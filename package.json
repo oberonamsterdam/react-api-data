@@ -1,0 +1,67 @@
+{
+  "name": "react-api-data",
+  "version": "0.1.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:clean && npm run build:lib && npm run build:flow",
+    "build:clean": "rimraf lib/",
+    "build:lib": "babel src --out-dir lib",
+    "build:flow": "flow-copy-source -v src lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oberonamsterdam/react-api-data.git"
+  },
+  "keywords": [
+    "redux",
+    "json",
+    "fetch"
+  ],
+  "author": "Richard van Willegen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oberonamsterdam/react-api-data/issues"
+  },
+  "homepage": "https://github.com/oberonamsterdam/react-api-data#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^3.0.0",
+    "eslint-config-oberon": "^1.1.3",
+    "flow-bin": "^0.56.0",
+    "flow-copy-source": "^1.2.1",
+    "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^2.3.1",
+    "normalizr": "^3.2.4",
+    "react-redux": "^5.0.6"
+  },
+  "PeerDependencies": {
+    "react": "^15.0.0 || ^16.0.0"
+  },
+  "eslintConfig": {
+    "extends": "oberon"
+  },
+  "babel": {
+    "presets": [
+      "flow",
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ],
+      "stage-0",
+      "react"
+    ]
+  }
+}
