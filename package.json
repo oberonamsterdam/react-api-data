@@ -1,6 +1,6 @@
 {
   "name": "react-api-data",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -50,20 +50,5 @@
   },
   "eslintConfig": {
     "extends": "oberon"
-  },
-  "babel": {
-    "presets": [
-      "flow",
-      [
-        "env",
-        {
-          "targets": {
-            "node": "current"
-          }
-        }
-      ],
-      "stage-0",
-      "react"
-    ]
   }
 }
