@@ -1,10 +1,11 @@
 // @flow
 
 import React from 'react';
-import type { ApiDataRequest, ApiDataState, EndpointParams } from './reducer';
+import type { ApiDataBinding, EndpointParams } from './index';
 import { connect } from 'react-redux';
 import { getApiDataRequest, getResultData, performApiRequest } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
+import type { ApiDataState } from '../lib/reducer';
 
 type GetParams = (ownProps: Object, state: Object) => {[paramName: string]: EndpointParams}
 
@@ -12,11 +13,6 @@ type WithApiDataProps = {
     apiData: ApiDataState,
     params: {[paramName: string]: EndpointParams},
     dispatch: Function,
-}
-
-export type ApiDataBinding<T> = {
-    data?: T,
-    request: ApiDataRequest,
 }
 
 /**
