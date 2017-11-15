@@ -15,10 +15,13 @@ Make sure *fetch* is available globally, polyfill it if needed to support older 
 
 ## Quick usage
 
+### Config
+
 ```js
-import { withApiData } from 'react-api-data';
 import { schema } from 'normalizr';
-import createStore from './store';
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import { configureApiData, reducer } from 'react-api-data';
+import thunk from 'redux-thunk'
 
 // define normalizr response schemas
 
@@ -30,29 +33,37 @@ const articleSchema = new schema.Entity('Article', {
 // define api endpoints
 
 const endpointConfig = {
-    getArticles: {
-        url: 'https://yourapi/articles/:articleId/:userId',
+    getArticle: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId/:userId',
         method: 'GET',
-        responseSchema: ArticleSchema
+        responseSchema: articleSchema
     }
 }
 
-// dispatch configuration action before rendering components
-const store = createStore()
-store.dispatch(configureApiData(globalConfig, endpointConfig))
+// Configure store and dispatch config before you render components
+
+const store = createStore(combineReducers({apiData: reducer}), applyMiddleware(thunk));
+store.dispatch(configureApiData({}, endpointConfig))
+```
+
+### Bind API data to your component
+
+```js
+import React from 'react'
+import { withApiData } from 'react-api-data';
 
 // bind api data to a component
 
 const connectApiData = withApiData({
     // specify property name and endpoint
-    articles: 'getArticle'
+    article: 'getArticle'
 }, (ownProps, state) => ({
     // provide URL parameters
-    article: {articleId: ownProps.articleId, userId: state.userId}
+    article: {articleId: ownProps.articleId, userId: state.userId || ''}
 }));
 
 const Article = (props) => {
-    switch(props.articles.request.networkStatus) {
+    switch(props.article.request.networkStatus) {
         case 'loading': return 'Loading...';
         case 'failed': return 'Something went wrong :(';
         case 'success': {

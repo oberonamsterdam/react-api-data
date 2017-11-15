@@ -1,6 +1,6 @@
 {
   "name": "react-api-data",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -40,11 +40,13 @@
   },
   "dependencies": {
     "hoist-non-react-statics": "^2.3.1",
-    "normalizr": "^3.2.4",
-    "react-redux": "^5.0.6"
+    "normalizr": "^3.2.4"
   },
   "PeerDependencies": {
-    "react": "^15.0.0 || ^16.0.0"
+    "react": "^15.0.0 || ^16.0.0",
+    "react-redux": "^5.0.0",
+    "normalizr": "^3.0.0",
+    "redux-thunk": "^2.0.0"
   },
   "eslintConfig": {
     "extends": "oberon"

@@ -63,10 +63,15 @@ export default (url: string, requestProperties?: any = {}): Promise<HandledRespo
                             response,
                             body
                         }),
-                        () => resolve({
-                            response,
-                            body: {}
-                        })
+                        (err) => {
+                            if (__DEV__) {
+                                console.warn(`Could not parse JSON response of ${url}`);
+                            }
+                            resolve({
+                                response,
+                                body: err
+                            });
+                        }
                     );
             }
         };

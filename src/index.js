@@ -1,7 +1,7 @@
 // @flow
 
 import withApiData from './withApiData';
-import { configureApiData, performApiRequest, getApiDataRequest, getResultData, getEntity, invalidateApiDataRequest } from './reducer';
+import reducer, { configureApiData, performApiRequest, getApiDataRequest, getResultData, getEntity, invalidateApiDataRequest } from './reducer';
 
 export {
     withApiData,
@@ -11,4 +11,5 @@ export {
     getResultData,
     getEntity,
     invalidateApiDataRequest,
+    reducer,
 };
