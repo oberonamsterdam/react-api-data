@@ -88,6 +88,7 @@ type ApiDataSuccessAction = {
         requestKey: string,
         response: Response,
         normalizedData?: NormalizedData,
+        responseBody?: any,
     }
 }
 
@@ -137,7 +138,7 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                     [action.payload.requestKey]: {
                         networkStatus: 'success',
                         lastCall: state.requests[action.payload.requestKey].lastCall,
-                        result: action.payload.normalizedData ? action.payload.normalizedData.result : undefined,
+                        result: action.payload.normalizedData ? action.payload.normalizedData.result : action.payload.responseBody,
                         response: action.payload.response
                     }
                 },
@@ -208,11 +209,12 @@ const apiDataSuccess = (requestKey: string, endpointConfig: ApiDataEndpointConfi
     payload: {
         requestKey,
         response,
-        normalizedData: typeof endpointConfig.transformResponseBody === 'function'
+        responseBody: typeof endpointConfig.transformResponseBody === 'function'
             ? endpointConfig.transformResponseBody(body)
-            : endpointConfig.responseSchema
-                ? normalize(body, endpointConfig.responseSchema)
-                : undefined
+            : body,
+        normalizedData: endpointConfig.responseSchema
+            ? normalize(body, endpointConfig.responseSchema)
+            : undefined,
     }
 });
 
@@ -321,7 +323,11 @@ export const getResultData = (apiDataState: ApiDataState, endpointKey: string, p
         return;
     }
 
-    return request.result && denormalize(request.result, config.responseSchema, apiDataState.entities);
+    return request.result && (
+        config.responseSchema
+            ? denormalize(request.result, config.responseSchema, apiDataState.entities)
+            : request.result
+    );
 };
 
 export const getEntity = (apiDataState: ApiDataState, schema: Object, id: string | number): Object | void => {
