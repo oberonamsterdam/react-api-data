@@ -242,11 +242,11 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params);
 
+        // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
-                apiDataRequest.networkStatus === 'loading' ||
-                (config.method === 'GET' && apiDataRequest.networkStatus === 'success')
-            )) {
-            // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
+            apiDataRequest.networkStatus === 'loading' ||
+            (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
+        )) {
             return;
         }
 
@@ -308,7 +308,7 @@ export const getApiDataRequest = (apiDataState: ApiDataState, endpointKey: strin
     apiDataState.requests[getRequestKey(endpointKey, params)];
 
 // Get the de-normalized result data of an endpoint, or undefined if not (yet) available
-export const getResultData = (apiDataState: ApiDataState, endpointKey: string, params: EndpointParams): Object | Array<Object> | void => {
+export const getResultData = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): Object | Array<Object> | void => {
     const config = apiDataState.endpointConfig[endpointKey];
     const request = getApiDataRequest(apiDataState, endpointKey, params);
 
@@ -334,3 +334,6 @@ export const getEntity = (apiDataState: ApiDataState, schema: Object, id: string
     const entity = apiDataState.entities[schema.key] && apiDataState.entities[schema.key][id];
     return entity && denormalize(id, schema, apiDataState.entities);
 };
+
+const cacheExpired = (endpointConfig: ApiDataEndpointConfig, request: ApiDataRequest): boolean =>
+    Date.now() - request.lastCall > (typeof endpointConfig.cacheDuration === 'number' ? endpointConfig.cacheDuration : Number.POSITIVE_INFINITY);

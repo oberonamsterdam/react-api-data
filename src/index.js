@@ -37,6 +37,7 @@ export type ApiDataGlobalConfig = {
 export type ApiDataEndpointConfig = {
     url: string,  // add parameters as :paramName, eg: https://myapi.org/myendpoint/:myparam
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    cacheDuration?: number, // milliseconds, infinite by default
     responseSchema?: Object | Array<Object>,
     transformResponseBody?: (responseBody: Object) => NormalizedData,
     handleErrorResponse?: (response?: Response, body?: any, dispatch: Function) => boolean,  // return false to block global config's handleErrorResopnse
