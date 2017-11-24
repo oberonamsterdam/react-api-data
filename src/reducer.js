@@ -125,6 +125,7 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                 requests: {
                     ...state.requests,
                     [action.payload.requestKey]: {
+                        ...state.requests[action.payload.requestKey],
                         networkStatus: 'loading',
                         lastCall: Date.now()
                     }
@@ -169,6 +170,7 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                 requests: {
                     ...state.requests,
                     [action.payload.requestKey]: {
+                        ...request,
                         networkStatus: 'ready'
                     }
                 }
