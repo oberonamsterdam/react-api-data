@@ -16,7 +16,7 @@ type WithApiDataProps = {
 }
 
 /**
- * Bind api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
+ * Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
  * component will get an ApiDataBinding added to each property key of the bindings param.
  * @param bindings - maps prop names to endpoint keys
  * @param [getParams] - optionally provide the params of the endpoint

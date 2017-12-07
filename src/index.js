@@ -39,9 +39,8 @@ export type ApiDataEndpointConfig = {
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     cacheDuration?: number, // milliseconds, infinite by default
     responseSchema?: Object | Array<Object>,
-    transformResponseBody?: (responseBody: Object) => NormalizedData,
-    handleErrorResponse?: (response?: Response, body?: any, dispatch: Function) => boolean,  // return false to block global config's handleErrorResopnse
-}
+    transformResponseBody?: (responseBody: Object) => NormalizedData, // todo: this should transform before normalize or without normalize if no schema (so return any)
+} & ApiDataGlobalConfig
 
 export type ApiDataRequest = {
     result?: any,

@@ -232,8 +232,10 @@ const apiDataFail = (requestKey: string, response?: Response, errorBody: any): A
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) =>
     (dispatch: Function, getState: () => Object) => {
         const state = getState();
-        const config = state.apiData.endpointConfig[endpointKey];
-        const globalConfig = state.apiData.globalConfig;
+        const config = {
+            ...state.apiData.globalConfig,
+            ...state.apiData.endpointConfig[endpointKey],
+        };
 
         if (!config) {
             if (__DEV__) {
@@ -261,12 +263,12 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
         const defaultRequestProperties = {body, headers: {}, method: config.method};
 
-        const requestProperties = typeof globalConfig.setRequestProperties === 'function'
-            ? globalConfig.setRequestProperties(defaultRequestProperties, state)
+        const requestProperties = typeof config.setRequestProperties === 'function'
+            ? config.setRequestProperties(defaultRequestProperties, state)
             : defaultRequestProperties;
 
-        requestProperties.headers = typeof globalConfig.setHeaders === 'function'
-            ? globalConfig.setHeaders(defaultRequestProperties.headers, state)
+        requestProperties.headers = typeof config.setHeaders === 'function'
+            ? config.setHeaders(defaultRequestProperties.headers, state)
             : defaultRequestProperties.headers;
 
         const onError = (response, body) => {
@@ -274,8 +276,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 return;
             }
 
-            if (typeof globalConfig.handleErrorResponse === 'function') {
-                globalConfig.handleErrorResponse(response, body, dispatch);
+            if (typeof config.handleErrorResponse === 'function') {
+                config.handleErrorResponse(response, body, dispatch);
             }
         };
 
