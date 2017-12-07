@@ -11,7 +11,7 @@ or
 
 `yarn add react-api-data`
 
-Make sure *fetch* is available globally, polyfill it if needed to support older environments.
+Make sure _fetch_ is available globally, polyfill it if needed to support older environments.
 
 ## Quick usage
 
@@ -81,7 +81,6 @@ const Article = (props) => {
 };
 
 export default connectApiData(Article);
-
 ```
 
 # The gist

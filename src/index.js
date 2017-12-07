@@ -40,7 +40,16 @@ export type ApiDataEndpointConfig = {
     cacheDuration?: number, // milliseconds, infinite by default
     responseSchema?: Object | Array<Object>,
     transformResponseBody?: (responseBody: Object) => NormalizedData, // todo: this should transform before normalize or without normalize if no schema (so return any)
-} & ApiDataGlobalConfig
+
+    // return false to not trigger global function
+    handleErrorResponse?: (response?: Response, body?: any, dispatch: Function) => boolean,
+
+    // defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
+    setHeaders?: (defaultHeaders: Object, state: Object) => Object,
+
+    // defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
+    setRequestProperties?: (defaultProperties: Object, state: Object) => Object,
+}
 
 export type ApiDataRequest = {
     result?: any,

@@ -229,13 +229,21 @@ const apiDataFail = (requestKey: string, response?: Response, errorBody: any): A
     }
 });
 
+// composes optional functions to work like: value -> globalFn? -> endpointFn? -> result
+const composeConfigFn = (endpointFn?: Function, globalFunction?: Function): Function => {
+    // eslint-disable-next-line no-unused-vars
+    const id = (val, state) => val;
+    const fnA = endpointFn || id;
+    const fnB = globalFunction || id;
+
+    return (value: any, state: Object) => fnA(fnB(value, state));
+};
+
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) =>
     (dispatch: Function, getState: () => Object) => {
         const state = getState();
-        const config = {
-            ...state.apiData.globalConfig,
-            ...state.apiData.endpointConfig[endpointKey],
-        };
+        const config = state.apiData.endpointConfig[endpointKey];
+        const globalConfig = state.apiData.globalConfig;
 
         if (!config) {
             if (__DEV__) {
@@ -262,22 +270,16 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }: FetchApiDataAction));
 
         const defaultRequestProperties = {body, headers: {}, method: config.method};
-
-        const requestProperties = typeof config.setRequestProperties === 'function'
-            ? config.setRequestProperties(defaultRequestProperties, state)
-            : defaultRequestProperties;
-
-        requestProperties.headers = typeof config.setHeaders === 'function'
-            ? config.setHeaders(defaultRequestProperties.headers, state)
-            : defaultRequestProperties.headers;
+        const requestProperties = composeConfigFn(config.setRequestProperties, globalConfig.setRequestProperties)(defaultRequestProperties, state);
+        requestProperties.headers = composeConfigFn(config.setHeaders, globalConfig.setHeaders)(defaultRequestProperties.headers, state);
 
         const onError = (response, body) => {
             if (typeof config.handleErrorResponse === 'function' && config.handleErrorResponse(response, body, dispatch) === false) {
                 return;
             }
 
-            if (typeof config.handleErrorResponse === 'function') {
-                config.handleErrorResponse(response, body, dispatch);
+            if (typeof globalConfig.handleErrorResponse === 'function') {
+                globalConfig.handleErrorResponse(response, body, dispatch);
             }
         };
 
