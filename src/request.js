@@ -8,7 +8,7 @@ export type HandledResponse = {
     body: Object
 };
 
-/**
+/*
  * Get the headers based on request properties, adds:
  * - Content Type json if a body is set
  * - Authorization if auth token is set
@@ -25,7 +25,7 @@ const getHeaders = (requestProperties: any): Object => {
     return headers;
 };
 
-/**
+/*
  * Execute a request. Body object will be converted to JSON.
  *
  * @param url

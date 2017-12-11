@@ -1,5 +1,5 @@
 // @flow
-/**
+/*
  * REDUX API DATA - lib for handling api requests and response data.
  * Consists of the following:
  *
@@ -198,6 +198,9 @@ const getRequestKey = (endpointKey: string, params?: EndpointParams = {}): strin
 
 // action creators
 
+/**
+ *
+ */
 export const configureApiData = (globalConfig: ApiDataGlobalConfig, endpointConfig: {[endpointKey: string]: ApiDataEndpointConfig}): ConfigureApiDataAction => ({
     type: 'CONFIGURE_API_DATA',
     payload: {

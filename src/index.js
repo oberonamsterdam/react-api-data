@@ -14,6 +14,9 @@ export {
     reducer,
 };
 
+/**
+ *
+ */
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
 
 export type NormalizeResult = string | number | Array<string | number>
@@ -26,14 +29,25 @@ export type NormalizedData = {
     result: NormalizeResult,
 }
 
+/**
+ * Map parameter names to values.
+ * @typedef {Object.<string,string|number>} EndpointParams
+ */
 export type EndpointParams = {[paramName: string]: string | number}
 
+/**
+ * Global configuration for all endpoints.
+ */
 export type ApiDataGlobalConfig = {
     handleErrorResponse?: (response?: Response, body?: any, dispatch: Function) => void,
     setHeaders?: (defaultHeaders: Object, state: Object) => Object,
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object, // the fetch init param
 }
 
+/**
+ * Specification and configuration of an endpoint.
+ * @typedef ApiDataEndpointConfig
+ */
 export type ApiDataEndpointConfig = {
     url: string,  // add parameters as :paramName, eg: https://myapi.org/myendpoint/:myparam
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
@@ -41,16 +55,25 @@ export type ApiDataEndpointConfig = {
     responseSchema?: Object | Array<Object>,
     transformResponseBody?: (responseBody: Object) => NormalizedData, // todo: this should transform before normalize or without normalize if no schema (so return any)
 
-    // return false to not trigger global function
+    /*
+     * return false to not trigger global function
+     */
     handleErrorResponse?: (response?: Response, body?: any, dispatch: Function) => boolean,
 
-    // defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
+    /*
+     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
+     */
     setHeaders?: (defaultHeaders: Object, state: Object) => Object,
 
-    // defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
+    /*
+     * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
+     */
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object,
 }
 
+/**
+ * Information about a request made to an endpoint.
+ */
 export type ApiDataRequest = {
     result?: any,
     networkStatus: NetworkStatus,
@@ -59,6 +82,13 @@ export type ApiDataRequest = {
     errorBody?: any,
 }
 
+/**
+ * The value that withApiData binds to the property of your component.
+ * @example
+ * type Props = {
+ *   users: ApiDataBinding<Array<User>>
+ * }
+ */
 export type ApiDataBinding<T> = {
     data?: T,
     request: ApiDataRequest,
