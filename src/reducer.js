@@ -199,7 +199,8 @@ const getRequestKey = (endpointKey: string, params?: EndpointParams = {}): strin
 // action creators
 
 /**
- *
+ * Register your global and endpoint configurations. Make sure you do this before you mount any components using
+ * withApiData.
  */
 export const configureApiData = (globalConfig: ApiDataGlobalConfig, endpointConfig: {[endpointKey: string]: ApiDataEndpointConfig}): ConfigureApiDataAction => ({
     type: 'CONFIGURE_API_DATA',
@@ -242,6 +243,10 @@ const composeConfigFn = (endpointFn?: Function, globalFunction?: Function): Func
     return (value: any, state: Object) => fnA(fnB(value, state));
 };
 
+/**
+ * Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
+ * to use {@link withApiData}.
+ */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) =>
     (dispatch: Function, getState: () => Object) => {
         const state = getState();
@@ -302,8 +307,10 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         );
     };
 
-// Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
-// a GET list request, which might need to include the newly created entity.
+/**
+ * Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
+ * a GET list request, which might need to include the newly created entity.
+ */
 export const invalidateApiDataRequest = (endpointKey: string, params?: EndpointParams): InvalidateApiDataRequestAction => ({
     type: 'INVALIDATE_API_DATA_REQUEST',
     payload: {
@@ -313,10 +320,19 @@ export const invalidateApiDataRequest = (endpointKey: string, params?: EndpointP
 
 // selectors
 
+/**
+ * Selector to manually get a {@link ApiDataRequest}. This value is automatically bind when using {@link withApiData}.
+ * This selector can be useful for tracking request status when a request is triggered manually, like a POST after a
+ * button click.
+ */
 export const getApiDataRequest = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): ApiDataRequest | void =>
     apiDataState.requests[getRequestKey(endpointKey, params)];
 
-// Get the de-normalized result data of an endpoint, or undefined if not (yet) available
+/**
+ * Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
+ * bind when using {@link withApiData}. This selector can be useful for getting response body values when a request is
+ * triggered manually, like a POST after a button click.
+ */
 export const getResultData = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): Object | Array<Object> | void => {
     const config = apiDataState.endpointConfig[endpointKey];
     const request = getApiDataRequest(apiDataState, endpointKey, params);
@@ -339,6 +355,9 @@ export const getResultData = (apiDataState: ApiDataState, endpointKey: string, p
     );
 };
 
+/**
+ * Selector for getting a single entity from normalized data.
+ */
 export const getEntity = (apiDataState: ApiDataState, schema: Object, id: string | number): Object | void => {
     const entity = apiDataState.entities[schema.key] && apiDataState.entities[schema.key][id];
     return entity && denormalize(id, schema, apiDataState.entities);

@@ -10,6 +10,11 @@
 -   [ApiDataBinding](#apidatabinding)
 -   [withApiData](#withapidata)
 -   [configureApiData](#configureapidata)
+-   [performApiRequest](#performapirequest)
+-   [invalidateApiDataRequest](#invalidateapidatarequest)
+-   [getApiDataRequest](#getapidatarequest)
+-   [getResultData](#getresultdata)
+-   [getEntity](#getentity)
 
 ## NetworkStatus
 
@@ -115,9 +120,75 @@ Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Ref
 
 ## configureApiData
 
+Register your global and endpoint configurations. Make sure you do this before you mount any components using
+withApiData.
+
 **Parameters**
 
 -   `globalConfig` **[ApiDataGlobalConfig](#apidataglobalconfig)** 
 -   `endpointConfig` **{}** 
 
 Returns **ConfigureApiDataAction** 
+
+## performApiRequest
+
+Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
+to use [withApiData](#withapidata).
+
+**Parameters**
+
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `params` **[EndpointParams](#endpointparams)** 
+-   `body` **any** 
+
+## invalidateApiDataRequest
+
+Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
+a GET list request, which might need to include the newly created entity.
+
+**Parameters**
+
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `params` **[EndpointParams](#endpointparams)** 
+
+Returns **InvalidateApiDataRequestAction** 
+
+## getApiDataRequest
+
+Selector to manually get a [ApiDataRequest](#apidatarequest). This value is automatically bind when using [withApiData](#withapidata).
+This selector can be useful for tracking request status when a request is triggered manually, like a POST after a
+button click.
+
+**Parameters**
+
+-   `apiDataState` **ApiDataState** 
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `params` **[EndpointParams](#endpointparams)** 
+
+Returns **([ApiDataRequest](#apidatarequest) | void)** 
+
+## getResultData
+
+Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
+bind when using [withApiData](#withapidata). This selector can be useful for getting response body values when a request is
+triggered manually, like a POST after a button click.
+
+**Parameters**
+
+-   `apiDataState` **ApiDataState** 
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `params` **[EndpointParams](#endpointparams)** 
+
+Returns **([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)> | void)** 
+
+## getEntity
+
+Selector for getting a single entity from normalized data.
+
+**Parameters**
+
+-   `apiDataState` **ApiDataState** 
+-   `schema` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+-   `id` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number))** 
+
+Returns **([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | void)** 
