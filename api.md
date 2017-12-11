@@ -97,18 +97,18 @@ component will get an ApiDataBinding added to each property key of the bindings 
 
 ```javascript
 withApiData({
-wishList: 'getWishLists',
-settings: 'getSettings'
-}, (ownProps, state) => ({
-wishList: {
-projectSlug: ownProps.match.params.projectSlug,
-env: ownProps.match.params.env
-},
-settings: {
-projectSlug: ownProps.match.params.projectSlug,
-env: ownProps.match.params.env
-}
-}))
+   wishList: 'getWishLists',
+   settings: 'getSettings'
+ }, (ownProps, state) => ({
+   wishList: {
+     projectSlug: ownProps.match.params.projectSlug,
+     env: ownProps.match.params.env
+   },
+   settings: {
+     projectSlug: ownProps.match.params.projectSlug,
+     env: ownProps.match.params.env
+   }
+ }))
 ```
 
 Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Function to wrap your component
