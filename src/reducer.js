@@ -28,7 +28,7 @@
  */
 
 import request from './request';
-import type { HandledResponse } from './request';
+import type { HandledResponse, RequestHandler } from './request'
 import { normalize, denormalize } from 'normalizr';
 import type {
     ApiDataEndpointConfig, ApiDataGlobalConfig, ApiDataRequest, EndpointParams,
@@ -109,6 +109,8 @@ type InvalidateApiDataRequestAction = {
 }
 
 export type Action = ConfigureApiDataAction | FetchApiDataAction | ApiDataSuccessAction | ApiDataFailAction
+
+let requestFunction = request;
 
 // reducer
 
@@ -281,17 +283,17 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         const requestProperties = composeConfigFn(config.setRequestProperties, globalConfig.setRequestProperties)(defaultRequestProperties, state);
         requestProperties.headers = composeConfigFn(config.setHeaders, globalConfig.setHeaders)(defaultRequestProperties.headers, state);
 
-        const onError = (response, body) => {
-            if (typeof config.handleErrorResponse === 'function' && config.handleErrorResponse(response, body, dispatch) === false) {
+        const onError = (response, responseBody) => {
+            if (typeof config.handleErrorResponse === 'function' && config.handleErrorResponse(response, responseBody, params, body, dispatch, getState) === false) {
                 return;
             }
 
             if (typeof globalConfig.handleErrorResponse === 'function') {
-                globalConfig.handleErrorResponse(response, body, dispatch);
+                globalConfig.handleErrorResponse(response, responseBody, endpointKey, params, body, dispatch, getState);
             }
         };
 
-        return request(formatUrl(config.url, params), requestProperties).then(
+        return requestFunction(formatUrl(config.url, params), requestProperties).then(
             (response: HandledResponse) => {
                 if (response.response.ok) {
                     dispatch(apiDataSuccess(requestKey, config, response.response, response.body));
@@ -365,3 +367,14 @@ export const getEntity = (apiDataState: ApiDataState, schema: Object, id: string
 
 const cacheExpired = (endpointConfig: ApiDataEndpointConfig, request: ApiDataRequest): boolean =>
     Date.now() - request.lastCall > (typeof endpointConfig.cacheDuration === 'number' ? endpointConfig.cacheDuration : Number.POSITIVE_INFINITY);
+
+// other
+
+/**
+ * Use your own request function that calls the api and reads the body response. Make sure it implements the
+ * {@link RequestHandler} interface.
+ * @param requestHandler
+ */
+export const useRequestHandler = (requestHandler: RequestHandler) => {
+    requestFunction = requestHandler;
+};

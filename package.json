@@ -1,14 +1,15 @@
 {
   "name": "react-api-data",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:clean && npm run build:lib && npm run build:flow",
+    "build": "npm run build:clean && npm run build:lib && npm run build:flow && npm run build:docs",
     "build:clean": "rimraf lib/",
     "build:lib": "babel src --out-dir lib",
-    "build:flow": "flow-copy-source -v src lib"
+    "build:flow": "flow-copy-source -v src lib",
+    "build:docs": "documentation build src/index.js -f md > api.md"
   },
   "repository": {
     "type": "git",

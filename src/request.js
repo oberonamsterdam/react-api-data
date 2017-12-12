@@ -8,6 +8,8 @@ export type HandledResponse = {
     body: Object
 };
 
+export type RequestHandler = (url: string, requestProperties?: any) => Promise<HandledResponse>;
+
 /*
  * Get the headers based on request properties, adds:
  * - Content Type json if a body is set
@@ -33,7 +35,7 @@ const getHeaders = (requestProperties: any): Object => {
  * @returns {Promise<HandledResponse>} Resolves with response, response body (json parsed, if present). Rejects with an Error if
  * connection fails.
  */
-export default (url: string, requestProperties?: any = {}): Promise<HandledResponse> => {
+export default ((url: string, requestProperties?: any = {}): Promise<HandledResponse> => {
     if (__DEV__) {
         console.log('Executing request: ' + url);
     }
@@ -87,4 +89,4 @@ export default (url: string, requestProperties?: any = {}): Promise<HandledRespo
 
         fetch(url, requestProperties).then(onRequestSuccess, onRequestError);
     });
-};
+}: RequestHandler);

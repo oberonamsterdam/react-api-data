@@ -1,7 +1,7 @@
 // @flow
 
 import withApiData from './withApiData';
-import reducer, { configureApiData, performApiRequest, getApiDataRequest, getResultData, getEntity, invalidateApiDataRequest } from './reducer';
+import reducer, { configureApiData, performApiRequest, getApiDataRequest, getResultData, getEntity, invalidateApiDataRequest, useRequestHandler } from './reducer';
 
 export {
     withApiData,
@@ -12,6 +12,7 @@ export {
     getEntity,
     invalidateApiDataRequest,
     reducer,
+    useRequestHandler,
 };
 
 /**
@@ -39,7 +40,7 @@ export type EndpointParams = {[paramName: string]: string | number}
  * Global configuration for all endpoints.
  */
 export type ApiDataGlobalConfig = {
-    handleErrorResponse?: (response?: Response, body?: any, dispatch: Function) => void,
+    handleErrorResponse?: (response?: Response, responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => void,
     setHeaders?: (defaultHeaders: Object, state: Object) => Object,
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object, // the fetch init param
 }
@@ -58,7 +59,7 @@ export type ApiDataEndpointConfig = {
     /*
      * return false to not trigger global function
      */
-    handleErrorResponse?: (response?: Response, body?: any, dispatch: Function) => boolean,
+    handleErrorResponse?: (response?: Response, responseBody: any, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => boolean,
 
     /*
      * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
