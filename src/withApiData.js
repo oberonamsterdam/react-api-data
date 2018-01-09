@@ -5,7 +5,8 @@ import type { ApiDataBinding, EndpointParams } from './index';
 import { connect } from 'react-redux';
 import { getApiDataRequest, getResultData, performApiRequest } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
-import type { ApiDataState } from '../lib/reducer';
+import type { ApiDataState } from '../src/reducer';
+import isEqual from 'lodash/isEqual';
 
 type GetParams = (ownProps: Object, state: Object) => {[paramName: string]: EndpointParams}
 
@@ -46,14 +47,15 @@ export default function withApiData (bindings: {[propName: string]: string}, get
             }
 
             componentWillReceiveProps (newProps: WithApiDataProps) {
-                // automatically re-fetch when a request gets invalidated
-                const getRequest = (props, propName) => getApiDataRequest(props.apiData, bindings[propName], props.params[propName]);
+                // automatically fetch when parameters change or re-fetch when a request gets invalidated
+                const paramsHaveChanged = bindingKey => !isEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
+                const getRequest = (props, bindingKey) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
                 const hasBeenInvalidated = (oldRequest, newRequest) =>
                     !!oldRequest && oldRequest.networkStatus === 'success' && !!newRequest && newRequest.networkStatus === 'ready';
 
-                Object.keys(bindings).forEach(propName => {
-                    if (hasBeenInvalidated(getRequest(this.props, propName), getRequest(newProps, propName))) {
-                        this.props.dispatch(performApiRequest(bindings[propName], newProps.params[propName]));
+                Object.keys(bindings).forEach(bindingKey => {
+                    if (paramsHaveChanged || hasBeenInvalidated(getRequest(this.props, bindingKey), getRequest(newProps, bindingKey))) {
+                        this.props.dispatch(performApiRequest(bindings[bindingKey], newProps.params[bindingKey]));
                     }
                 });
             }

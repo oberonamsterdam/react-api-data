@@ -45,7 +45,7 @@ type Entities = {
     }
 }
 
-type ApiDataState = {
+export type ApiDataState = {
     globalConfig: ApiDataGlobalConfig,
     endpointConfig: {
         [endpointKey: string]: ApiDataEndpointConfig
