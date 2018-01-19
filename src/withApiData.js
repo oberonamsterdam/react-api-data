@@ -54,7 +54,7 @@ export default function withApiData (bindings: {[propName: string]: string}, get
                     !!oldRequest && oldRequest.networkStatus === 'success' && !!newRequest && newRequest.networkStatus === 'ready';
 
                 Object.keys(bindings).forEach(bindingKey => {
-                    if (paramsHaveChanged || hasBeenInvalidated(getRequest(this.props, bindingKey), getRequest(newProps, bindingKey))) {
+                    if (paramsHaveChanged(bindingKey) || hasBeenInvalidated(getRequest(this.props, bindingKey), getRequest(newProps, bindingKey))) {
                         this.props.dispatch(performApiRequest(bindings[bindingKey], newProps.params[bindingKey]));
                     }
                 });
