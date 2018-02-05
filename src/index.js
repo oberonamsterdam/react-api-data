@@ -30,6 +30,12 @@ export type NormalizedData = {
     result: NormalizeResult,
 }
 
+
+/**
+ * Type of the Api-data state
+ */
+export type { ApiDataState } from './reducer';
+
 /**
  * Map parameter names to values.
  * @typedef {Object.<string,string|number>} EndpointParams
