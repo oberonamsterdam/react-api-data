@@ -1,10 +1,11 @@
 {
   "name": "react-api-data",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test-watch": "jest --watch",
     "build": "npm run build:clean && npm run build:lib && npm run build:flow && npm run build:docs",
     "build:clean": "rimraf lib/",
     "build:lib": "babel src --out-dir lib",
@@ -28,25 +29,32 @@
   "homepage": "https://github.com/oberonamsterdam/react-api-data#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
+    "babel-jest": "^22.2.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^3.0.0",
     "eslint-config-oberon": "^1.1.3",
     "flow-bin": "^0.56.0",
     "flow-copy-source": "^1.2.1",
+    "jest": "^22.3.0",
+    "redux": "^3.7.2",
+    "regenerator-runtime": "^0.11.1",
     "rimraf": "^2.6.2"
   },
   "dependencies": {
+    "react": "^15.0.0 || ^16.0.0",
     "hoist-non-react-statics": "^2.3.1",
-    "lodash": "^4.17.4",
-    "normalizr": "^3.2.4"
+    "normalizr": "^3.2.4",
+    "react-redux": "^5.0.0",
+    "shallowequal": "^1.0.2"
   },
   "PeerDependencies": {
-    "react": "^15.0.0 || ^16.0.0",
-    "react-redux": "^5.0.0",
     "normalizr": "^3.0.0",
     "redux-thunk": "^2.0.0"
   },

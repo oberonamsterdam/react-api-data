@@ -3,6 +3,7 @@
 ### Table of Contents
 
 -   [NetworkStatus](#networkstatus)
+-   [ApiDataState](#apidatastate)
 -   [EndpointParams](#endpointparams)
 -   [ApiDataGlobalConfig](#apidataglobalconfig)
 -   [ApiDataEndpointConfig](#apidataendpointconfig)
@@ -20,6 +21,10 @@
 ## NetworkStatus
 
 Type: (`"ready"` \| `"loading"` \| `"failed"` \| `"success"`)
+
+## ApiDataState
+
+Type of the Api-data state
 
 ## EndpointParams
 
@@ -162,7 +167,7 @@ button click.
 
 **Parameters**
 
--   `apiDataState` **ApiDataState** 
+-   `apiDataState` **[ApiDataState](#apidatastate)** 
 -   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 -   `params` **[EndpointParams](#endpointparams)** 
 
@@ -176,7 +181,7 @@ triggered manually, like a POST after a button click.
 
 **Parameters**
 
--   `apiDataState` **ApiDataState** 
+-   `apiDataState` **[ApiDataState](#apidatastate)** 
 -   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 -   `params` **[EndpointParams](#endpointparams)** 
 
@@ -188,7 +193,7 @@ Selector for getting a single entity from normalized data.
 
 **Parameters**
 
--   `apiDataState` **ApiDataState** 
+-   `apiDataState` **[ApiDataState](#apidatastate)** 
 -   `schema` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 -   `id` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number))** 
 
