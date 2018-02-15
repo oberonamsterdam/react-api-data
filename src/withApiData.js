@@ -18,11 +18,6 @@ type WithApiDataProps = {
     dispatch: Function,
 }
 
-export const someParamsHaveChanged = (nextParams: WithApiDataParams, prevParams: WithApiDataParams): boolean =>
-    Object.keys(nextParams).some(propName =>
-        !shallowEqual(nextParams[propName], prevParams[propName])
-    );
-
 /**
  * Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
  * component will get an ApiDataBinding added to each property key of the bindings param.
@@ -51,10 +46,6 @@ export default function withApiData (bindings: {[propName: string]: string}, get
 
             componentDidMount () {
                 this.fetchDataIfNeeded();
-            }
-
-            shouldComponentUpdate (nextProps: WithApiDataProps) {
-                return nextProps.apiData !== this.props.apiData || someParamsHaveChanged(nextProps.params, this.props.params);
             }
 
             componentWillReceiveProps (newProps: WithApiDataProps) {
