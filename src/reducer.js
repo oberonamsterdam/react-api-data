@@ -116,7 +116,7 @@ let requestFunction = request;
 
 // reducer
 
-export default (state: ApiDataState = defaultState, action: Action) => {
+export default (state: ApiDataState = defaultState, action: Action): ApiDataState => {
     switch (action.type) {
         case 'CONFIGURE_API_DATA':
             return {
@@ -132,20 +132,23 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                         ...state.requests[action.payload.requestKey],
                         networkStatus: 'loading',
                         lastCall: Date.now(),
+                        duration: 0,
                         endpointKey: action.payload.endpointKey,
                         params: action.payload.params,
                     }
                 }
             };
-        case 'API_DATA_SUCCESS':
+        case 'API_DATA_SUCCESS': {
+            const request = state.requests[action.payload.requestKey];
+
             return {
                 ...state,
                 requests: {
                     ...state.requests,
                     [action.payload.requestKey]: {
-                        ...state.requests[action.payload.requestKey],
+                        ...request,
                         networkStatus: 'success',
-                        lastCall: state.requests[action.payload.requestKey].lastCall,
+                        duration: Date.now() - request.lastCall,
                         result: action.payload.normalizedData ? action.payload.normalizedData.result : action.payload.responseBody,
                         response: action.payload.response,
                         errorBody: undefined,
@@ -158,21 +161,25 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                     )
                 }
             };
-        case 'API_DATA_FAIL':
+        }
+        case 'API_DATA_FAIL': {
+            const request = state.requests[action.payload.requestKey];
+
             return {
                 ...state,
                 requests: {
                     ...state.requests,
                     [action.payload.requestKey]: {
-                        ...state.requests[action.payload.requestKey],
+                        ...request,
                         networkStatus: 'failed',
-                        lastCall: state.requests[action.payload.requestKey].lastCall,
+                        duration: Date.now() - request.lastCall,
                         response: action.payload.response,
                         errorBody: action.payload.errorBody,
                         result: undefined,
                     }
                 }
             };
+        }
         case 'INVALIDATE_API_DATA_REQUEST': {
             const request = state.requests[action.payload.requestKey];
             return request ? {

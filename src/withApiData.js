@@ -86,6 +86,7 @@ export default function withApiData (bindings: {[propName: string]: string}, get
                         request: getApiDataRequest(apiData, endpointKey, params[propName]) || {
                             networkStatus: 'ready',
                             lastCall: 0,
+                            duration: 0,
                             endpointKey,
                         }
                     }: ApiDataBinding<*>);

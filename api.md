@@ -67,13 +67,14 @@ Type: {url: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Ref
 
 Information about a request made to an endpoint.
 
-Type: {result: any?, networkStatus: [NetworkStatus](#networkstatus), lastCall: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)?, errorBody: any?, endpointKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), params: [EndpointParams](#endpointparams)?}
+Type: {result: any?, networkStatus: [NetworkStatus](#networkstatus), lastCall: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), duration: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)?, errorBody: any?, endpointKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), params: [EndpointParams](#endpointparams)?}
 
 **Properties**
 
 -   `result` **any?** 
 -   `networkStatus` **[NetworkStatus](#networkstatus)** 
 -   `lastCall` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+-   `duration` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 -   `response` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)?** 
 -   `errorBody` **any?** 
 -   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 

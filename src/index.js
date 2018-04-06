@@ -88,6 +88,7 @@ export type ApiDataRequest = {
     result?: any,
     networkStatus: NetworkStatus,
     lastCall: number,
+    duration: number,
     response?: Response,
     errorBody?: any,
     endpointKey: string,
