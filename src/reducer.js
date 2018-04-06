@@ -28,7 +28,7 @@
  */
 
 import request from './request';
-import type { HandledResponse, RequestHandler } from './request'
+import type { HandledResponse, RequestHandler } from './request';
 import { normalize, denormalize } from 'normalizr';
 import type {
     ApiDataEndpointConfig, ApiDataGlobalConfig, ApiDataRequest, EndpointParams,
@@ -79,6 +79,8 @@ type FetchApiDataAction = {
     type: 'FETCH_API_DATA',
     payload: {
         requestKey: string,
+        endpointKey: string,
+        params?: EndpointParams,
     },
 }
 
@@ -129,7 +131,9 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                     [action.payload.requestKey]: {
                         ...state.requests[action.payload.requestKey],
                         networkStatus: 'loading',
-                        lastCall: Date.now()
+                        lastCall: Date.now(),
+                        endpointKey: action.payload.endpointKey,
+                        params: action.payload.params,
                     }
                 }
             };
@@ -139,10 +143,12 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                 requests: {
                     ...state.requests,
                     [action.payload.requestKey]: {
+                        ...state.requests[action.payload.requestKey],
                         networkStatus: 'success',
                         lastCall: state.requests[action.payload.requestKey].lastCall,
                         result: action.payload.normalizedData ? action.payload.normalizedData.result : action.payload.responseBody,
-                        response: action.payload.response
+                        response: action.payload.response,
+                        errorBody: undefined,
                     }
                 },
                 entities: {
@@ -158,10 +164,12 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                 requests: {
                     ...state.requests,
                     [action.payload.requestKey]: {
+                        ...state.requests[action.payload.requestKey],
                         networkStatus: 'failed',
                         lastCall: state.requests[action.payload.requestKey].lastCall,
                         response: action.payload.response,
-                        errorBody: action.payload.errorBody
+                        errorBody: action.payload.errorBody,
+                        result: undefined,
                     }
                 }
             };
@@ -177,6 +185,9 @@ export default (state: ApiDataState = defaultState, action: Action) => {
                     }
                 }
             } : state;
+        }
+        case 'CLEAR_API_DATA': {
+            return defaultState;
         }
         default:
             return state;
@@ -248,18 +259,20 @@ const composeConfigFn = (endpointFn?: Function, globalFunction?: Function): Func
 /**
  * Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
  * to use {@link withApiData}.
+ * @return {Promise<void>} Always resolves, use request networkStatus to see if call was succeeded or not.
  */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) =>
-    (dispatch: Function, getState: () => Object) => {
+    (dispatch: Function, getState: () => Object): Promise<void> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
 
         if (!config) {
+            const errorMsg = `apiData.performApiRequest: no config with key ${endpointKey} found!`;
             if (__DEV__) {
-                console.error(`apiData.performApiRequest: no config with key ${endpointKey} found!`);
+                console.error(errorMsg);
             }
-            return;
+            return Promise.reject(errorMsg);
         }
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params);
@@ -269,14 +282,18 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return;
+            return Promise.resolve();
         }
 
         const requestKey = getRequestKey(endpointKey, params || {});
 
         dispatch(({
             type: 'FETCH_API_DATA',
-            payload: {requestKey}
+            payload: {
+                requestKey,
+                endpointKey,
+                params,
+            }
         }: FetchApiDataAction));
 
         const defaultRequestProperties = {body, headers: {}, method: config.method};
@@ -293,20 +310,44 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
         };
 
-        return requestFunction(formatUrl(config.url, params), requestProperties).then(
-            (response: HandledResponse) => {
-                if (response.response.ok) {
-                    dispatch(apiDataSuccess(requestKey, config, response.response, response.body));
-                } else {
-                    dispatch(apiDataFail(requestKey, response.response, response.body));
-                    onError(response.response, response.body);
-                }
-            },
-            (error: any) => {
-                dispatch(apiDataFail(requestKey, undefined, error));
-                onError(undefined, error);
+        return new Promise((resolve: Function) => {
+            const timeout = config.timeout || globalConfig.timeout;
+
+            let abortTimeout;
+            let aborted = false;
+
+            if (timeout) {
+                abortTimeout = setTimeout(() => {
+                    const error = new Error('Timeout');
+
+                    dispatch(apiDataFail(requestKey, undefined, error));
+                    onError(undefined, error);
+                    aborted = true;
+                    resolve();
+                }, timeout);
             }
-        );
+
+            requestFunction(formatUrl(config.url, params), requestProperties).then(
+                (response: HandledResponse) => {
+                    if (aborted) { return; }
+                    clearTimeout(abortTimeout);
+                    if (response.response.ok) {
+                        dispatch(apiDataSuccess(requestKey, config, response.response, response.body));
+                    } else {
+                        dispatch(apiDataFail(requestKey, response.response, response.body));
+                        onError(response.response, response.body);
+                    }
+                    resolve();
+                },
+                (error: any) => {
+                    if (aborted) { return; }
+                    clearTimeout(abortTimeout);
+                    dispatch(apiDataFail(requestKey, undefined, error));
+                    onError(undefined, error);
+                    resolve();
+                }
+            );
+        });
     };
 
 /**

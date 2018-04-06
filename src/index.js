@@ -49,6 +49,7 @@ export type ApiDataGlobalConfig = {
     handleErrorResponse?: (response?: Response, responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => void,
     setHeaders?: (defaultHeaders: Object, state: Object) => Object,
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object, // the fetch init param
+    timeout?: number,
 }
 
 /**
@@ -76,6 +77,8 @@ export type ApiDataEndpointConfig = {
      * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
      */
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object,
+
+    timeout?: number,
 }
 
 /**
@@ -87,6 +90,8 @@ export type ApiDataRequest = {
     lastCall: number,
     response?: Response,
     errorBody?: any,
+    endpointKey: string,
+    params?: EndpointParams,
 }
 
 /**
