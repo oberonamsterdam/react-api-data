@@ -340,6 +340,16 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
                     if (response.response.ok) {
                         dispatch(apiDataSuccess(requestKey, config, response.response, response.body));
+
+                        if (config.afterSuccess || globalConfig.afterSuccess) {
+                            const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
+                            if (config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) === false) {
+                                return;
+                            }
+                            if (globalConfig.afterSuccess) {
+                                globalConfig.afterSuccess(updatedRequest, dispatch, getState);
+                            }
+                        }
                     } else {
                         dispatch(apiDataFail(requestKey, response.response, response.body));
                         onError(response.response, response.body);

@@ -30,7 +30,6 @@ export type NormalizedData = {
     result: NormalizeResult,
 }
 
-
 /**
  * Type of the Api-data state
  */
@@ -43,12 +42,29 @@ export type { ApiDataState } from './reducer';
 export type EndpointParams = {[paramName: string]: string | number}
 
 /**
+ * Information about a request made to an endpoint.
+ */
+export type ApiDataRequest = {
+    result?: any,
+    networkStatus: NetworkStatus,
+    lastCall: number,
+    duration: number,
+    response?: Response,
+    errorBody?: any,
+    endpointKey: string,
+    params?: EndpointParams,
+    // todo: add requestBody for retriggering post calls or logging errors etc
+}
+
+/**
  * Global configuration for all endpoints.
  */
 export type ApiDataGlobalConfig = {
     handleErrorResponse?: (response?: Response, responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => void,
     setHeaders?: (defaultHeaders: Object, state: Object) => Object,
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object, // the fetch init param
+    afterSuccess?: (request: ApiDataRequest, dispatch: Function, getState: () => Object) => void,
+    // todo: add afterFail and deprecate handleErrorResponse
     timeout?: number,
 }
 
@@ -66,7 +82,12 @@ export type ApiDataEndpointConfig = {
     /*
      * return false to not trigger global function
      */
-    handleErrorResponse?: (response?: Response, responseBody: any, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => boolean,
+    handleErrorResponse?: (response?: Response, responseBody: any, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => boolean | void,
+
+    /*
+     * return false to not trigger global function
+     */
+    afterSuccess?: (request: ApiDataRequest, dispatch: Function, getState: () => Object) => boolean | void,
 
     /*
      * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
@@ -79,20 +100,6 @@ export type ApiDataEndpointConfig = {
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object,
 
     timeout?: number,
-}
-
-/**
- * Information about a request made to an endpoint.
- */
-export type ApiDataRequest = {
-    result?: any,
-    networkStatus: NetworkStatus,
-    lastCall: number,
-    duration: number,
-    response?: Response,
-    errorBody?: any,
-    endpointKey: string,
-    params?: EndpointParams,
 }
 
 /**
