@@ -1,6 +1,6 @@
 {
   "name": "react-api-data",
-  "version": "0.3.7",
+  "version": "0.4.0",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
