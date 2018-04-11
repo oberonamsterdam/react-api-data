@@ -307,7 +307,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         const requestProperties = composeConfigFn(config.setRequestProperties, globalConfig.setRequestProperties)(defaultRequestProperties, state);
         requestProperties.headers = composeConfigFn(config.setHeaders, globalConfig.setHeaders)(defaultRequestProperties.headers, state);
 
-        const onError = (response, responseBody) => {
+        const onError = (response?: Response, responseBody: any) => {
             if (typeof config.handleErrorResponse === 'function' && config.handleErrorResponse(response, responseBody, params, body, dispatch, getState) === false) {
                 return;
             }
@@ -335,11 +335,19 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
 
             requestFunction(formatUrl(config.url, params), requestProperties).then(
-                (response: HandledResponse) => {
+                ({ response, body }: HandledResponse) => {
                     if (aborted) { return; }
                     clearTimeout(abortTimeout);
-                    if (response.response.ok) {
-                        dispatch(apiDataSuccess(requestKey, config, response.response, response.body));
+
+                    const beforeSuccess = config.beforeSuccess || globalConfig.beforeSuccess;
+                    if (response.ok && beforeSuccess) {
+                        const alteredResp = beforeSuccess({response, body});
+                        response = alteredResp.response;
+                        body = alteredResp.body;
+                    }
+
+                    if (response.ok) {
+                        dispatch(apiDataSuccess(requestKey, config, response, body));
 
                         if (config.afterSuccess || globalConfig.afterSuccess) {
                             const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
@@ -351,8 +359,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                             }
                         }
                     } else {
-                        dispatch(apiDataFail(requestKey, response.response, response.body));
-                        onError(response.response, response.body);
+                        dispatch(apiDataFail(requestKey, response, body));
+                        onError(response, body);
                     }
                     resolve();
                 },

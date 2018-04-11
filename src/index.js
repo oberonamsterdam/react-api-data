@@ -63,6 +63,7 @@ export type ApiDataGlobalConfig = {
     handleErrorResponse?: (response?: Response, responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => void,
     setHeaders?: (defaultHeaders: Object, state: Object) => Object,
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object, // the fetch init param
+    beforeSuccess?: ({response: Response, body: any}) => {response: Response, body: any},
     afterSuccess?: (request: ApiDataRequest, dispatch: Function, getState: () => Object) => void,
     // todo: add afterFail and deprecate handleErrorResponse
     timeout?: number,
@@ -77,6 +78,9 @@ export type ApiDataEndpointConfig = {
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     cacheDuration?: number, // milliseconds, infinite by default
     responseSchema?: Object | Array<Object>,
+    /*
+     * @deprecated Use beforeSuccess instead
+     */
     transformResponseBody?: (responseBody: Object) => NormalizedData, // todo: this should transform before normalize or without normalize if no schema (so return any)
 
     /*
@@ -84,6 +88,10 @@ export type ApiDataEndpointConfig = {
      */
     handleErrorResponse?: (response?: Response, responseBody: any, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => boolean | void,
 
+    /*
+     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
+     */
+    beforeSuccess?: (handledResponse: {response: Response, body: any}) => {response: Response, body: any},
     /*
      * return false to not trigger global function
      */
