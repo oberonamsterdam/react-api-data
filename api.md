@@ -13,6 +13,7 @@
 -   [configureApiData](#configureapidata)
 -   [performApiRequest](#performapirequest)
 -   [invalidateApiDataRequest](#invalidateapidatarequest)
+-   [afterRehydrate](#afterrehydrate)
 -   [getApiDataRequest](#getapidatarequest)
 -   [getResultData](#getresultdata)
 -   [getEntity](#getentity)
@@ -169,6 +170,13 @@ a GET list request, which might need to include the newly created entity.
 -   `params` **[EndpointParams](#endpointparams)** 
 
 Returns **InvalidateApiDataRequestAction** 
+
+## afterRehydrate
+
+Call this after you've re-hydrated the store when using redux-persist or any other method of persisting and restoring
+the entire apiData state. This is needed to reset loading statuses.
+
+Returns **{type: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)}** 
 
 ## getApiDataRequest
 

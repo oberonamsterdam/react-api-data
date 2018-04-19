@@ -31,7 +31,7 @@ import request from './request';
 import type { HandledResponse, RequestHandler } from './request';
 import { normalize, denormalize } from 'normalizr';
 import type {
-    ApiDataEndpointConfig, ApiDataGlobalConfig, ApiDataRequest, EndpointParams,
+    ApiDataEndpointConfig, ApiDataGlobalConfig, ApiDataRequest, EndpointParams, NetworkStatus,
     NormalizedData,
 } from './index';
 
@@ -109,6 +109,10 @@ type InvalidateApiDataRequestAction = {
         requestKey: string
     }
 }
+
+type ApiDataAfterRehydrateAction = {
+    type: 'API_DATA_AFTER_REHYDRATE',
+};
 
 export type Action = ConfigureApiDataAction | FetchApiDataAction | ApiDataSuccessAction | ApiDataFailAction
 
@@ -196,6 +200,11 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
         case 'CLEAR_API_DATA': {
             return defaultState;
         }
+        case 'API_DATA_AFTER_REHYDRATE':
+            return {
+                ...state,
+                requests: recoverNetworkStatuses(state.requests),
+            };
         default:
             return state;
     }
@@ -215,6 +224,22 @@ const formatUrl = (url: string, params?: EndpointParams): string =>
 
 const getRequestKey = (endpointKey: string, params?: EndpointParams = {}): string =>
     endpointKey + '/' + Object.keys(params).sort().map(param => param + '=' + params[param]).join('&');
+
+// resets a networkStatus to ready if it was loading. Use when recovering state from storage to prevent loading states
+// when no calls are running.
+export const recoverNetworkStatus = (networkStatus: NetworkStatus): NetworkStatus =>
+    networkStatus === 'loading' ? 'ready' : networkStatus;
+
+export const recoverNetworkStatuses = (requests: {[requestKey: string]: ApiDataRequest}): {[requestKey: string]: ApiDataRequest} => ({
+    ...(Object.keys(requests).reduce((result, key) => ({
+        ...result,
+        [key]: {
+            ...requests[key],
+            networkStatus: recoverNetworkStatus(requests[key].networkStatus)
+        }
+    }), {})),
+
+});
 
 // action creators
 
@@ -384,6 +409,15 @@ export const invalidateApiDataRequest = (endpointKey: string, params?: EndpointP
     payload: {
         requestKey: getRequestKey(endpointKey, params)
     }
+});
+
+/**
+ * Call this after you've re-hydrated the store when using redux-persist or any other method of persisting and restoring
+ * the entire apiData state. This is needed to reset loading statuses.
+ * @return {{type: string}}
+ */
+export const afterRehydrate = (): ApiDataAfterRehydrateAction => ({
+    type: 'API_DATA_AFTER_REHYDRATE',
 });
 
 // selectors

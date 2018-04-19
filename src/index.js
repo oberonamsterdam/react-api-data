@@ -1,7 +1,16 @@
 // @flow
 
 import withApiData from './withApiData';
-import reducer, { configureApiData, performApiRequest, getApiDataRequest, getResultData, getEntity, invalidateApiDataRequest, useRequestHandler } from './reducer';
+import reducer, {
+    configureApiData,
+    performApiRequest,
+    getApiDataRequest,
+    getResultData,
+    getEntity,
+    invalidateApiDataRequest,
+    afterRehydrate,
+    useRequestHandler
+} from './reducer';
 
 export {
     withApiData,
@@ -11,6 +20,7 @@ export {
     getResultData,
     getEntity,
     invalidateApiDataRequest,
+    afterRehydrate,
     reducer,
     useRequestHandler,
 };
