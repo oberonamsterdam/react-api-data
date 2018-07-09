@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "lib",
     "module": "esnext",
     "target": "es5",
     "downlevelIteration": true,
-    "lib": ["es6", "dom", "esnext.asynciterable"],
+    "lib": [
+      "es6",
+      "dom",
+      "esnext.asynciterable"
+    ],
     "sourceMap": true,
-    "allowJs": false,
     "jsx": "react",
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
@@ -22,12 +24,13 @@
   },
   "exclude": [
     "node_modules",
-    "build",
+    "lib",
     "scripts",
     "acceptance-tests",
     "webpack",
     "jest",
     "src/setupTests.ts",
-    "public"
+    "public",
+    "coverage"
   ]
 }
