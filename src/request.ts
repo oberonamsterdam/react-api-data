@@ -1,12 +1,11 @@
-
 const __DEV__ = process.env.NODE_ENV === 'development';
 
-export type HandledResponse = {
+export interface HandledResponse {
     response: Response,
-    body: Object
-};
+    body: any
+}
 
-export type RequestHandler = (url: string, requestProperties?: any) => Promise<HandledResponse>;
+export type RequestHandler = (url: string, requestProperties?: RequestInit) => Promise<HandledResponse>;
 
 /*
  * Get the headers based on request properties, adds:
@@ -15,10 +14,11 @@ export type RequestHandler = (url: string, requestProperties?: any) => Promise<H
  * @param requestProperties
  * @returns {{}}
  */
-const getHeaders = (requestProperties: any): Object => {
+
+const getHeaders = (requestProperties: any): any => {
     const headers = requestProperties.headers || {};
 
-    if ('body' in requestProperties) {
+    if('body' in requestProperties) {
         headers['Content-Type'] = 'application/json';
     }
 
@@ -33,7 +33,8 @@ const getHeaders = (requestProperties: any): Object => {
  * @returns {Promise<HandledResponse>} Resolves with response, response body (json parsed, if present). Rejects with an Error if
  * connection fails.
  */
-export default ((url: string, requestProperties: any = {}): Promise<HandledResponse> => {
+
+const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => {
     if (__DEV__) {
         console.log('Executing request: ' + url);
     }
@@ -43,7 +44,6 @@ export default ((url: string, requestProperties: any = {}): Promise<HandledRespo
     if (typeof requestProperties.body !== 'string') {
         requestProperties.body = JSON.stringify(requestProperties.body);
     }
-
     return new Promise((resolve, reject) => {
         const onRequestSuccess = (response: Response) => {
             if (__DEV__) {
@@ -59,7 +59,7 @@ export default ((url: string, requestProperties: any = {}): Promise<HandledRespo
             } else {
                 response.json()
                     .then(
-                        body => resolve({
+                        (body: any) => resolve({
                             response,
                             body
                         }),
@@ -76,7 +76,7 @@ export default ((url: string, requestProperties: any = {}): Promise<HandledRespo
             }
         };
 
-        const onRequestError = (error: Error) => {
+        const onRequestError = (error: any) => {
             if (__DEV__) {
                 console.log(`Request failed: ${url}`);
                 console.error(error);
@@ -88,3 +88,4 @@ export default ((url: string, requestProperties: any = {}): Promise<HandledRespo
         fetch(url, requestProperties).then(onRequestSuccess, onRequestError);
     });
 });
+export default defaultRequestHandler;

@@ -19,7 +19,7 @@ test('recoverNetworkStatuses should return a new requests map with loading state
             lastCall: 123,
         },
 
-    };
+    } as any;
 
     const output = recoverNetworkStatuses(input);
 

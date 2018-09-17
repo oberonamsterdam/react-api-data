@@ -1,16 +1,16 @@
 {
   "name": "react-api-data",
-  "version": "0.6.0",
-  "description": "",
+  "version": "0.7.0",
+  "description": "Fetch and normalize data from api",
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest src/",
-    "test-watch": "jest --watch src/",
-    "build": "npm run build:clean && npm run build:docs",
+    "test": "jest",
+    "build": "npm run build:clean && npm run build:lib",
     "build:clean": "rimraf lib/",
     "build:lib": "tsc",
     "build:docs": "documentation build lib/index.js -f md > api.md",
-    "precommit": "tslint --project ."
+    "precommit": "tslint --project .",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,9 @@
   "keywords": [
     "redux",
     "json",
-    "fetch"
+    "fetch",
+    "normalize",
+    "typeScript support"
   ],
   "author": "Richard van Willegen",
   "license": "MIT",
@@ -28,28 +30,50 @@
   },
   "homepage": "https://github.com/oberonamsterdam/react-api-data#readme",
   "devDependencies": {
-    "@types/react-redux": "^6.0.2",
-    "@types/shallowequal": "^0.2.3",
-    "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
+    "@types/jest": "^22.2.3",
+    "jest": "^23.0.1",
+    "ts-jest": "^22.4.2",
     "tslint": "^5.10.0",
     "tslint-config-oberon": "^1.0.4",
-    "flowgen": "^1.2.2",
-    "jest": "^22.3.0",
-    "redux": "^3.7.2",
-    "regenerator-runtime": "^0.11.1",
-    "rimraf": "^2.6.2",
-    "react": "^16.0.0"
+    "typescript": "^2.8.3",
+    "redux": "^3.7.2"
   },
   "dependencies": {
+    "@types/node": "^10.9.2",
+    "@types/react-redux": "^6.0.6",
+    "@types/shallowequal": "^0.2.3",
     "hoist-non-react-statics": "^2.3.1",
     "normalizr": "^3.2.4",
+    "react": "^15.0.0 || ^16.0.0",
     "react-redux": "^5.0.0",
     "shallowequal": "^1.0.2"
   },
-  "peerDependencies": {
+  "PeerDependencies": {
     "normalizr": "^3.0.0",
-    "redux-thunk": "^2.0.0",
-    "react": "^15.0.0 || ^16.0.0"
+    "redux-thunk": "^2.0.0"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "enableTsDiagnostics": true
+      }
+    },
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

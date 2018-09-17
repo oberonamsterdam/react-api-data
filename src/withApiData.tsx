@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ApiDataBinding, ApiDataRequest, EndpointParams } from './index';
 import { connect } from 'react-redux';
-import { getApiDataRequest, performApiRequest, getResultData } from './reducer';
+import { getApiDataRequest, getResultData, performApiRequest } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import { ApiDataState } from './reducer';
 import shallowEqual from 'shallowequal';
 
-export type GetParams = (ownProps: Object, state: Object) => {[paramName: string]: EndpointParams}
+type GetParams = (ownProps: any, state: any) => {[paramName: string]: EndpointParams}
 
 type WithApiDataParams = {[paramName: string]: EndpointParams}
 
-type WithApiDataProps = {
+interface WithApiDataProps {
     apiData: ApiDataState,
     params: WithApiDataParams,
     dispatch: Function,
 }
+
+interface WithApiDataChildProps {
+    children?: ReactNode;
+    [key: string]: ReactNode | ApiDataRequest;
+}
+
 
 /**
  * Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
@@ -23,8 +29,6 @@ type WithApiDataProps = {
  * @param [getParams] - optionally provide the params of the endpoint
  * @returns {Function} - Function to wrap your component
  * @example
- * ```js
- *
  * withApiData({
  *    wishList: 'getWishLists',
  *    settings: 'getSettings'
@@ -38,12 +42,11 @@ type WithApiDataProps = {
  *      env: ownProps.match.params.env
  *    }
  *  }))
- *  ```
  */
-export default function withApiData (bindings: {[propName: string]: string}, getParams?: GetParams) {
+export default function withApiData <T extends any> (bindings: {[propName: string]: string}, getParams?: GetParams) {
     return function (WrappedComponent: any) {
         class WithApiData extends React.Component<WithApiDataProps> {
-            static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+            static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`
 
             componentDidMount () {
                 this.fetchDataIfNeeded();
@@ -51,9 +54,9 @@ export default function withApiData (bindings: {[propName: string]: string}, get
 
             componentWillReceiveProps (newProps: WithApiDataProps) {
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
-                const keyParamsHaveChanged = (bindingKey: string) => !shallowEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
-                const getRequest = (props: WithApiDataProps, bindingKey: string) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
-                const hasBeenInvalidated = (oldRequest: ApiDataRequest | void, newRequest: ApiDataRequest | void): boolean =>
+                const keyParamsHaveChanged = (bindingKey: any) => !shallowEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
+                const getRequest = (props: any, bindingKey: any) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
+                const hasBeenInvalidated = (oldRequest: any, newRequest: any) =>
                     !!oldRequest && oldRequest.networkStatus === 'success' && !!newRequest && newRequest.networkStatus === 'ready';
                 const apiDataChanged = newProps.apiData !== this.props.apiData;
 
@@ -77,7 +80,7 @@ export default function withApiData (bindings: {[propName: string]: string}, get
 
             render () {
                 const { apiData, params, dispatch, ...componentProps } = this.props;
-                const props: any = {
+                const props: WithApiDataChildProps = {
                     ...componentProps
                 };
                 Object.keys(bindings).forEach(propName => {
@@ -85,12 +88,12 @@ export default function withApiData (bindings: {[propName: string]: string}, get
                     props[propName] = ({
                         data: getResultData(apiData, endpointKey, params[propName]),
                         request: getApiDataRequest(apiData, endpointKey, params[propName]) || {
-                            networkStatus: 'ready',
-                            lastCall: 0,
-                            duration: 0,
-                            endpointKey,
-                        }
-                    } as ApiDataBinding<any>);
+                        networkStatus: 'ready',
+                        lastCall: 0,
+                        duration: 0,
+                        endpointKey,
+                    }
+                } as ApiDataBinding<T>);
                 });
                 return <WrappedComponent {...props} />;
             }
@@ -101,8 +104,7 @@ export default function withApiData (bindings: {[propName: string]: string}, get
         return connect((state: {apiData: ApiDataState}, ownProps: Object) => ({
             params: typeof getParams === 'function' ? getParams(ownProps, state) : {},
             apiData: state.apiData
-        }), (dispatch: Function) => ({
-            dispatch
         }))(WithApiData);
     };
 }
+
