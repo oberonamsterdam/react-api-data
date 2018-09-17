@@ -23,6 +23,8 @@ type WithApiDataProps = {
  * @param [getParams] - optionally provide the params of the endpoint
  * @returns {Function} - Function to wrap your component
  * @example
+ * ```js
+ *
  * withApiData({
  *    wishList: 'getWishLists',
  *    settings: 'getSettings'
@@ -36,6 +38,7 @@ type WithApiDataProps = {
  *      env: ownProps.match.params.env
  *    }
  *  }))
+ *  ```
  */
 export default function withApiData (bindings: {[propName: string]: string}, getParams?: GetParams) {
     return function (WrappedComponent: any) {

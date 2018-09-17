@@ -69,7 +69,7 @@ export type ApiDataRequest = {
 /**
  * Global configuration for all endpoints.
  */
-export type ApiDataGlobalConfig = {
+export interface ApiDataGlobalConfig {
     handleErrorResponse?: (response: Response, responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => void,
     setHeaders?: (defaultHeaders: Object, state: Object) => Object,
     setRequestProperties?: (defaultProperties: Object, state: Object) => Object, // the fetch init param
@@ -79,16 +79,18 @@ export type ApiDataGlobalConfig = {
     timeout?: number
 }
 
+export type HandleErrorResponse = (response: Response, responseBody: any, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => boolean | void
+
 /**
  * Specification and configuration of an endpoint.
  * @typedef ApiDataEndpointConfig
  */
-export type ApiDataEndpointConfig = {
+export interface ApiDataEndpointConfig {
     url: string,  // add parameters as :paramName, eg: https://myapi.org/myendpoint/:myparam
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     cacheDuration?: number, // milliseconds, infinite by default
     responseSchema?: Schema,
-    /*
+    /**
      * @deprecated Use beforeSuccess instead
      */
     transformResponseBody?: (responseBody: Object) => NormalizedData, // todo: this should transform before normalize or without normalize if no schema (so return any)
@@ -96,7 +98,7 @@ export type ApiDataEndpointConfig = {
     /*
      * return false to not trigger global function
      */
-    handleErrorResponse?: (response: Response, responseBody: any, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object) => boolean | void,
+    handleErrorResponse?: HandleErrorResponse,
 
     /*
      * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
