@@ -1,12 +1,17 @@
 import { performApiRequest } from './reducer';
 
-const endpointKey = 'oberon';
+const endpointKey = 'data';
 const dispatch = () => {};
 const getState = () => (
     {
         apiData: {
             globalConfig: {},
-            endpointConfig: {},
+            endpointConfig: {
+                'data':
+                {
+                    url: 'data/',
+                    method: 'POST'
+                }},
             requests: {
                 'data/': {
                     networkStatus: 'ready'
@@ -21,9 +26,7 @@ const getState = () => (
 );
 
 test('it performs an api request to a given endpoint and returns a promise', () => {
-
-    // return performApiRequest(endpointKey)(dispatch, getState).then((data) => {
-    expect.assertions(1);
-    return expect(performApiRequest((dispatch, getState)).rejects.toMatch(`apiData.performApiRequest: no config with key ${endpointKey} found!`));
-        // expect(data).toBe(`Failed: apiData.performApiRequest: no config with key ${endpointKey} found!`);
+    return performApiRequest(endpointKey)(dispatch, getState).then((data) => {
+        expect(data).toBe(newState);
+    });
 });
