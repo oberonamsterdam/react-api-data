@@ -30,7 +30,7 @@ export type NormalizeResult = string | number | Array<string | number>;
 export interface NormalizedData {
     entities: {
         [type: string]: {
-            [id: string] : any,
+            [id: string]: any,
         }
     }
     result: NormalizeResult,
@@ -64,7 +64,7 @@ export type ApiDataRequest = {
 }
 
 export interface ApiDataGlobalConfig {
-    handleErrorResponse?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => Object, response?: Response) => void,
+    handleErrorResponse?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: Function, getState: () => any, response?: Response) => void,
     setHeaders?: (defaultHeaders: any, state: any) => any,
     setRequestProperties?: (defaultProperties: any, state: any) => any,
     beforeSuccess?: ({response: Response, body: any}),

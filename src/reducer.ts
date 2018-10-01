@@ -26,12 +26,14 @@
  * the HOC and the selectors, use those.
  */
 
-import request from './request';
-
-import { HandledResponse, RequestHandler } from './request';
-import { normalize, denormalize } from 'normalizr';
+import request, { HandledResponse, RequestHandler } from './request';
+import { denormalize, normalize } from 'normalizr';
 import {
-    ApiDataEndpointConfig, ApiDataGlobalConfig, ApiDataRequest, EndpointParams, NetworkStatus,
+    ApiDataEndpointConfig,
+    ApiDataGlobalConfig,
+    ApiDataRequest,
+    EndpointParams,
+    NetworkStatus,
     NormalizedData
 } from './index';
 
@@ -118,7 +120,14 @@ interface ApiDataAfterRehydrateAction {
     type: 'API_DATA_AFTER_REHYDRATE',
 }
 
-export type Action = ConfigureApiDataAction | FetchApiDataAction | ApiDataSuccessAction | ApiDataFailAction | InvalidateApiDataRequestAction | ClearApiData | ApiDataAfterRehydrateAction;
+export type Action =
+    ConfigureApiDataAction
+    | FetchApiDataAction
+    | ApiDataSuccessAction
+    | ApiDataFailAction
+    | InvalidateApiDataRequestAction
+    | ClearApiData
+    | ApiDataAfterRehydrateAction;
 
 let requestFunction = request;
 
@@ -259,7 +268,7 @@ export const configureApiData = (globalConfig: ApiDataGlobalConfig, endpointConf
     }
 });
 
-const apiDataSuccess = (requestKey: string, endpointConfig: ApiDataEndpointConfig, response: Response, body: Object): ApiDataSuccessAction => ({
+const apiDataSuccess = (requestKey: string, endpointConfig: ApiDataEndpointConfig, response: Response, body: any): ApiDataSuccessAction => ({
     type: 'API_DATA_SUCCESS',
     payload: {
         requestKey,
@@ -324,13 +333,13 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         const requestKey = getRequestKey(endpointKey, params || {});
 
         dispatch(({
-                      type:'FETCH_API_DATA',
-                      payload: {
-                          requestKey,
-                          endpointKey,
-                          params
-                      }
-                  } as FetchApiDataAction));
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey,
+                endpointKey,
+                params
+            }
+        }));
 
         const defaultRequestProperties = { body, headers: {}, method: config.method };
         const requestProperties = composeConfigFn(config.setRequestProperties, globalConfig.setRequestProperties)(defaultRequestProperties, state);
@@ -435,7 +444,7 @@ export const afterRehydrate = (): ApiDataAfterRehydrateAction => ({
  * This selector can be useful for tracking request status when a request is triggered manually, like a POST after a
  * button click.
  */
-export const getApiDataRequest = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): ApiDataRequest | void =>
+export const getApiDataRequest = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): ApiDataRequest =>
     apiDataState.requests[getRequestKey(endpointKey, params)];
 
 /**

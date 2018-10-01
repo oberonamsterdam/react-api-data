@@ -15,11 +15,17 @@ export type RequestHandler = (url: string, requestProperties?: RequestInit) => P
  * @returns {{}}
  */
 
-const getHeaders = (requestProperties: any): any => {
+const getHeaders = (requestProperties: RequestInit): HeadersInit => {
     const headers = requestProperties.headers || {};
 
     if('body' in requestProperties) {
-        headers['Content-Type'] = 'application/json';
+        if (headers instanceof Headers) {
+            headers.set('Content-Type', 'application/json');
+        } else if (Array.isArray(headers)) {
+            headers.push(['Content-Type', 'application/json']);
+        } else {
+            headers['Content-Type'] = 'application/json';
+        }
     }
 
     return headers;
