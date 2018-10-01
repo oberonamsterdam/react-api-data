@@ -31,17 +31,17 @@
   "homepage": "https://github.com/oberonamsterdam/react-api-data#readme",
   "devDependencies": {
     "@types/jest": "^22.2.3",
-    "jest": "^23.0.1",
-    "ts-jest": "^22.4.2",
-    "tslint": "^5.10.0",
-    "tslint-config-oberon": "^1.0.4",
-    "typescript": "^2.8.3",
-    "redux": "^3.7.2"
-  },
-  "dependencies": {
     "@types/node": "^10.9.2",
     "@types/react-redux": "^6.0.6",
     "@types/shallowequal": "^0.2.3",
+    "jest": "^23.0.1",
+    "redux": "^3.7.2",
+    "ts-jest": "^22.4.2",
+    "tslint": "^5.10.0",
+    "tslint-config-oberon": "^1.0.4",
+    "typescript": "^2.9.2"
+  },
+  "dependencies": {
     "hoist-non-react-statics": "^2.3.1",
     "normalizr": "^3.2.4",
     "react": "^15.0.0 || ^16.0.0",
