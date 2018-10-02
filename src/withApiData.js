@@ -53,7 +53,7 @@ export default function withApiData (bindings: {[propName: string]: string}, get
                 const keyParamsHaveChanged = bindingKey => !shallowEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
                 const getRequest = (props, bindingKey) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
                 const hasBeenInvalidated = (oldRequest, newRequest) =>
-                    !!oldRequest && oldRequest.networkStatus === 'success' && !!newRequest && newRequest.networkStatus === 'ready';
+                    !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
                 const apiDataChanged = newProps.apiData !== this.props.apiData;
 
                 Object.keys(bindings).forEach(bindingKey => {
