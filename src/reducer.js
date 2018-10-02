@@ -145,6 +145,12 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
         case 'API_DATA_SUCCESS': {
             const request = state.requests[action.payload.requestKey];
 
+            if (!request) {
+                // for security reasons reject the response if the request has been removed since the call was initiated.
+                // this might be due to a logout between start and end of call
+                return state;
+            }
+
             return {
                 ...state,
                 requests: {
@@ -168,6 +174,10 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
         }
         case 'API_DATA_FAIL': {
             const request = state.requests[action.payload.requestKey];
+
+            if (!request) {
+                return state;
+            }
 
             return {
                 ...state,
