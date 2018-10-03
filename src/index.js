@@ -9,7 +9,8 @@ import reducer, {
     getEntity,
     invalidateApiDataRequest,
     afterRehydrate,
-    useRequestHandler
+    useRequestHandler,
+    purgeApiData
 } from './reducer';
 
 export {
@@ -23,6 +24,7 @@ export {
     afterRehydrate,
     reducer,
     useRequestHandler,
+    purgeApiData
 };
 
 /**

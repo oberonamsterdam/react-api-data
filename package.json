@@ -1,6 +1,6 @@
 {
   "name": "react-api-data",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "build:lib": "babel src --out-dir lib",
     "build:flow": "flow-copy-source -v src lib",
     "build:docs": "documentation build src/index.js -f md > api.md",
-    "prepare": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
