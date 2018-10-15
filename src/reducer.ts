@@ -121,6 +121,10 @@ interface ApiDataAfterRehydrateAction {
     type: 'API_DATA_AFTER_REHYDRATE';
 }
 
+type PurgeApiDataAction = {
+    type: 'PURGE_API_DATA',
+};
+
 export type Action =
     ConfigureApiDataAction
     | FetchApiDataAction
@@ -128,7 +132,8 @@ export type Action =
     | ApiDataFailAction
     | InvalidateApiDataRequestAction
     | ClearApiData
-    | ApiDataAfterRehydrateAction;
+    | ApiDataAfterRehydrateAction
+    | PurgeApiDataAction;
 
 let requestFunction = Request;
 
@@ -159,6 +164,12 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
         case 'API_DATA_SUCCESS': {
             const request = state.requests[action.payload.requestKey];
 
+            if (!request) {
+                // for security reasons reject the response if the request has been removed since the call was initiated.
+                // this might be due to a logout between start and end of call
+                return state;
+            }
+
             return {
                 ...state,
                 requests: {
@@ -182,6 +193,10 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
         }
         case 'API_DATA_FAIL': {
             const request = state.requests[action.payload.requestKey];
+
+            if (!request) {
+                return state;
+            }
 
             return {
                 ...state,
@@ -213,6 +228,13 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
         }
         case 'CLEAR_API_DATA': {
             return defaultState;
+        }
+        case 'PURGE_API_DATA': {
+            return {
+                ...defaultState,
+                endpointConfig: state.endpointConfig,
+                globalConfig: state.globalConfig,
+            };
         }
         case 'API_DATA_AFTER_REHYDRATE':
             return {
@@ -445,6 +467,16 @@ export const invalidateApiDataRequest = (endpointKey: string, params?: EndpointP
  */
 export const afterRehydrate = (): ApiDataAfterRehydrateAction => ({
     type: 'API_DATA_AFTER_REHYDRATE'
+});
+
+/**
+ * Remove all the requests and entities but keep the configurations. This can be usefull when creating a log out feature.
+ * @return {{type: string}}
+ * @example
+ * dispatch(purgeApiData());
+ */
+export const purgeApiData = (): PurgeApiDataAction => ({
+    type: 'PURGE_API_DATA',
 });
 
 // selectors

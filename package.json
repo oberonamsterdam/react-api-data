@@ -10,7 +10,7 @@
     "build:lib": "tsc",
     "build:docs": "documentation build lib/index.js -f md > api.md",
     "precommit": "tslint --project .",
-    "prepare": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
