@@ -39,10 +39,22 @@ type WithApiDataProps = {
  *    }
  *  }))
  */
+
+export const checkIfRequestChanged = (newProps: any, oldProps: any, bindings: any, bindingKey: string) => {
+    const keyParamsHaveChanged = bindingKey => !shallowEqual(newProps.params[bindingKey], oldProps.params[bindingKey]);
+    const getRequest = (props, bindingKey) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
+    const hasBeenInvalidated = (oldRequest, newRequest) =>
+        !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
+    const apiDataChanged = newProps.apiData !== oldProps.apiData;
+    if (keyParamsHaveChanged(bindingKey) || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)))) {
+        return true;
+    }
+};
+
 export default function withApiData (bindings: {[propName: string]: string}, getParams?: GetParams) {
     return function (WrappedComponent: any) {
         class WithApiData extends React.Component<WithApiDataProps> {
-            static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`
+            static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
             componentDidMount () {
                 this.fetchDataIfNeeded();
@@ -50,14 +62,14 @@ export default function withApiData (bindings: {[propName: string]: string}, get
 
             componentWillReceiveProps (newProps: WithApiDataProps) {
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
-                const keyParamsHaveChanged = bindingKey => !shallowEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
-                const getRequest = (props, bindingKey) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
-                const hasBeenInvalidated = (oldRequest, newRequest) =>
-                    !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
-                const apiDataChanged = newProps.apiData !== this.props.apiData;
+                // const keyParamsHaveChanged = bindingKey => !shallowEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
+                // const getRequest = (props, bindingKey) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
+                // const hasBeenInvalidated = (oldRequest, newRequest) =>
+                //     !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
+                // const apiDataChanged = newProps.apiData !== this.props.apiData;
 
                 Object.keys(bindings).forEach(bindingKey => {
-                    if (keyParamsHaveChanged(bindingKey) || (apiDataChanged && hasBeenInvalidated(getRequest(this.props, bindingKey), getRequest(newProps, bindingKey)))) {
+                    if (checkIfRequestChanged(newProps, this.props, bindings, bindingKey)) {
                         this.props.dispatch(performApiRequest(bindings[bindingKey], newProps.params[bindingKey]));
                     }
                 });
