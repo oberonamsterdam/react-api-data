@@ -7,21 +7,24 @@ import { ApiDataBinding, withApiData } from '../src';
  */
 
 interface OwnProps {
-    article: ApiDataBinding<{ 
-        title: string; 
-        author: { name: string; }; 
-        body: string; 
-    }>
+    article: ApiDataBinding<{
+        title: string;
+        author: { name: string; };
+        body: string;
+    }>;
     articleId: number;
 }
 
-const connectApiData = withApiData({
-    // specify property name and endpoint
-    article: 'getArticle'
-}, (ownProps: OwnProps, state: any) => ({
-    // provide URL parameters
-    article: { articleId: ownProps.articleId, userId: state.userId || '' }
-}));
+const connectApiData = withApiData(
+    {
+        // specify property name and endpoint
+        article: 'getArticle'
+    },
+    (ownProps: OwnProps, state: any) => ({
+        // provide URL parameters
+        article: { articleId: ownProps.articleId, userId: state.userId || '' }
+    })
+);
 
 const Example: SFC<OwnProps> = (props) => {
     const article = props.article.data;

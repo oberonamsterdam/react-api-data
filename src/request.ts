@@ -1,8 +1,8 @@
 const __DEV__ = process.env.NODE_ENV === 'development';
 
 export interface HandledResponse {
-    response: Response,
-    body: any
+    response: Response;
+    body: any;
 }
 
 export type RequestHandler = (url: string, requestProperties?: RequestInit) => Promise<HandledResponse>;
@@ -18,7 +18,7 @@ export type RequestHandler = (url: string, requestProperties?: RequestInit) => P
 const getHeaders = (requestProperties: RequestInit): HeadersInit => {
     const headers = requestProperties.headers || {};
 
-    if('body' in requestProperties) {
+    if ('body' in requestProperties) {
         if (headers instanceof Headers) {
             headers.set('Content-Type', 'application/json');
         } else if (Array.isArray(headers)) {

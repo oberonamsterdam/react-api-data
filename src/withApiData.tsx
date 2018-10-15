@@ -1,18 +1,22 @@
 import React from 'react';
 import { ApiDataRequest, EndpointParams } from './index';
 import { connect } from 'react-redux';
-import { ApiDataState, getApiDataRequest, getResultData, performApiRequest } from './reducer';
+import { Action, ApiDataState, getApiDataRequest, getResultData, performApiRequest } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
+import { ActionCreator } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 
-type GetParams<TPropName extends string> = (ownProps: any, state: any) => { [paramName in TPropName]?: EndpointParams }
+type GetParams<TPropName extends string> = (ownProps: any, state: any) => { [paramName in TPropName]?: EndpointParams };
 
-type WithApiDataParams = { [paramName: string]: EndpointParams }
+interface WithApiDataParams {
+    [paramName: string]: EndpointParams;
+}
 
 interface WithApiDataProps {
-    apiData: ApiDataState,
-    params: WithApiDataParams,
-    dispatch: Function,
+    apiData: ApiDataState;
+    params: WithApiDataParams;
+    dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState }, void, Action>>;
 }
 
 export type WithApiDataChildProps<TPropNames extends string> = {
@@ -20,7 +24,7 @@ export type WithApiDataChildProps<TPropNames extends string> = {
         request: ApiDataRequest,
         data?: any;
     };
-}
+};
 
 /**
  * Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
@@ -44,7 +48,7 @@ export type WithApiDataChildProps<TPropNames extends string> = {
  *  }))
  */
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
-    return function (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentType<TChildProps> {
+    return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentType<TChildProps> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
@@ -81,22 +85,21 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
             render() {
                 const { apiData, params, dispatch, ...componentProps } = this.props;
                 const props: WithApiDataChildProps<TPropNames> =
-                    Object.assign({},
-                        ...Object.keys(bindings)
-                            .map((propName: TPropNames) => {
-                                const endpointKey = bindings[propName];
-                                return {
-                                    data: getResultData(apiData, endpointKey, params[propName]),
-                                    request: getApiDataRequest(apiData, endpointKey, params[propName]) || {
-                                        networkStatus: 'ready',
-                                        lastCall: 0,
-                                        duration: 0,
-                                        endpointKey
-                                    }
-                                };
-                            })
+                    Object.assign({}, ...Object.keys(bindings)
+                        .map((propName: TPropNames) => {
+                            const endpointKey = bindings[propName];
+                            return {
+                                data: getResultData(apiData, endpointKey, params[propName]),
+                                request: getApiDataRequest(apiData, endpointKey, params[propName]) || {
+                                    networkStatus: 'ready',
+                                    lastCall: 0,
+                                    duration: 0,
+                                    endpointKey
+                                }
+                            };
+                        })
                     );
-                
+
                 return <WrappedComponent {...componentProps} {...props} />;
             }
         }
@@ -109,4 +112,3 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
         }))(WithApiData);
     };
 }
-
