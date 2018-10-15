@@ -121,9 +121,9 @@ interface ApiDataAfterRehydrateAction {
     type: 'API_DATA_AFTER_REHYDRATE';
 }
 
-type PurgeApiDataAction = {
-    type: 'PURGE_API_DATA',
-};
+interface PurgeApiDataAction {
+    type: 'PURGE_API_DATA';
+}
 
 export type Action =
     ConfigureApiDataAction
