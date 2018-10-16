@@ -222,7 +222,7 @@ const addEntities = (entities: Entities, newEntities: Entities): Entities => Obj
 const formatUrl = (url: string, params?: EndpointParams): string =>
     !params ? url : url.replace(/:[a-zA-Z]+/g, match => params ? String(params[match.substr(1)]) || '' : '');
 
-const getRequestKey = (endpointKey: string, params?: EndpointParams = {}): string =>
+export const getRequestKey = (endpointKey: string, params?: EndpointParams = {}): string =>
     endpointKey + '/' + Object.keys(params).sort().map(param => param + '=' + params[param]).join('&');
 
 // resets a networkStatus to ready if it was loading. Use when recovering state from storage to prevent loading states

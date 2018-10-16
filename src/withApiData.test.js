@@ -1,4 +1,5 @@
-import { checkIfRequestChanged } from './withApiData';
+import { shouldPerformApiRequest } from './withApiData';
+import { getRequestKey } from './reducer';
 // import { performApiRequest } from './reducer';
 // const apiState =
 // {
@@ -20,75 +21,65 @@ import { checkIfRequestChanged } from './withApiData';
 //         entities: {}
 // }
 
-const oldState = {
-    globalConfig: {},
-    endpointConfig: {},
-    requests: {
-        'getData': {
-            networkStatus: 'success'
-        },
-        'oberon/one=one&two=two': {
-            networkStatus: 'failed'
-        }
-    },
-    entities: {}
-};
-
-const newState = {
-    globalConfig: {},
-    endpointConfig: {},
-    requests: {
-        'getData': {
-            networkStatus: 'ready'
-        },
-        'oberon/one=one&two=two': {
-            networkStatus: 'failed'
-        }
-    },
-    entities: {}
-};
-
-// const newApiState =
-//     {
-//         globalConfig: {},
-//         endpointConfig: {
-//             'getData':
-//                 {
-//                     url: 'getData/',
-//                     method: 'GET'
-//                 }},
-//         requests: {
-//             'getData': {
-//                 networkStatus: 'ready'
-//             },
-//             'oberon/one=one&two=two': {
-//                 networkStatus: 'failed'
-//             }
+// const oldState = {
+//     globalConfig: {},
+//     endpointConfig: {},
+//     requests: {
+//         [getRequestKey('getData', {})]: {
+//             networkStatus: 'success'
 //         },
-//         entities: {}
-//     }
+//         [getRequestKey('getData', {one: 'one'})]: {
+//             networkStatus: 'failed'
+//         }
+//     },
+//     entities: {}
+// };
+
+const getState = (binding, params, networkStatus) => (
+    {
+        globalConfig: {},
+        endpointConfig: {},
+        requests: {
+            [getRequestKey(binding, params)]: {
+                networkStatus: networkStatus
+            }
+        },
+        entities: {}
+    }
+)
+
+const getProps = (binding, params, networkStatus) => (
+    {
+        apiData: getState(binding, params, networkStatus),
+        params: params
+    }
+)
 
 const bindings = {
-    data: 'getData'
+    getData: 'getData'
 }
 
-const oldProps = {
-    apiData: oldState,
-}
+test('the request have been changed', () => {
+    const oldPropsOne = {
+        apiData: getState('getData', {}, 'success'),
+        params: {}
+    }
 
-const newProps = {
-    apiData: newState,
-}
+    const newPropsOne = {
+        apiData: getState('getData', {}, 'ready'),
+        params: {}
+    }
 
-// jest.mock('./withApiData');
-//
-// const withApiDataHoc = withApiData;
-// const testComponent = (props) => {
-//     expect(props).toEqual(bindings);
-// }
-test('the params have been changed', () => {
-    const testOne = checkIfRequestChanged(newProps, oldProps, bindings, 'getData');
+    // getProps(endpoint, {}, 'success'), getProps(endpoint, {}, 'ready')
+    const endpoint = 'getData'
+    const testOne = shouldPerformApiRequest(newPropsOne, oldPropsOne, bindings, 'getData');
         expect(testOne).toBe(true);
+    const testTwo = shouldPerformApiRequest(getProps(endpoint, {}, 'ready'), getProps(endpoint, {}, 'success'), bindings, 'getData');
+        expect(testTwo).toBe(true);
+    const testTree = shouldPerformApiRequest(getProps(endpoint, () => ({getData: {one: 'one'}}), 'ready'), getProps(endpoint, () => ({getData: {two: 'two'}}), 'success'), bindings, 'getData');
+        expect(testTree).toBe(true);
+    const testFour = shouldPerformApiRequest(getProps(endpoint, () => ({getData: {one: 'one'}}), 'ready'), getProps(endpoint, () => ({getData: {one: 'one'}}), 'success'), bindings, 'getData');
+        expect(testFour).toBe(true);
     //     const spy = jest.spyOn(withApiData.prototype, 'performApiRequest');
     //     withApiDataHoc(bindings);
     //     expect(spy).toHaveBeenCalled();
