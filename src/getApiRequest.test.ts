@@ -3,8 +3,8 @@ import { getApiDataRequest } from './reducer';
 test('it gets the request status of a given endpoint', () => {
     const testOneEndpoint = 'data';
     const testTwoEndpoint = 'oberon';
-    const params = {one: 'one', two: 'two'};
-    const state = {
+    const params = { one: 'one', two: 'two' };
+    const state: any = {
         globalConfig: {},
         endpointConfig: {},
         requests: {
@@ -19,6 +19,6 @@ test('it gets the request status of a given endpoint', () => {
     };
     const testOne = getApiDataRequest(state, testOneEndpoint);
     const testTwo = getApiDataRequest(state, testTwoEndpoint, params);
-    expect(testOne).toEqual({networkStatus: 'ready'});
-    expect(testTwo).toEqual({networkStatus: 'failed'});
+    expect(testOne).toEqual({ networkStatus: 'ready' });
+    expect(testTwo).toEqual({ networkStatus: 'failed' });
 });
