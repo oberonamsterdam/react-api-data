@@ -40,13 +40,13 @@ type WithApiDataProps = {
  *  }))
  */
 
-export const shouldPerformApiRequest = (newProps: any, oldProps: any, bindings: any, bindingKey: string) => {
+export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: WithApiDataProps, bindings: any, bindingKey: string) => {
     const keyParamsHaveChanged = bindingKey => !shallowEqual(newProps.params[bindingKey], oldProps.params[bindingKey]);
     const getRequest = (props, bindingKey) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
     const hasBeenInvalidated = (oldRequest, newRequest) =>
         !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
     const apiDataChanged = newProps.apiData !== oldProps.apiData;
-    console.log(getRequest(oldProps, bindingKey), getApiDataRequest(newProps.apiData, bindings[bindingKey], newProps.params[bindingKey]));
+    console.log(newProps, oldProps);
     return keyParamsHaveChanged(bindingKey) || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)));
 };
 
@@ -61,12 +61,6 @@ export default function withApiData (bindings: {[propName: string]: string}, get
 
             componentWillReceiveProps (newProps: WithApiDataProps) {
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
-                // const keyParamsHaveChanged = bindingKey => !shallowEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
-                // const getRequest = (props, bindingKey) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
-                // const hasBeenInvalidated = (oldRequest, newRequest) =>
-                //     !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
-                // const apiDataChanged = newProps.apiData !== this.props.apiData;
-
                 Object.keys(bindings).forEach(bindingKey => {
                     if (shouldPerformApiRequest(newProps, this.props, bindings, bindingKey)) {
                         this.props.dispatch(performApiRequest(bindings[bindingKey], newProps.params[bindingKey]));
