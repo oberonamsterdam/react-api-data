@@ -1,24 +1,13 @@
-import { getApiDataRequest } from '../reducer';
+import { getApiDataRequest } from './getApiDataRequest'
+import {getState} from '../../mocks/mockActions';
 
 test('it gets the request status of a given endpoint', () => {
     const testOneEndpoint = 'data';
     const testTwoEndpoint = 'oberon';
     const params = { one: 'one', two: 'two' };
-    const state: any = {
-        globalConfig: {},
-        endpointConfig: {},
-        requests: {
-            'data/': {
-                networkStatus: 'ready'
-            },
-            'oberon/one=one&two=two': {
-                networkStatus: 'failed'
-            }
-        },
-        entities: {}
-    };
-    const testOne = getApiDataRequest(state, testOneEndpoint);
-    const testTwo = getApiDataRequest(state, testTwoEndpoint, params);
-    expect(testOne).toEqual({ networkStatus: 'ready' });
-    expect(testTwo).toEqual({ networkStatus: 'failed' });
+
+    const testOne = getApiDataRequest(getState('data', {}, 'ready'), testOneEndpoint);
+    const testTwo = getApiDataRequest(getState('oberon', {oberon: params}, 'ready'), testTwoEndpoint, params);
+    expect(testOne.networkStatus).toEqual('ready');
+    expect(testTwo.networkStatus).not.toEqual('failed');
 });

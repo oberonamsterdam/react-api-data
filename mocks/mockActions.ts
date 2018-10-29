@@ -1,6 +1,6 @@
 import { getRequestKey } from '../src/helpers/getRequestKey';
 
-const getState: any = (binding: string, params?: any, networkStatus?: any) => (
+export const getState: any = (binding: string, params?: any, networkStatus?: any) => (
 {
     globalConfig: {},
     endpointConfig: {[getRequestKey(binding, params[binding])]: {

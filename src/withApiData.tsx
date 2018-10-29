@@ -1,7 +1,9 @@
 import React from 'react';
 import { ApiDataRequest, EndpointParams } from './index';
 import { connect } from 'react-redux';
-import { Action, ApiDataState, getApiDataRequest, getResultData, performApiRequest } from './reducer';
+import { ApiDataState } from './reducer';
+import { getApiDataRequest, getResultData, performApiRequest } from './index';
+import { Action } from './actions';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ActionCreator } from 'redux';

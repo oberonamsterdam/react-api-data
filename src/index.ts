@@ -41,7 +41,7 @@ export interface NormalizedData {
  * Type of the Api-data state
  * TODO: controleer of dit werkt op deze manier
  */
-export { ApiDataState } from './reducer';
+import { ApiDataState } from './reducer';
 
 /**
  * Map parameter names to values.

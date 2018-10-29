@@ -1,6 +1,6 @@
-import Request, { RequestHandler } from '../request';
+import { RequestHandler } from '../request';
 
-let requestFunction = Request;
+// let requestFunction = Request;
 
 /**
  * Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
@@ -9,5 +9,5 @@ let requestFunction = Request;
  */
 
 export const useRequestHandler = (requestHandler: RequestHandler) => {
-    requestFunction = requestHandler;
+    requestHandler;
 };

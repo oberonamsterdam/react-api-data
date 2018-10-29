@@ -8,6 +8,7 @@ import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
 import Request, { HandledResponse } from '../request';
+import { cacheExpired } from '../selectors/cacheExpired';
 
 const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
     // eslint-disable-next-line no-unused-vars
@@ -18,7 +19,7 @@ const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
     return (value: any, state: ApiDataState) => fnA(fnB(value, state));
 };
 
-const requestFunction = Request;
+let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
