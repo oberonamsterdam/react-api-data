@@ -1,4 +1,4 @@
-import { getApiDataRequest } from './reducer';
+import { getApiDataRequest } from '../reducer';
 
 test('it gets the request status of a given endpoint', () => {
     const testOneEndpoint = 'data';

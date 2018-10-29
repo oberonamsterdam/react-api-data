@@ -1,40 +1,12 @@
 import { shouldPerformApiRequest } from './withApiData';
-import { getRequestKey } from './reducer';
-
-const getState: any = (binding: string, params: any, networkStatus: any) => (
-{
-    globalConfig: {},
-    endpointConfig: {[getRequestKey(binding, params[binding])]: {
-        url: '',
-        method: 'GET'
-
-    }
-    },
-    requests: {
-        [getRequestKey(binding, params[binding])]: {
-            networkStatus,
-            lastCall: Date.now(),
-            duration: 0,
-        }
-    },
-    entities: {}
-}
-);
-
-const getProps: any = (binding: string, params: any, networkStatus: any) => (
-{
-    apiData: getState(binding, params, networkStatus),
-    params
-}
-    );
-
+import { getProps } from '../mocks/mockActions';
 const bindings = {
     getData: 'getData'
 };
 
-test('the request have been changed', () => {
-    // getProps(endpoint, {}, 'success'), getProps(endpoint, {}, 'ready')
+test('The request status or params has been changed', () => {
     const endpoint = 'getData';
+
     const testOne = shouldPerformApiRequest(getProps(endpoint, {}, 'ready'), getProps(endpoint, {}, 'success'), bindings, 'getData');
     expect(testOne).toBe(true);
 

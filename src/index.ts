@@ -1,17 +1,15 @@
 import withApiData from './withApiData';
-import { configureApiData } from './configureApiData';
-import reducer, {
-    Action,
-    afterRehydrate,
-    ApiDataState,
-    getApiDataRequest,
-    getEntity,
-    getResultData,
-    invalidateApiDataRequest,
-    performApiRequest,
-    useRequestHandler
-} from './reducer';
+import { configureApiData } from './actions/configureApiData';
+import { afterRehydrate } from './actions/afterRehydrate';
+import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { getResultData } from './selectors/getResultData';
+import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
+import { performApiRequest } from './actions/performApiDataRequest';
+import { useRequestHandler } from './selectors/useRequestHandler';
+import { getEntity } from './selectors/getEntity';
+import { Action } from './actions/index';
 import { ActionCreator } from 'redux';
+import reducer from './reducer';
 
 export {
     withApiData,
