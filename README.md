@@ -150,3 +150,76 @@ class WriteComment extends React.Component {
 
 export default connect(mapStateToProps, mapDispatchToProps)(WriteComment);
 ```
+
+### Cache Controlling
+```js
+import { schema } from 'normalizr';
+
+const BASE_URL = process.env.REACT_APP_API_BASE || '';
+const API_URL = BASE_URL;
+const cacheDuration = 60000;
+
+// define normalizr response schemas
+const searchTermSchema = new schema.Entity('SearchTerm');
+
+export default {
+    getSearchSuggestions: {
+        url: `${API_URL}/search/suggestions/?q=:searchTerm`,
+        method: 'GET',
+        cacheDuration,
+        searchTermSchema
+    }
+}
+```
+
+### Purge API Data (for deleting local storage)
+```js
+import { Dispatch } from 'redux';
+import { performApiRequest, purgeApiData } from 'react-api-data';
+
+export const logout = () => (dispatch: Dispatch) => {
+    dispatch(performApiRequest('postLogout'));
+    dispatch({ type: 'LOGOUT' });
+    dispatch(purgeApiData());
+};
+```
+
+
+### InvalidateRequest with Posting data
+```js
+fetch(`${API_URL}/researcher/${this.props.profileId}`, {
+    method: 'POST',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(values)
+}).then((response) => {
+    invalidateApiDataRequest('getProfile', { profileId: this.props.profileId });
+    this.setState(() => ({
+        toProfile: true
+    }));
+});
+
+if (this.state.toProfile) {
+    return <Redirect to={'/profile/' + this.props.profileId} />;
+}
+```
+
+### Retrigger Failed Call 
+```js
+const cacheExpiredCallback = (dispatch: Function, ownProps: GetCustomerProps) => dispatch(invalidateApiDataRequest('getCustomer', {
+    customerId: ownProps.customerData.data.customer.no 
+}));
+
+```
+
+### Including Cookies in your Request
+```js
+export const globalConfig: ApiDataGlobalConfig = {
+    setRequestProperties: (defaultProperties) => ({
+        ...defaultProperties,
+        credentials: 'include',
+    })
+};
+```
