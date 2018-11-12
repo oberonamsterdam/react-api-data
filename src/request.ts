@@ -87,7 +87,6 @@ const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => 
                 console.log(`Request failed: ${url}`);
                 console.error(error);
             }
-
             reject(error);
         };
 

@@ -32,6 +32,7 @@ import {
     ApiDataRequest,
     NetworkStatus,
 } from './index';
+import Request , { RequestHandler } from './request';
 
 // state def
 
@@ -58,6 +59,8 @@ const defaultState = {
     requests: {},
     entities: {}
 };
+
+let requestFunction = Request;
 
 // reducer
 
@@ -197,3 +200,13 @@ export const recoverNetworkStatuses = (requests: { [requestKey: string]: ApiData
             {})
     )
 });
+
+/**
+ * Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
+ * {@link RequestHandler} interface.
+ * @param requestHandler
+ */
+
+export const useRequestHandler = (requestHandler: RequestHandler) => (
+    requestFunction = requestHandler
+);

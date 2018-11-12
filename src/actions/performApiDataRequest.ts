@@ -19,7 +19,7 @@ const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
     return (value: any, state: ApiDataState) => fnA(fnB(value, state));
 };
 
-let requestFunction = Request;
+const requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 

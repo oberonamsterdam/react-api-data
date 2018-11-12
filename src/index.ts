@@ -5,7 +5,7 @@ import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { getResultData } from './selectors/getResultData';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
 import { performApiRequest } from './actions/performApiDataRequest';
-import { useRequestHandler } from './selectors/useRequestHandler';
+import { useRequestHandler } from './reducer';
 import { getEntity } from './selectors/getEntity';
 import { Action } from './actions/index';
 import { ActionCreator } from 'redux';
