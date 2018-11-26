@@ -65,7 +65,6 @@ Type: {handleErrorResponse: function (response: [Response](https://developer.moz
 -   `afterSuccess` **function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 
-
 ## ApiDataEndpointConfig
 
 Specification and configuration of an endpoint.
@@ -86,18 +85,6 @@ Type: {url: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Ref
 -   `setRequestProperties` **function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 
-```javascript
-export const endpointConfig = {
-    endpoint: {
-        url: `/getData`,
-        method: 'GET',
-        cacheDuration: 1500,
-        responseSchema: {
-            sources: [sourcesSchema]
-        },
-    },
-}
-```
 ## ApiDataBinding
 
 The value that withApiData binds to the property of your component.
@@ -159,10 +146,6 @@ withApiData.
 
 Returns **ConfigureApiDataAction** 
 
-```javascript
-   store.dispatch(configureApiData(globalConfig, endpointConfig));
-```
-
 ## performApiRequest
 
 Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
@@ -176,9 +159,6 @@ to use [withApiData](#withapidata).
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** Always resolves, use request networkStatus to see if call was succeeded or not.
 
-```javascript
-   dispatch(performApiRequest(endpointKey, params, responseBody));
-```
 ## invalidateApiDataRequest
 
 Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
@@ -190,10 +170,6 @@ a GET list request, which might need to include the newly created entity.
 -   `params` **[EndpointParams](#endpointparams)** 
 
 Returns **InvalidateApiDataRequestAction** 
-
-```javascript
-dispatch(invalidateApiDataRequest(endpointKey, params))
-```
 
 ## afterRehydrate
 
@@ -216,14 +192,6 @@ button click.
 
 Returns **([ApiDataRequest](#apidatarequest) | void)** 
 
-```javascript
-connect(
-    ({ apiData }: State, { source }: Props) => ({
-        request: getApiDataRequest(apiDataState, endpointKey, params)
-    })
-)
-```
-
 ## getResultData
 
 Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
@@ -238,9 +206,6 @@ triggered manually, like a POST after a button click.
 
 Returns **([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)> | void)** 
 
-```javascript
-getResultData(apiDataState, endpointKey, params)
-```
 ## getEntity
 
 Selector for getting a single entity from normalized data.
@@ -253,10 +218,6 @@ Selector for getting a single entity from normalized data.
 
 Returns **([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | void)** 
 
-
-```javascript
-const entity = getEntity(apiDataState, schema, id);
-```
 ## useRequestHandler
 
 Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
