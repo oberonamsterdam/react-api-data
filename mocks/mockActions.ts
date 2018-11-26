@@ -1,11 +1,11 @@
 import { getRequestKey } from '../src/helpers/getRequestKey';
 
-export const getState: any = (binding: string, params?: any, networkStatus?: any) => (
+export const getState: any = (binding: string, params?: any, networkStatus?: any, method?: string) => (
 {
     globalConfig: {},
     endpointConfig: {[getRequestKey(binding, params[binding])]: {
         url: '',
-        method: 'GET'
+        method: method ? method : 'GET'
     }
     },
     requests: {
@@ -15,7 +15,9 @@ export const getState: any = (binding: string, params?: any, networkStatus?: any
             duration: 0,
         }
     },
-    entities: {}
+    entities: {
+
+    }
 }
 );
 
