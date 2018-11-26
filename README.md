@@ -171,7 +171,17 @@ export default {
     }
 }
 ```
-
+### After Success
+```js
+getCurrentUser: {
+    url: `${API_URL}/settings`,
+    method: 'GET',
+    afterSuccess: (request: any, dispatch: any, getState: any) => {
+        const data: IGetSettingsResponse = getResultData(getState().apiData, 'getSettings');
+        dispatch(update('app.currentUser', data.user.id));
+    }
+},
+```
 ### Purge API Data (for deleting local storage)
 ```js
 import { Dispatch } from 'redux';
@@ -187,22 +197,29 @@ export const logout = () => (dispatch: Dispatch) => {
 
 ### InvalidateRequest with Posting data
 ```js
-fetch(`${API_URL}/researcher/${this.props.profileId}`, {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(values)
-}).then((response) => {
-    invalidateApiDataRequest('getProfile', { profileId: this.props.profileId });
-    this.setState(() => ({
-        toProfile: true
-    }));
-});
+interface Props {
+    invalidate: () => void;
+}
 
-if (this.state.toProfile) {
-    return <Redirect to={'/profile/' + this.props.profileId} />;
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        invalidate: () => {
+            dispatch(invalidateApiDataRequest('getArticle', { id: props.id }));
+        }
+    };
+};
+
+class Article extends Component<Props> {
+    componentDidUpdate(prevProps: Props) {
+        if (
+            prevProps.articleResponse.request
+            && this.props.articleResponse.request
+            && prevProps.articleResponse.request.networkStatus === 'loading'
+            && this.props.articleResponse.request.networkStatus === 'success'
+        ) {
+            this.props.invalidate();
+        }
+    }
 }
 ```
 
