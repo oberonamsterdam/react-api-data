@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "lib",
+    "rootDir": "src",
     "module": "esnext",
     "target": "es5",
     "downlevelIteration": true,
@@ -19,6 +20,7 @@
     "declaration": true
   },
   "exclude": [
+    "example",
     "node_modules",
     "lib",
     "scripts",

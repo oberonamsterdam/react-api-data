@@ -5,9 +5,10 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "jest",
-    "build": "npm run build:clean && npm run build:lib",
+    "build": "npm run build:clean && npm run build:lib && npm run build:flow",
     "build:clean": "rimraf lib/",
     "build:lib": "tsc",
+    "build:flow": "flow example && ./cp-flow.sh",
     "build:docs": "documentation build lib/index.js -f md > api.md",
     "precommit": "tslint --project .",
     "prepublishOnly": "npm run build"
