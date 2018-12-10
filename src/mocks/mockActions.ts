@@ -1,11 +1,23 @@
-import { getRequestKey } from '../src/helpers/getRequestKey';
+import { getRequestKey } from '../helpers/getRequestKey';
+
+const setPostRequestProperties = (requestProperties: any) => ({
+    ...requestProperties,
+    body: JSON.stringify(requestProperties.body)
+});
+
+const setPostHeaders = (headers: any) => ({
+    ...headers,
+    'Content-Type': 'application/json',
+});
 
 export const getState: any = (binding: string, params?: any, networkStatus?: any, method?: string) => (
 {
     globalConfig: {},
     endpointConfig: {[getRequestKey(binding, params[binding])]: {
-        url: '',
-        method: method ? method : 'GET'
+        url: 'mockAction.get',
+        method: method ? method : 'GET',
+        setHeaders: method && method === 'POST' ? setPostHeaders : null,
+        setRequestProperties: method && method === 'POST' ? setPostRequestProperties : null
     }
     },
     requests: {

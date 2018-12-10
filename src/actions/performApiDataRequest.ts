@@ -28,8 +28,8 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * to use {@link withApiData}.
  * @return {Promise<void>} Always resolves, use request networkStatus to see if call was succeeded or not.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) =>
-    (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
+export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) => {
+    return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
@@ -79,7 +79,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
         return new Promise((resolve: () => void) => {
             const timeout = config.timeout || globalConfig.timeout;
-
             let abortTimeout: any;
             let aborted = false;
 
@@ -91,19 +90,16 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         dispatch(apiDataFail(requestKey, error));
                         onError(error);
                         aborted = true;
-                        resolve();
                     },
                     timeout
                 );
             }
-
             requestFunction(formatUrl(config.url, params), requestProperties).then(
                 ({ response, body: responseBody }: HandledResponse) => {
                     if (aborted) {
                         return;
                     }
                     clearTimeout(abortTimeout);
-
                     const beforeSuccess = config.beforeSuccess || globalConfig.beforeSuccess;
                     if (response.ok && beforeSuccess) {
                         const alteredResp = beforeSuccess({ response, body: responseBody });
@@ -141,3 +137,4 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             );
         });
     };
+};
