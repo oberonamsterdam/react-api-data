@@ -1,7 +1,6 @@
 import { getRequestKey } from '../src/helpers/getRequestKey';
 
-export const getState: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any, ) => (
-{
+export const getState: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any) => ({
     globalConfig: {},
     endpointConfig: {[getRequestKey(binding, params[binding])]: {
         url: '',
@@ -16,12 +15,9 @@ export const getState: any = (binding: string, hasRequest: boolean, params?: any
         }
     } : {},
     entities: {}
-}
-);
+});
 
-export const getProps: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any) => (
-{
+export const getProps: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any) => ({
     apiData: getState(binding, hasRequest, params, networkStatus),
     params
-}
-);
+});
