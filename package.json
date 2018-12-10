@@ -35,6 +35,7 @@
     "@types/node": "^10.9.2",
     "@types/react-redux": "^6.0.9",
     "@types/shallowequal": "^0.2.3",
+    "flow-bin": "^0.87.0",
     "husky": "^1.0.1",
     "jest": "^23.0.1",
     "redux": "^4.0.1",
