@@ -174,11 +174,12 @@ export default {
 }
 ```
 
-### Removing api data from the store
+### Removing api data from the store with Logout
 ```js
 import { performApiRequest, purgeApiData } from 'react-api-data';
 
 export const logout = () => (dispatch) => {
+    dispatch(performApiRequest('postLogout'));
     dispatch(purgeApiData());
 };
 ```
