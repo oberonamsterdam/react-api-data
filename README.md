@@ -15,7 +15,7 @@ Make sure _fetch_ is available globally, polyfill it if needed to support older 
 
 ## API
 
-[API specification](api.md)
+[API specification](api)
 
 ## Quick usage
 

@@ -68,7 +68,7 @@ const defaultState = {
 
 // actions
 
-interface ConfigureApiDataAction {
+export interface ConfigureApiDataAction {
     type: 'CONFIGURE_API_DATA';
     payload: {
         globalConfig: ApiDataGlobalConfig,
@@ -106,7 +106,7 @@ interface ApiDataFailAction {
     };
 }
 
-interface InvalidateApiDataRequestAction {
+export interface InvalidateApiDataRequestAction {
     type: 'INVALIDATE_API_DATA_REQUEST';
     payload: {
         requestKey: string
@@ -117,7 +117,7 @@ interface ClearApiData {
     type: 'CLEAR_API_DATA';
 }
 
-interface ApiDataAfterRehydrateAction {
+export interface ApiDataAfterRehydrateAction {
     type: 'API_DATA_AFTER_REHYDRATE';
 }
 
