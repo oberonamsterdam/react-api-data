@@ -8,7 +8,7 @@
     "build": "npm run build:clean && npm run build:lib",
     "build:clean": "rimraf lib/",
     "build:lib": "tsc",
-    "build:docs": "documentation build lib/index.js -f md > api.md",
+    "build:docs": "typedoc --theme markdown --out docs src",
     "precommit": "tslint --project .",
     "prepublishOnly": "npm run build"
   },
@@ -41,6 +41,8 @@
     "ts-jest": "^22.4.2",
     "tslint": "^5.10.0",
     "tslint-config-oberon": "^1.0.4",
+    "typedoc": "^0.13.0",
+    "typedoc-plugin-markdown": "^1.1.19",
     "typescript": "^2.9.2"
   },
   "dependencies": {
