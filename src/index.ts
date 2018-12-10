@@ -4,10 +4,9 @@ import { afterRehydrate } from './actions/afterRehydrate';
 import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { getResultData } from './selectors/getResultData';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
-import { performApiRequest } from './actions/performApiDataRequest';
-import { useRequestHandler } from './reducer';
+import { performApiRequest, useRequestHandler } from './actions/performApiDataRequest';
 import { getEntity } from './selectors/getEntity';
-import { Action } from './actions/index';
+import { Action } from './reducer';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
 

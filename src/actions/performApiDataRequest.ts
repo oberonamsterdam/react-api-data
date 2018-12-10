@@ -1,6 +1,5 @@
 import { ActionCreator } from 'redux';
-import { Action } from './index';
-import { ApiDataState } from '../reducer';
+import { ApiDataState, Action } from '../reducer';
 import { EndpointParams } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
@@ -9,9 +8,9 @@ import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
+import { RequestHandler } from '../request';
 
 const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
-    // eslint-disable-next-line no-unused-vars
     const id = (val: any, state: ApiDataState) => val;
     const fnA = endpointFn || id;
     const fnB = globalFunction || id;
@@ -19,9 +18,13 @@ const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
     return (value: any, state: ApiDataState) => fnA(fnB(value, state));
 };
 
-const requestFunction = Request;
+let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
+
+export const useRequestHandler = (requestHandler: RequestHandler) => (
+    requestFunction = requestHandler
+);
 
 /**
  * Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
