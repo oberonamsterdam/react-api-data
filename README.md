@@ -174,7 +174,7 @@ export default {
 }
 ```
 
-### Removing api data from the store with Logout
+## Removing api data from the store with Logout
 ```js
 import { performApiRequest, purgeApiData } from 'react-api-data';
 
@@ -184,7 +184,7 @@ export const logout = () => (dispatch) => {
 };
 ```
 
-### Including Cookies in your Request
+## Including Cookies in your Request
 ```js
 export const globalConfig: ApiDataGlobalConfig = {
     setRequestProperties: (defaultProperties) => ({
