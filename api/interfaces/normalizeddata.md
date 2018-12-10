@@ -23,7 +23,7 @@
 
 **● entities**: *`object`*
 
-*Defined in [src/index.ts:34](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L34)*
+*Defined in [index.ts:34](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L34)*
 
 #### Type declaration
 
@@ -38,7 +38,7 @@ ___
 
 **● result**: *[NormalizeResult](../#normalizeresult)*
 
-*Defined in [src/index.ts:39](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L39)*
+*Defined in [index.ts:39](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L39)*
 
 ___
 

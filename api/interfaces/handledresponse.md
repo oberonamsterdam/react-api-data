@@ -23,7 +23,7 @@
 
 **● body**: *`any`*
 
-*Defined in [src/request.ts:5](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/request.ts#L5)*
+*Defined in [request.ts:5](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/request.ts#L5)*
 
 ___
 <a id="response"></a>
@@ -32,7 +32,7 @@ ___
 
 **● response**: *`Response`*
 
-*Defined in [src/request.ts:4](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/request.ts#L4)*
+*Defined in [request.ts:4](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/request.ts#L4)*
 
 ___
 

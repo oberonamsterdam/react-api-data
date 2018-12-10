@@ -23,7 +23,7 @@
 
 **● payload**: *`object`*
 
-*Defined in [src/reducer.ts:83](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L83)*
+*Defined in [reducer.ts:83](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L83)*
 
 #### Type declaration
 
@@ -40,7 +40,7 @@ ___
 
 **● type**: *"FETCH_API_DATA"*
 
-*Defined in [src/reducer.ts:82](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L82)*
+*Defined in [reducer.ts:82](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L82)*
 
 ___
 

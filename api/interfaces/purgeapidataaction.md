@@ -22,7 +22,7 @@
 
 **● type**: *"PURGE_API_DATA"*
 
-*Defined in [src/reducer.ts:125](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L125)*
+*Defined in [reducer.ts:125](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L125)*
 
 ___
 

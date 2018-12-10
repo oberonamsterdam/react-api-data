@@ -28,7 +28,7 @@
 **● afterSuccess**: * `undefined` &#124; `function`
 *
 
-*Defined in [src/index.ts:76](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L76)*
+*Defined in [index.ts:76](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L76)*
 
 ___
 <a id="beforesuccess"></a>
@@ -38,7 +38,7 @@ ___
 **● beforeSuccess**: * `undefined` &#124; `function`
 *
 
-*Defined in [src/index.ts:75](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L75)*
+*Defined in [index.ts:75](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L75)*
 
 ___
 <a id="handleerrorresponse"></a>
@@ -48,7 +48,7 @@ ___
 **● handleErrorResponse**: * `undefined` &#124; `function`
 *
 
-*Defined in [src/index.ts:72](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L72)*
+*Defined in [index.ts:72](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L72)*
 
 ___
 <a id="setheaders"></a>
@@ -58,7 +58,7 @@ ___
 **● setHeaders**: * `undefined` &#124; `function`
 *
 
-*Defined in [src/index.ts:73](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L73)*
+*Defined in [index.ts:73](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L73)*
 
 ___
 <a id="setrequestproperties"></a>
@@ -68,7 +68,7 @@ ___
 **● setRequestProperties**: * `undefined` &#124; `function`
 *
 
-*Defined in [src/index.ts:74](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L74)*
+*Defined in [index.ts:74](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L74)*
 
 ___
 <a id="timeout"></a>
@@ -78,7 +78,7 @@ ___
 **● timeout**: * `undefined` &#124; `number`
 *
 
-*Defined in [src/index.ts:78](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L78)*
+*Defined in [index.ts:78](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L78)*
 
 ___
 

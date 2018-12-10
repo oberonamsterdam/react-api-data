@@ -22,7 +22,7 @@
 
 **● type**: *"API_DATA_AFTER_REHYDRATE"*
 
-*Defined in [src/reducer.ts:121](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L121)*
+*Defined in [reducer.ts:121](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L121)*
 
 ___
 

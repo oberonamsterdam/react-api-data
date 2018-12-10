@@ -31,7 +31,7 @@ Information about a request made to an endpoint.
 
 **● duration**: *`number`*
 
-*Defined in [src/index.ts:63](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L63)*
+*Defined in [index.ts:63](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L63)*
 
 ___
 <a id="endpointkey"></a>
@@ -40,7 +40,7 @@ ___
 
 **● endpointKey**: *`string`*
 
-*Defined in [src/index.ts:66](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L66)*
+*Defined in [index.ts:66](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L66)*
 
 ___
 <a id="errorbody"></a>
@@ -49,7 +49,7 @@ ___
 
 **● errorBody**: *`any`*
 
-*Defined in [src/index.ts:65](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L65)*
+*Defined in [index.ts:65](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L65)*
 
 ___
 <a id="lastcall"></a>
@@ -58,7 +58,7 @@ ___
 
 **● lastCall**: *`number`*
 
-*Defined in [src/index.ts:62](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L62)*
+*Defined in [index.ts:62](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L62)*
 
 ___
 <a id="networkstatus"></a>
@@ -67,7 +67,7 @@ ___
 
 **● networkStatus**: *[NetworkStatus](../#networkstatus)*
 
-*Defined in [src/index.ts:61](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L61)*
+*Defined in [index.ts:61](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L61)*
 
 ___
 <a id="params"></a>
@@ -76,7 +76,7 @@ ___
 
 **● params**: *[EndpointParams](endpointparams.md)*
 
-*Defined in [src/index.ts:67](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L67)*
+*Defined in [index.ts:67](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L67)*
 
 ___
 <a id="response"></a>
@@ -85,7 +85,7 @@ ___
 
 **● response**: *`Response`*
 
-*Defined in [src/index.ts:64](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L64)*
+*Defined in [index.ts:64](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L64)*
 
 ___
 <a id="result"></a>
@@ -94,7 +94,7 @@ ___
 
 **● result**: *`any`*
 
-*Defined in [src/index.ts:60](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L60)*
+*Defined in [index.ts:60](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L60)*
 
 ___
 

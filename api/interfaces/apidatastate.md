@@ -25,7 +25,7 @@
 
 **● endpointConfig**: *`object`*
 
-*Defined in [src/reducer.ts:53](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L53)*
+*Defined in [reducer.ts:53](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L53)*
 
 #### Type declaration
 
@@ -38,7 +38,7 @@ ___
 
 **● entities**: *[Entities](entities.md)*
 
-*Defined in [src/reducer.ts:59](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L59)*
+*Defined in [reducer.ts:59](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L59)*
 
 ___
 <a id="globalconfig"></a>
@@ -47,7 +47,7 @@ ___
 
 **● globalConfig**: *[ApiDataGlobalConfig](apidataglobalconfig.md)*
 
-*Defined in [src/reducer.ts:52](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L52)*
+*Defined in [reducer.ts:52](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L52)*
 
 ___
 <a id="requests"></a>
@@ -56,7 +56,7 @@ ___
 
 **● requests**: *`object`*
 
-*Defined in [src/reducer.ts:56](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L56)*
+*Defined in [reducer.ts:56](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L56)*
 
 #### Type declaration
 

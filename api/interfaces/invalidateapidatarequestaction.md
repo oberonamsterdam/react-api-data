@@ -23,7 +23,7 @@
 
 **● payload**: *`object`*
 
-*Defined in [src/reducer.ts:111](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L111)*
+*Defined in [reducer.ts:111](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L111)*
 
 #### Type declaration
 
@@ -36,7 +36,7 @@ ___
 
 **● type**: *"INVALIDATE_API_DATA_REQUEST"*
 
-*Defined in [src/reducer.ts:110](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L110)*
+*Defined in [reducer.ts:110](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L110)*
 
 ___
 

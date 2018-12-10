@@ -23,7 +23,7 @@
 
 **● payload**: *`object`*
 
-*Defined in [src/reducer.ts:102](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L102)*
+*Defined in [reducer.ts:102](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L102)*
 
 #### Type declaration
 
@@ -40,7 +40,7 @@ ___
 
 **● type**: *"API_DATA_FAIL"*
 
-*Defined in [src/reducer.ts:101](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L101)*
+*Defined in [reducer.ts:101](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L101)*
 
 ___
 

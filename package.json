@@ -8,7 +8,7 @@
     "build": "npm run build:clean && npm run build:lib",
     "build:clean": "rimraf lib/",
     "build:lib": "tsc",
-    "build:docs": "typedoc --theme markdown --out docs src",
+    "build:docs": "typedoc --theme markdown --out api --includes src --readme none --mode file",
     "precommit": "tslint --project .",
     "prepublishOnly": "npm run build"
   },

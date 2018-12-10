@@ -28,7 +28,7 @@ The value that withApiData binds to the property of your component.
 
 **● data**: *[T]()*
 
-*Defined in [src/index.ts:127](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L127)*
+*Defined in [index.ts:127](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L127)*
 
 ___
 <a id="request"></a>
@@ -37,7 +37,7 @@ ___
 
 **● request**: *[ApiDataRequest](apidatarequest.md)*
 
-*Defined in [src/index.ts:128](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L128)*
+*Defined in [index.ts:128](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L128)*
 
 ___
 

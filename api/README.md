@@ -21,7 +21,6 @@
 * [HandledResponse](interfaces/handledresponse.md)
 * [InvalidateApiDataRequestAction](interfaces/invalidateapidatarequestaction.md)
 * [NormalizedData](interfaces/normalizeddata.md)
-* [OwnProps](interfaces/ownprops.md)
 * [PurgeApiDataAction](interfaces/purgeapidataaction.md)
 * [WithApiDataParams](interfaces/withapidataparams.md)
 * [WithApiDataProps](interfaces/withapidataprops.md)
@@ -38,13 +37,11 @@
 ### Variables
 
 * [__DEV__](#__dev__)
-* [connectApiData](#connectapidata)
 * [defaultRequestHandler](#defaultrequesthandler)
 * [requestFunction](#requestfunction)
 
 ### Functions
 
-* [Example](#example)
 * [addEntities](#addentities)
 * [afterRehydrate](#afterrehydrate)
 * [apiDataFail](#apidatafail)
@@ -81,7 +78,7 @@
 **Ƭ Action**: * [ConfigureApiDataAction](interfaces/configureapidataaction.md) &#124; [FetchApiDataAction](interfaces/fetchapidataaction.md) &#124; [ApiDataSuccessAction](interfaces/apidatasuccessaction.md) &#124; [ApiDataFailAction](interfaces/apidatafailaction.md) &#124; [InvalidateApiDataRequestAction](interfaces/invalidateapidatarequestaction.md) &#124; [ClearApiData](interfaces/clearapidata.md) &#124; [ApiDataAfterRehydrateAction](interfaces/apidataafterrehydrateaction.md) &#124; [PurgeApiDataAction](interfaces/purgeapidataaction.md)
 *
 
-*Defined in [src/reducer.ts:128](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L128)*
+*Defined in [reducer.ts:128](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L128)*
 
 ___
 <a id="getparams"></a>
@@ -90,7 +87,7 @@ ___
 
 **Ƭ GetParams**: *`function`*
 
-*Defined in [src/withApiData.tsx:10](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/withApiData.tsx#L10)*
+*Defined in [withApiData.tsx:10](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/withApiData.tsx#L10)*
 
 #### Type declaration
 ▸(ownProps: *`any`*, state: *`any`*): `object`
@@ -112,7 +109,7 @@ ___
 **Ƭ NetworkStatus**: * "ready" &#124; "loading" &#124; "failed" &#124; "success"
 *
 
-*Defined in [src/index.ts:29](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L29)*
+*Defined in [index.ts:29](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L29)*
 
 ___
 <a id="normalizeresult"></a>
@@ -122,7 +119,7 @@ ___
 **Ƭ NormalizeResult**: * `string` &#124; `number` &#124; `Array`< `string` &#124; `number`>
 *
 
-*Defined in [src/index.ts:31](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/index.ts#L31)*
+*Defined in [index.ts:31](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/index.ts#L31)*
 
 ___
 <a id="requesthandler"></a>
@@ -131,7 +128,7 @@ ___
 
 **Ƭ RequestHandler**: *`function`*
 
-*Defined in [src/request.ts:8](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/request.ts#L8)*
+*Defined in [request.ts:8](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/request.ts#L8)*
 
 #### Type declaration
 ▸(url: *`string`*, requestProperties?: *`RequestInit`*): `Promise`<[HandledResponse](interfaces/handledresponse.md)>
@@ -152,7 +149,7 @@ ___
 
 **Ƭ WithApiDataChildProps**: *`object`*
 
-*Defined in [src/withApiData.tsx:22](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/withApiData.tsx#L22)*
+*Defined in [withApiData.tsx:22](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/withApiData.tsx#L22)*
 
 #### Type declaration
 
@@ -166,26 +163,8 @@ ___
 
 **● __DEV__**: *`boolean`* =  process.env.NODE_ENV === 'development'
 
-*Defined in [src/request.ts:1](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/request.ts#L1)*
-*Defined in [src/reducer.ts:41](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L41)*
-
-___
-<a id="connectapidata"></a>
-
-### `<Const>` connectApiData
-
-**● connectApiData**: *`(Anonymous function)`* =  withApiData(
-    {
-        // specify property name and endpoint
-        article: 'getArticle'
-    },
-    (ownProps: OwnProps, state: any) => ({
-        // provide URL parameters
-        article: { articleId: ownProps.articleId, userId: state.userId || '' }
-    })
-)
-
-*Defined in [example/Example.tsx:18](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/example/Example.tsx#L18)*
+*Defined in [request.ts:1](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/request.ts#L1)*
+*Defined in [reducer.ts:41](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L41)*
 
 ___
 <a id="defaultrequesthandler"></a>
@@ -247,7 +226,7 @@ ___
     });
 })
 
-*Defined in [src/request.ts:43](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/request.ts#L43)*
+*Defined in [request.ts:43](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/request.ts#L43)*
 
 ___
 <a id="requestfunction"></a>
@@ -256,7 +235,7 @@ ___
 
 **● requestFunction**: *`function`* =  Request
 
-*Defined in [src/reducer.ts:138](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L138)*
+*Defined in [reducer.ts:138](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L138)*
 
 #### Type declaration
 ▸(url: *`string`*, requestProperties?: *`RequestInit`*): `Promise`<[HandledResponse](interfaces/handledresponse.md)>
@@ -274,30 +253,13 @@ ___
 
 ## Functions
 
-<a id="example"></a>
-
-### `<Const>` Example
-
-▸ **Example**(props: * [OwnProps](interfaces/ownprops.md) & `object`*):  `null` &#124; `Element`
-
-*Defined in [example/Example.tsx:29](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/example/Example.tsx#L29)*
-
-**Parameters:**
-
-| Name | Type |
-| ------ | ------ |
-| props |  [OwnProps](interfaces/ownprops.md) & `object`|
-
-**Returns:**  `null` &#124; `Element`
-
-___
 <a id="addentities"></a>
 
 ### `<Const>` addEntities
 
 ▸ **addEntities**(entities: *[Entities](interfaces/entities.md)*, newEntities: *[Entities](interfaces/entities.md)*): [Entities](interfaces/entities.md)
 
-*Defined in [src/reducer.ts:250](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L250)*
+*Defined in [reducer.ts:250](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L250)*
 
 **Parameters:**
 
@@ -315,7 +277,7 @@ ___
 
 ▸ **afterRehydrate**(): [ApiDataAfterRehydrateAction](interfaces/apidataafterrehydrateaction.md)
 
-*Defined in [src/reducer.ts:468](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L468)*
+*Defined in [reducer.ts:468](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L468)*
 
 Call this after you've re-hydrated the store when using redux-persist or any other method of persisting and restoring the entire apiData state. This is needed to reset loading statuses.
 
@@ -328,7 +290,7 @@ ___
 
 ▸ **apiDataFail**(requestKey: *`string`*, errorBody: *`any`*, response?: *`Response`*): [ApiDataFailAction](interfaces/apidatafailaction.md)
 
-*Defined in [src/reducer.ts:313](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L313)*
+*Defined in [reducer.ts:313](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L313)*
 
 **Parameters:**
 
@@ -347,7 +309,7 @@ ___
 
 ▸ **apiDataSuccess**(requestKey: *`string`*, endpointConfig: *[ApiDataEndpointConfig](interfaces/apidataendpointconfig.md)*, response: *`Response`*, body: *`any`*): [ApiDataSuccessAction](interfaces/apidatasuccessaction.md)
 
-*Defined in [src/reducer.ts:299](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L299)*
+*Defined in [reducer.ts:299](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L299)*
 
 **Parameters:**
 
@@ -367,7 +329,7 @@ ___
 
 ▸ **cacheExpired**(endpointConfig: *[ApiDataEndpointConfig](interfaces/apidataendpointconfig.md)*, request: *[ApiDataRequest](interfaces/apidatarequest.md)*): `boolean`
 
-*Defined in [src/reducer.ts:527](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L527)*
+*Defined in [reducer.ts:527](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L527)*
 
 **Parameters:**
 
@@ -385,7 +347,7 @@ ___
 
 ▸ **composeConfigFn**(endpointFn?: *`any`*, globalFunction?: *`any`*): `any`
 
-*Defined in [src/reducer.ts:324](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L324)*
+*Defined in [reducer.ts:324](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L324)*
 
 **Parameters:**
 
@@ -403,7 +365,7 @@ ___
 
 ▸ **configureApiData**(globalConfig: *[ApiDataGlobalConfig](interfaces/apidataglobalconfig.md)*, endpointConfig: *`object`*): [ConfigureApiDataAction](interfaces/configureapidataaction.md)
 
-*Defined in [src/reducer.ts:291](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L291)*
+*Defined in [reducer.ts:291](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L291)*
 
 Register your global and endpoint configurations. Make sure you do this before you mount any components using withApiData.
 
@@ -423,7 +385,7 @@ ___
 
 ▸ **formatUrl**(url: *`string`*, params?: *[EndpointParams](interfaces/endpointparams.md)*): `string`
 
-*Defined in [src/reducer.ts:261](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L261)*
+*Defined in [reducer.ts:261](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L261)*
 
 **Parameters:**
 
@@ -441,7 +403,7 @@ ___
 
 ▸ **getApiDataRequest**(apiDataState: *[ApiDataState](interfaces/apidatastate.md)*, endpointKey: *`string`*, params?: *[EndpointParams](interfaces/endpointparams.md)*): [ApiDataRequest](interfaces/apidatarequest.md)
 
-*Defined in [src/reducer.ts:489](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L489)*
+*Defined in [reducer.ts:489](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L489)*
 
 Selector to manually get a [ApiDataRequest](interfaces/apidatarequest.md). This value is automatically bind when using [withApiData](#withapidata). This selector can be useful for tracking request status when a request is triggered manually, like a POST after a button click.
 
@@ -462,7 +424,7 @@ ___
 
 ▸ **getEntity**(apiDataState: *[ApiDataState](interfaces/apidatastate.md)*, schema: *`any`*, id: * `string` &#124; `number`*):  `any` &#124; `void`
 
-*Defined in [src/reducer.ts:522](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L522)*
+*Defined in [reducer.ts:522](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L522)*
 
 Selector for getting a single entity from normalized data.
 
@@ -483,7 +445,7 @@ ___
 
 ▸ **getHeaders**(requestProperties: *`RequestInit`*): `HeadersInit`
 
-*Defined in [src/request.ts:18](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/request.ts#L18)*
+*Defined in [request.ts:18](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/request.ts#L18)*
 
 **Parameters:**
 
@@ -500,7 +462,7 @@ ___
 
 ▸ **getRequestKey**(endpointKey: *`string`*, params?: *[EndpointParams](interfaces/endpointparams.md)*): `string`
 
-*Defined in [src/reducer.ts:264](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L264)*
+*Defined in [reducer.ts:264](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L264)*
 
 **Parameters:**
 
@@ -518,7 +480,7 @@ ___
 
 ▸ **getResultData**(apiDataState: *[ApiDataState](interfaces/apidatastate.md)*, endpointKey: *`string`*, params?: *[EndpointParams](interfaces/endpointparams.md)*):  `any` &#124; `any`[] &#124; `void`
 
-*Defined in [src/reducer.ts:497](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L497)*
+*Defined in [reducer.ts:497](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L497)*
 
 Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically bind when using [withApiData](#withapidata). This selector can be useful for getting response responseBody values when a request is triggered manually, like a POST after a button click.
 
@@ -539,7 +501,7 @@ ___
 
 ▸ **invalidateApiDataRequest**(endpointKey: *`string`*, params?: *[EndpointParams](interfaces/endpointparams.md)*): [InvalidateApiDataRequestAction](interfaces/invalidateapidatarequestaction.md)
 
-*Defined in [src/reducer.ts:456](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L456)*
+*Defined in [reducer.ts:456](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L456)*
 
 Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate a GET list request, which might need to include the newly created entity.
 
@@ -559,7 +521,7 @@ ___
 
 ▸ **performApiRequest**(endpointKey: *`string`*, params?: *[EndpointParams](interfaces/endpointparams.md)*, body?: *`any`*): `(Anonymous function)`
 
-*Defined in [src/reducer.ts:338](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L338)*
+*Defined in [reducer.ts:338](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L338)*
 
 Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred to use [withApiData](#withapidata).
 
@@ -581,7 +543,7 @@ ___
 
 ▸ **purgeApiData**(): [PurgeApiDataAction](interfaces/purgeapidataaction.md)
 
-*Defined in [src/reducer.ts:478](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L478)*
+*Defined in [reducer.ts:478](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L478)*
 
 Remove all the requests and entities but keep the configurations. This can be usefull when creating a log out feature.
 
@@ -594,7 +556,7 @@ ___
 
 ▸ **recoverNetworkStatus**(networkStatus: *[NetworkStatus](#networkstatus)*): [NetworkStatus](#networkstatus)
 
-*Defined in [src/reducer.ts:269](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L269)*
+*Defined in [reducer.ts:269](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L269)*
 
 **Parameters:**
 
@@ -611,7 +573,7 @@ ___
 
 ▸ **recoverNetworkStatuses**(requests: *`object`*): `object`
 
-*Defined in [src/reducer.ts:272](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L272)*
+*Defined in [reducer.ts:272](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L272)*
 
 **Parameters:**
 
@@ -628,7 +590,7 @@ ___
 
 ▸ **useRequestHandler**(requestHandler: *[RequestHandler](#requesthandler)*): `void`
 
-*Defined in [src/reducer.ts:537](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L537)*
+*Defined in [reducer.ts:537](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L537)*
 
 Use your own request function that calls the api and reads the responseBody response. Make sure it implements the [RequestHandler](#requesthandler) interface.
 
@@ -647,7 +609,7 @@ ___
 
 ▸ **withApiData**<`TChildProps`,`TPropNames`>(bindings: *`object`*, getParams?: *[GetParams](#getparams)<`TPropNames`>*): `(Anonymous function)`
 
-*Defined in [src/withApiData.tsx:50](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/withApiData.tsx#L50)*
+*Defined in [withApiData.tsx:50](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/withApiData.tsx#L50)*
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped component will get an ApiDataBinding added to each property key of the bindings param.
 *__example__*: withApiData({ wishList: 'getWishLists', settings: 'getSettings' }, (ownProps, state) => ({ wishList: { projectSlug: ownProps.match.params.projectSlug, env: ownProps.match.params.env }, settings: { projectSlug: ownProps.match.params.projectSlug, env: ownProps.match.params.env } }))
@@ -676,7 +638,7 @@ ___
 
 **defaultState**: *`object`*
 
-*Defined in [src/reducer.ts:62](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L62)*
+*Defined in [reducer.ts:62](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L62)*
 
 <a id="defaultstate.endpointconfig"></a>
 
@@ -684,7 +646,7 @@ ___
 
 **● endpointConfig**: *`object`*
 
-*Defined in [src/reducer.ts:64](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L64)*
+*Defined in [reducer.ts:64](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L64)*
 
 #### Type declaration
 
@@ -695,7 +657,7 @@ ___
 
 **● entities**: *`object`*
 
-*Defined in [src/reducer.ts:66](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L66)*
+*Defined in [reducer.ts:66](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L66)*
 
 #### Type declaration
 
@@ -706,7 +668,7 @@ ___
 
 **● globalConfig**: *`object`*
 
-*Defined in [src/reducer.ts:63](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L63)*
+*Defined in [reducer.ts:63](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L63)*
 
 #### Type declaration
 
@@ -717,7 +679,7 @@ ___
 
 **● requests**: *`object`*
 
-*Defined in [src/reducer.ts:65](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L65)*
+*Defined in [reducer.ts:65](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L65)*
 
 #### Type declaration
 

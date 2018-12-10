@@ -22,7 +22,7 @@
 
 **● type**: *"CLEAR_API_DATA"*
 
-*Defined in [src/reducer.ts:117](https://github.com/oberonamsterdam/react-api-data/blob/e1dcf9e/src/reducer.ts#L117)*
+*Defined in [reducer.ts:117](https://github.com/oberonamsterdam/react-api-data/blob/a5bda9f/src/reducer.ts#L117)*
 
 ___
 
