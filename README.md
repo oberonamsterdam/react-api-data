@@ -111,7 +111,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    onSubmit: comment => { dispatch(performApiRequest('postComment', {}, {comment})); }
+    onSubmit: comment => { dispatch(performApiRequest('postComment', {}, {comment})); },
+    invalidate: () => { dispatch(invalidateApiDataRequest('getArticle', { id: props.id }))}
 });
 
 class WriteComment extends React.Component {
@@ -119,9 +120,20 @@ class WriteComment extends React.Component {
         comment: ''
     }
 
+    componentDidUpdate(prevProps) {
+        if (
+            prevProps.articleResponse.request
+            && this.props.articleResponse.request
+            && prevProps.articleResponse.request.networkStatus === 'loading'
+            && this.props.articleResponse.request.networkStatus === 'success'
+        ) {
+            this.props.invalidate();
+        }
+    }
+    
     render () {
         const status = this.props.request ? this.props.request.networkStatus : '';
-
+        
         return (
             <div>
                 <h1>Post a comment</h1>
@@ -151,84 +163,24 @@ class WriteComment extends React.Component {
 export default connect(mapStateToProps, mapDispatchToProps)(WriteComment);
 ```
 
-### Cache Controlling
+## Cache Controlling
 ```js
-import { schema } from 'normalizr';
-
-const BASE_URL = process.env.REACT_APP_API_BASE || '';
-const API_URL = BASE_URL;
-const cacheDuration = 60000;
-
-// define normalizr response schemas
-const searchTermSchema = new schema.Entity('SearchTerm');
-
 export default {
-    getSearchSuggestions: {
-        url: `${API_URL}/search/suggestions/?q=:searchTerm`,
+    getArticle: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId/:userId',
         method: 'GET',
-        cacheDuration,
-        searchTermSchema
+        cacheDuration: 60000,
     }
 }
 ```
-### After Success
+
+### Removing api data from the store
 ```js
-getCurrentUser: {
-    url: `${API_URL}/settings`,
-    method: 'GET',
-    afterSuccess: (request: any, dispatch: any, getState: any) => {
-        const data: IGetSettingsResponse = getResultData(getState().apiData, 'getSettings');
-        dispatch(update('app.currentUser', data.user.id));
-    }
-},
-```
-### Purge API Data (for deleting local storage)
-```js
-import { Dispatch } from 'redux';
 import { performApiRequest, purgeApiData } from 'react-api-data';
 
-export const logout = () => (dispatch: Dispatch) => {
-    dispatch(performApiRequest('postLogout'));
-    dispatch({ type: 'LOGOUT' });
+export const logout = () => (dispatch) => {
     dispatch(purgeApiData());
 };
-```
-
-
-### InvalidateRequest with Posting data
-```js
-interface Props {
-    invalidate: () => void;
-}
-
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        invalidate: () => {
-            dispatch(invalidateApiDataRequest('getArticle', { id: props.id }));
-        }
-    };
-};
-
-class Article extends Component<Props> {
-    componentDidUpdate(prevProps: Props) {
-        if (
-            prevProps.articleResponse.request
-            && this.props.articleResponse.request
-            && prevProps.articleResponse.request.networkStatus === 'loading'
-            && this.props.articleResponse.request.networkStatus === 'success'
-        ) {
-            this.props.invalidate();
-        }
-    }
-}
-```
-
-### Retrigger Failed Call 
-```js
-const cacheExpiredCallback = (dispatch: Function, ownProps: GetCustomerProps) => dispatch(invalidateApiDataRequest('getCustomer', {
-    customerId: ownProps.customerData.data.customer.no 
-}));
-
 ```
 
 ### Including Cookies in your Request
