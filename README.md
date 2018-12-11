@@ -112,7 +112,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     onSubmit: comment => { dispatch(performApiRequest('postComment', {}, {comment})); },
-    invalidate: () => { dispatch(invalidateApiDataRequest('getArticle', { id: props.id }))}
+    onSuccess: () => { dispatch(invalidateApiDataRequest('getComments'))}
 });
 
 class WriteComment extends React.Component {
@@ -163,23 +163,36 @@ class WriteComment extends React.Component {
 export default connect(mapStateToProps, mapDispatchToProps)(WriteComment);
 ```
 
-## Cache Controlling
+## Caching API responses
 ```js
 export default {
     getArticle: {
         url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId/:userId',
         method: 'GET',
-        cacheDuration: 60000,
-    }
+        cacheDuration: 60000, // 1 minute
+    },
+    getComments: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
+        method: 'GET',
+        cacheDuration: 0,
+    },
+    getPosts: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
+        method: 'GET'
+    },
 }
 ```
 
-## Removing api data from the store with Logout
+## Manually clearing cache
+```js
+dispatch(invalidateApiDataRequest('getComments'));
+```
+
+## Removing api data from the store on Logout
 ```js
 import { performApiRequest, purgeApiData } from 'react-api-data';
 
 export const logout = () => (dispatch) => {
-    dispatch(performApiRequest('postLogout'));
     dispatch(purgeApiData());
 };
 ```
