@@ -127,7 +127,7 @@ class WriteComment extends React.Component {
             && prevProps.articleResponse.request.networkStatus === 'loading'
             && this.props.articleResponse.request.networkStatus === 'success'
         ) {
-            this.props.invalidate();
+            this.props.onSuccess();
         }
     }
     
@@ -164,6 +164,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(WriteComment);
 ```
 
 ## Caching API responses
+Responses from successful API calls will be kept in memory so the same call won't be re-triggered a second time. This is especially useful when using *withApiData* for the same endpoint on multiple components. 
+You can set a *cacheDuration* to specify how long the response is considered valid, or to disable the caching entirely. 
 ```js
 export default {
     getArticle: {
@@ -174,11 +176,12 @@ export default {
     getComments: {
         url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
         method: 'GET',
-        cacheDuration: 0,
+        cacheDuration: 0, // no caching, use with caution. Preferably set to a low value to prevent multiple simultaneous calls.
     },
     getPosts: {
         url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
         method: 'GET'
+        // Infinite caching
     },
 }
 ```
@@ -188,7 +191,7 @@ export default {
 dispatch(invalidateApiDataRequest('getComments'));
 ```
 
-## Removing api data from the store on Logout
+## Removing api data from the store
 ```js
 import { performApiRequest, purgeApiData } from 'react-api-data';
 
