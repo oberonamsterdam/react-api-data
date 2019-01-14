@@ -70,7 +70,7 @@ export interface ApiDataGlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
     beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterSuccess?: (request: ApiDataRequest, dispatch: (action: Action) => void, getState: () => any) => void;
+    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
     // todo: add afterFail and deprecate handleErrorResponse
     timeout?: number;
 }
@@ -100,7 +100,7 @@ export interface ApiDataEndpointConfig {
     /*
     * return false to not trigger global function
     */
-    afterSuccess?: (request: ApiDataRequest, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */

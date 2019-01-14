@@ -8,5 +8,5 @@ import { EndpointParams, ApiDataRequest } from '../index';
  * button click.
  */
 
-export const getApiDataRequest = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): ApiDataRequest =>
+export const getApiDataRequest = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): ApiDataRequest | undefined =>
     apiDataState.requests[getRequestKey(endpointKey, params)];
