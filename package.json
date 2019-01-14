@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "jest",
+    "test-watch": "jest --watch",
     "build": "npm run build:clean && npm run build:lib",
     "build:clean": "rimraf lib/",
     "build:lib": "tsc",

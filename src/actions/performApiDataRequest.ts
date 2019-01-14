@@ -1,7 +1,7 @@
 import { ActionCreator } from 'redux';
 import { Action } from './index';
 import { ApiDataState } from '../reducer';
-import { EndpointParams } from '../index';
+import { EndpointParams, ApiDataEndpointConfig, ApiDataGlobalConfig } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -9,6 +9,14 @@ import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
+
+export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
+    const defaultProperties = { body, headers: {}, method: endpointConfig.method };
+    const requestProperties = composeConfigFn(endpointConfig.setRequestProperties, globalConfig.setRequestProperties)(defaultProperties, state);
+    requestProperties.headers = composeConfigFn(endpointConfig.setHeaders, globalConfig.setHeaders)(defaultProperties.headers, state);
+
+    return requestProperties;
+};
 
 const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
     // eslint-disable-next-line no-unused-vars
@@ -62,10 +70,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 params
             }
         }));
-
-        const defaultRequestProperties = { body, headers: {}, method: config.method };
-        const requestProperties = composeConfigFn(config.setRequestProperties, globalConfig.setRequestProperties)(defaultRequestProperties, state);
-        requestProperties.headers = composeConfigFn(config.setHeaders, globalConfig.setHeaders)(defaultRequestProperties.headers, state);
+        const requestProperties = getRequestProperties(config, globalConfig, state, body);
 
         const onError = (responseBody: any, response?: Response) => {
             if (typeof config.handleErrorResponse === 'function' && config.handleErrorResponse(responseBody, params!, body, dispatch, getState, response) === false) {
