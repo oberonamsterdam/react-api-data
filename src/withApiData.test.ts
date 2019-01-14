@@ -37,10 +37,16 @@ test('The request status or params has been changed', () => {
         getProps(endpoint, true, { getData: { one: 'one' } }, 'ready'),
         getProps(endpoint, true, {}), bindings, 'getData');
     expect(testSix).toBe(true);
-    // test when config is undefined
+    // test when config is undefined an old request is undefined
     const testSeven = shouldPerformApiRequest(
-        getProps(endpoint, false, { getData: { one: 'one' } }),
-        getProps(endpoint, true, { getData:  { one: 'one' } }), bindings, 'getData');
-    expect(testSeven).toBe(false);
+        getProps(endpoint, true, { getData: { one: 'one' } }),
+        getProps(endpoint, false, {}, 'ready'), bindings, 'getData');
+    expect(testSeven).toBe(true);
+
+    // test when config is undefined and new config is created
+    const testEight = shouldPerformApiRequest(
+        getProps(endpoint, false, {}),
+        getProps(endpoint, true, {getData: {} }), bindings, 'getData');
+    expect(testEight).toBe(true);
 
 });

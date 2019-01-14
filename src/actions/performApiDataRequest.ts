@@ -22,6 +22,12 @@ let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
+/**
+ * Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
+ * {@link RequestHandler} interface.
+ * @param requestHandler
+ */
+
 export const useRequestHandler = (requestHandler: RequestHandler) => (
     requestFunction = requestHandler
 );
