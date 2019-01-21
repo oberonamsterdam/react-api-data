@@ -5,11 +5,14 @@ import {
     type ApiDataGlobalConfig,
     type ApiDataRequest,
     type EndpointParams,
-    type NetworkStatus,
-    type NormalizedData
+    type NetworkStatus
 } from './';
-import { type RequestHandler } from './request';
-import { type ActionCreator } from 'redux';
+import type { PurgeApiDataAction } from './actions/purgeApiData';
+import type { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
+import type { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
+import type { ApiDataFailAction } from './actions/apiDataFail';
+import type { ApiDataSuccessAction } from './actions/apiDataSuccess';
+import type { ConfigureApiDataAction } from './actions/configureApiData';
 
 declare interface Entities {
     [type: string]: {
@@ -28,16 +31,6 @@ export interface ApiDataState {
     entities: Entities;
 }
 
-declare interface ConfigureApiDataAction {
-    type: 'CONFIGURE_API_DATA';
-    payload: {
-        globalConfig: ApiDataGlobalConfig,
-        endpointConfig: {
-            [endpointKey: string]: ApiDataEndpointConfig
-        }
-    };
-}
-
 declare interface FetchApiDataAction {
     type: 'FETCH_API_DATA';
     payload: {
@@ -47,42 +40,8 @@ declare interface FetchApiDataAction {
     };
 }
 
-declare interface ApiDataSuccessAction {
-    type: 'API_DATA_SUCCESS';
-    payload: {
-        requestKey: string,
-        response: Response,
-        normalizedData?: NormalizedData,
-        responseBody?: any
-    };
-}
-
-declare interface ApiDataFailAction {
-    type: 'API_DATA_FAIL';
-    payload: {
-        requestKey: string,
-        response?: Response,
-        errorBody: any
-    };
-}
-
-declare interface InvalidateApiDataRequestAction {
-    type: 'INVALIDATE_API_DATA_REQUEST';
-    payload: {
-        requestKey: string
-    };
-}
-
 declare interface ClearApiData {
     type: 'CLEAR_API_DATA';
-}
-
-declare interface ApiDataAfterRehydrateAction {
-    type: 'API_DATA_AFTER_REHYDRATE';
-}
-
-declare interface PurgeApiDataAction {
-    type: 'PURGE_API_DATA';
 }
 
 export type Action =
@@ -102,46 +61,6 @@ declare export var recoverNetworkStatuses: (requests: {
 }) => {
     [requestKey: string]: ApiDataRequest
 };
-declare export var configureApiData: (
-    globalConfig: ApiDataGlobalConfig,
-    endpointConfig: {
-        [endpointKey: string]: ApiDataEndpointConfig
-    }
-) => ConfigureApiDataAction;
-declare export var performApiRequest: (
-    endpointKey: string,
-    params?: EndpointParams | void,
-    body?: any
-) => (
-    dispatch: ActionCreator<Action>,
-    getState: () => {
-        apiData: ApiDataState
-    }
-) => Promise<void>;
-declare export var invalidateApiDataRequest: (
-    endpointKey: string,
-    params?: EndpointParams | void
-) => InvalidateApiDataRequestAction;
-declare export var afterRehydrate: () => ApiDataAfterRehydrateAction;
-declare export var purgeApiData: () => PurgeApiDataAction;
-declare export var getApiDataRequest: (
-    apiDataState: ApiDataState,
-    endpointKey: string,
-    params?: EndpointParams | void
-) => ApiDataRequest;
-declare export var getResultData: (
-    apiDataState: ApiDataState,
-    endpointKey: string,
-    params?: EndpointParams | void
-) => any;
-declare export var getEntity: (
-    apiDataState: ApiDataState,
-    schema: any,
-    id: string | number
-) => any;
-declare export var useRequestHandler: (
-    requestHandler: RequestHandler
-) => void;
 
 declare var _default: (state: ?ApiDataState, action: Action) => ApiDataState;
 declare export default typeof _default;
