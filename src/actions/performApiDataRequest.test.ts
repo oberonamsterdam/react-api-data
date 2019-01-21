@@ -15,26 +15,48 @@ import configureMockStore from 'redux-mock-store';
 //     postData: 'postData'
 // };
 
+const defaultState = {
+    apiData: {
+        globalConfig: {},
+        endpointConfig: {},
+        requests: {},
+        entities: {}
+    }
+};
+
+// const response1 = {
+//     body: { data: 'json' },
+//     ok: true,
+//     redirected: false,
+//     status: 200,
+//     statusText: "ok"
+// };
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
 const dispatch = jest.fn();
 
 jest.mock('../request', () => {
-    return () => 10;
+    return () => new Promise((resolve, reject) => {
+        process.nextTick(() => {
+            return resolve(1);
+        })
+    });
+});
+
+test('Empty config', () => {
+    const store: any = mockStore(defaultState);
+    return expect(performApiRequest('postData/', {}, { data: 'json' })(dispatch, () => store.getState())).rejects.toBeTruthy();
 });
 
 test('The request status or params has been changed', () => {
-
     const initialState = { apiData: getState('postData', {}, 'ready', 'POST') };
-    const initialStateOne = { }
     const store: any = mockStore(initialState);
-    // expect.assertions(1);
-    return expect(performApiRequest('postData/', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toEqual(undefined);
-
-    // const testOne = shouldPerformApiRequest(getProps(endpoint, {}, 'ready'), getProps(endpoint, {}, 'success'), bindings, 'getData');
-    // expect(testOne).toBe(true);
+    return expect(performApiRequest('postData/', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeTruthy();
 });
+
+
+
 
 // test('It sets the request properties correctly', () => {
 //     const bodyOne = {};

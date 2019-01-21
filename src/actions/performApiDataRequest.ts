@@ -40,6 +40,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
     return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
+
         const globalConfig = state.apiData.globalConfig;
 
         if (!config) {
