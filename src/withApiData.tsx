@@ -1,7 +1,9 @@
 import React from 'react';
 import { ApiDataRequest, EndpointParams } from './index';
 import { connect } from 'react-redux';
-import { Action, ApiDataState, getApiDataRequest, getResultData, performApiRequest } from './reducer';
+import { ApiDataState } from './reducer';
+import { getApiDataRequest, getResultData, performApiRequest } from './index';
+import { Action } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ActionCreator } from 'redux';
@@ -13,7 +15,7 @@ interface WithApiDataParams {
     [paramName: string]: EndpointParams;
 }
 
-interface WithApiDataProps {
+export interface WithApiDataProps {
     apiData: ApiDataState;
     params: WithApiDataParams;
     dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState }, void, Action>>;
@@ -24,6 +26,15 @@ export type WithApiDataChildProps<TPropNames extends string> = {
         request: ApiDataRequest,
         data?: any;
     };
+};
+
+export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: WithApiDataProps, bindings: { [propName in string]: string }, bindingKey: string) => {
+    const keyParamsHaveChanged = (key: string) => !shallowEqual(newProps.params[key], oldProps.params[key]);
+    const getRequest = (props: WithApiDataProps, key: string) => getApiDataRequest(props.apiData, bindings[key], props.params[key]);
+    const hasBeenInvalidated = (oldRequest?: ApiDataRequest, newRequest?: ApiDataRequest) =>
+        !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
+    const apiDataChanged = newProps.apiData !== oldProps.apiData;
+    return (keyParamsHaveChanged(bindingKey) || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey))));
 };
 
 /**
@@ -47,6 +58,7 @@ export type WithApiDataChildProps<TPropNames extends string> = {
  *    }
  *  }))
  */
+
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
     return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentType<TChildProps> => {
         class WithApiData extends React.Component<WithApiDataProps> {
@@ -58,14 +70,8 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
 
             componentWillReceiveProps(newProps: WithApiDataProps) {
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
-                const keyParamsHaveChanged = (bindingKey: TPropNames) => !shallowEqual(newProps.params[bindingKey], this.props.params[bindingKey]);
-                const getRequest = (props: any, bindingKey: TPropNames) => getApiDataRequest(props.apiData, bindings[bindingKey], props.params[bindingKey]);
-                const hasBeenInvalidated = (oldRequest?: ApiDataRequest, newRequest?: ApiDataRequest) =>
-                    !!oldRequest && oldRequest.networkStatus === 'success' && !!newRequest && newRequest.networkStatus === 'ready';
-                const apiDataChanged = newProps.apiData !== this.props.apiData;
-
                 Object.keys(bindings).forEach((bindingKey: TPropNames) => {
-                    if (keyParamsHaveChanged(bindingKey) || (apiDataChanged && hasBeenInvalidated(getRequest(this.props, bindingKey), getRequest(newProps, bindingKey)))) {
+                    if (shouldPerformApiRequest(newProps, this.props, bindings, bindingKey)) {
                         this.props.dispatch(performApiRequest(bindings[bindingKey], newProps.params[bindingKey]));
                     }
                 });

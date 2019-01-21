@@ -1,17 +1,14 @@
 import withApiData from './withApiData';
-import reducer, {
-    Action,
-    afterRehydrate,
-    ApiDataState,
-    configureApiData,
-    getApiDataRequest,
-    getEntity,
-    getResultData,
-    invalidateApiDataRequest,
-    performApiRequest,
-    useRequestHandler
-} from './reducer';
+import { configureApiData } from './actions/configureApiData';
+import { afterRehydrate } from './actions/afterRehydrate';
+import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { getResultData } from './selectors/getResultData';
+import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
+import { performApiRequest, useRequestHandler } from './actions/performApiDataRequest';
+import { getEntity } from './selectors/getEntity';
+import { Action } from './reducer';
 import { ActionCreator } from 'redux';
+import reducer from './reducer';
 
 export {
     withApiData,
@@ -43,7 +40,7 @@ export interface NormalizedData {
  * Type of the Api-data state
  * TODO: controleer of dit werkt op deze manier
  */
-export { ApiDataState } from './reducer';
+import { ApiDataState } from './reducer';
 
 /**
  * Map parameter names to values.
@@ -73,7 +70,7 @@ export interface ApiDataGlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
     beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterSuccess?: (request: ApiDataRequest, dispatch: (action: Action) => void, getState: () => any) => void;
+    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
     // todo: add afterFail and deprecate handleErrorResponse
     timeout?: number;
 }
@@ -103,7 +100,7 @@ export interface ApiDataEndpointConfig {
     /*
     * return false to not trigger global function
     */
-    afterSuccess?: (request: ApiDataRequest, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */
