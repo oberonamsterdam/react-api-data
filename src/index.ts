@@ -53,6 +53,7 @@ export interface EndpointParams {
 /**
  * Information about a request made to an endpoint.
  */
+
 export interface ApiDataRequest {
     result?: any;
     networkStatus: NetworkStatus;
