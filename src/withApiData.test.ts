@@ -46,7 +46,7 @@ test('The request status or params has been changed', () => {
     // test when config is undefined and new config is created
     const testEight = shouldPerformApiRequest(
         getProps(endpoint, false, {}),
-        getProps(endpoint, true, {getData: {} }), bindings, 'getData');
+        getProps(endpoint, true, { getData: {} }), bindings, 'getData');
     expect(testEight).toBe(true);
 
 });

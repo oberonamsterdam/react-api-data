@@ -37,6 +37,7 @@ export const useRequestHandler = (requestHandler: RequestHandler) => (
  * to use {@link withApiData}.
  * @return {Promise<void>} Always resolves, use request networkStatus to see if call was succeeded or not.
  */
+
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) =>
     (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
         const state = getState();
