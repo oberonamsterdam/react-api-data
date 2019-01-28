@@ -28,16 +28,6 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * @param requestHandler
  */
 
-export const useRequestHandler = (requestHandler: RequestHandler) => (
-    requestFunction = requestHandler
-);
-
-/**
- * Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
- * to use {@link withApiData}.
- * @return {Promise<void>} Always resolves, use request networkStatus to see if call was succeeded or not.
- */
-
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) =>
     (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
         const state = getState();
@@ -151,3 +141,13 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             );
         });
     };
+
+/**
+ * Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
+ * {@link RequestHandler} interface.
+ * @param requestHandler
+ */
+
+export const useRequestHandler = (requestHandler: RequestHandler) => {
+    requestFunction = requestHandler;
+};
