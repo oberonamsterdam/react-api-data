@@ -112,8 +112,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         response = alteredResp.response;
                         responseBody = alteredResp.body;
                     }
-
                     if (response.ok) {
+                        console.log(requestKey, config, response, responseBody);
                         dispatch(apiDataSuccess(requestKey, config, response, responseBody));
 
                         if (config.afterSuccess || globalConfig.afterSuccess) {

@@ -13,7 +13,7 @@ const setPostHeaders = (headers: any) => ({
 export const getState: any = (binding: string, params?: any, networkStatus?: any, method?: string) => (
 {
     globalConfig: {},
-    endpointConfig: {[getRequestKey(binding, params[binding])]: {
+    endpointConfig: {[binding]: {
         url: 'mockAction.get',
         method: method ? method : 'GET',
         setHeaders: method && method === 'POST' ? setPostHeaders : null,
