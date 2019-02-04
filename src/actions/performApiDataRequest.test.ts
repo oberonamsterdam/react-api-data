@@ -149,12 +149,12 @@ const response3 = {
     }
 };
 
-const beforeResponse = () => {
+const beforeSuccess = () => {
     return response3;
 };
 
 test('The function resolves with a beforeSuccess argument', () => {
-    state = { apiData: getState('getData', {}, 'ready', 'GET', 1, beforeResponse) };
+    state = { apiData: getState('getData', {}, 'ready', 'GET', 1, beforeSuccess) };
 
     return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
@@ -163,9 +163,32 @@ test('The function resolves with a beforeSuccess argument', () => {
     Promise.resolve(response1)
 );
 
-test('it calls ApiDataSuccess', async (done) => {
-    const initialState = { apiData: getState('getData', {}, 'ready', 'GET', 1, beforeResponse) };
+test('it calls apiDatasuccess with properties added by the beforeSuccess function', async (done) => {
+    const initialState = { apiData: getState('getData', {}, 'ready', 'GET', 1, beforeSuccess) };
     // @ts-ignore
     expect(dispatch).toHaveBeenCalledWith(apiDataSuccess(getRequestKey('getData'), initialState.apiData.endpointConfig, response3.response, undefined));
+    done();
+});
+
+
+const afterSuccessFunction = jest.fn();
+
+const afterSuccess = () => {
+    return afterSuccessFunction();
+};
+
+test('The function resolves with a beforeSuccess argument', () => {
+    state = { apiData: getState('getData', {}, 'ready', 'GET', -1, undefined, afterSuccess) };
+
+    return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
+});
+
+(request as jest.Mock).mockImplementationOnce(() =>
+    Promise.resolve(response1)
+);
+
+test('it calls apiDatasuccess with properties added by the beforeSuccess function', async (done) => {
+    // @ts-ignore
+    expect(afterSuccessFunction).toHaveBeenCalled();
     done();
 });
