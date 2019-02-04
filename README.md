@@ -111,7 +111,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    onSubmit: comment => { dispatch(performApiRequest('postComment', {}, {comment})); }
+    onSubmit: comment => { dispatch(performApiRequest('postComment', {}, {comment})); },
+    onSuccess: () => { dispatch(invalidateApiDataRequest('getComments'))}
 });
 
 class WriteComment extends React.Component {
@@ -119,9 +120,20 @@ class WriteComment extends React.Component {
         comment: ''
     }
 
+    componentDidUpdate(prevProps) {
+        if (
+            prevProps.articleResponse.request
+            && this.props.articleResponse.request
+            && prevProps.articleResponse.request.networkStatus === 'loading'
+            && this.props.articleResponse.request.networkStatus === 'success'
+        ) {
+            this.props.onSuccess();
+        }
+    }
+    
     render () {
         const status = this.props.request ? this.props.request.networkStatus : '';
-
+        
         return (
             <div>
                 <h1>Post a comment</h1>
@@ -149,4 +161,51 @@ class WriteComment extends React.Component {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(WriteComment);
+```
+
+## Caching API responses
+Responses from successful API calls will be kept in memory so the same call won't be re-triggered a second time. This is especially useful when using *withApiData* for the same endpoint on multiple components. 
+You can set a *cacheDuration* to specify how long the response is considered valid, or to disable the caching entirely. 
+```js
+export default {
+    getArticle: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId/:userId',
+        method: 'GET',
+        cacheDuration: 60000, // 1 minute
+    },
+    getComments: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
+        method: 'GET',
+        cacheDuration: 0, // no caching, use with caution. Preferably set to a low value to prevent multiple simultaneous calls.
+    },
+    getPosts: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
+        method: 'GET'
+        // Infinite caching
+    },
+}
+```
+
+## Manually clearing cache
+```js
+dispatch(invalidateApiDataRequest('getComments'));
+```
+
+## Removing api data from the store
+```js
+import { performApiRequest, purgeApiData } from 'react-api-data';
+
+export const logout = () => (dispatch) => {
+    dispatch(purgeApiData());
+};
+```
+
+## Including Cookies in your Request
+```js
+export const globalConfig: ApiDataGlobalConfig = {
+    setRequestProperties: (defaultProperties) => ({
+        ...defaultProperties,
+        credentials: 'include',
+    })
+};
 ```
