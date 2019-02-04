@@ -5,6 +5,7 @@ import request from '../request';
 import { apiDataSuccess } from './apiDataSuccess';
 import configureMockStore from 'redux-mock-store';
 import { getRequestKey } from '../helpers/getRequestKey';
+import {apiDataFail} from "./apiDataFail";
 
 // TODO:
 // - reject wanneer geen config is geset.
@@ -54,6 +55,16 @@ const response1 = {
     }
 };
 
+const response2 = {
+    response: {
+        body: { data: 'json' },
+        ok: false,
+        redirected: false,
+        status: 200,
+        statusText: 'ok'
+    }
+};
+
 test('It gets an error message when config is empty', () => {
     const store: any = mockStore(defaultState);
     return expect(performApiRequest('postData/', {}, { data: 'json' })(dispatch, () => store.getState())).rejects.toBe('apiData.performApiRequest: no config with key postData/ found!');
@@ -68,15 +79,26 @@ test('The function resolves', () => {
 test('The function resolves with custom response', () => {
     const initialState = { apiData: getState('postData', {}, 'ready', 'POST') };
     const store: any = mockStore(initialState);
-    (request as jest.Mock).mockImplementationOnce(() =>
-        Promise.resolve(response1)
-    );
+
     return expect(performApiRequest('postData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
 
-test('it calls ApiDataSuccess', () => {
+(request as jest.Mock).mockImplementationOnce(() =>
+    Promise.resolve(response1)
+);
+test('it calls ApiDataSuccess', async (done) => {
     const initialState = { apiData: getState('postData', {}, 'ready', 'POST') };
-
     // @ts-ignore
-    return expect(dispatch).toHaveBeenCalledWith(apiDataSuccess(getRequestKey('postData'), initialState.apiData.endpointConfig, response1.response, undefined));
+    expect(dispatch).toHaveBeenCalledWith(apiDataSuccess(getRequestKey('postData'), initialState.apiData.endpointConfig, response1.response, undefined));
+    done();
+});
+
+(request as jest.Mock).mockImplementationOnce(() =>
+    Promise.resolve(response2)
+);
+test('it calls ApiDataFail', async (done) => {
+    const requestKey = getRequestKey('postData');
+    // @ts-ignore
+    expect(dispatch).toHaveBeenCalledWith(apiDataFail(requestKey, response2.response, undefined));
+    done();
 });
