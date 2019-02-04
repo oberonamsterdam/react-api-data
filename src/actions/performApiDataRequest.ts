@@ -42,7 +42,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         const config = state.apiData.endpointConfig[endpointKey];
 
         const globalConfig = state.apiData.globalConfig;
-
         if (!config) {
             const errorMsg = `apiData.performApiRequest: no config with key ${endpointKey} found!`;
             if (__DEV__) {
@@ -50,9 +49,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
             return Promise.reject(errorMsg);
         }
-
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params);
-
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
             apiDataRequest.networkStatus === 'loading' ||
@@ -87,7 +84,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
-
             if (timeout) {
                 abortTimeout = setTimeout(
                     () => {

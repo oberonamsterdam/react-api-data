@@ -10,14 +10,16 @@ const setPostHeaders = (headers: any) => ({
     'Content-Type': 'application/json',
 });
 
-export const getState: any = (binding: string, params?: any, networkStatus?: any, method?: string) => (
+export const getState: any = (binding: string, params?: any, networkStatus?: any, method?: string, cacheDuration?: number, beforeSuccess?: () => void) => (
 {
     globalConfig: {},
     endpointConfig: {[binding]: {
         url: 'mockAction.get',
         method: method ? method : 'GET',
         setHeaders: method && method === 'POST' ? setPostHeaders : null,
-        setRequestProperties: method && method === 'POST' ? setPostRequestProperties : null
+        setRequestProperties: method && method === 'POST' ? setPostRequestProperties : null,
+        cacheDuration: cacheDuration ? cacheDuration : null,
+        beforeSuccess
     }
     },
     requests: {
