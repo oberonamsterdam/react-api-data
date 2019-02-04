@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "lib",
+    "rootDir": "src",
     "module": "CommonJS",
     "target": "es5",
     "downlevelIteration": true,
@@ -29,6 +30,8 @@
     "jest",
     "src/setupTests.ts",
     "public",
-    "coverage"
+    "coverage",
+    "src/mocks",
+    "src/**/*.test.ts"
   ]
 }
