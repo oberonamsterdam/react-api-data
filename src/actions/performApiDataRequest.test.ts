@@ -170,7 +170,6 @@ test('it calls apiDatasuccess with properties added by the beforeSuccess functio
     done();
 });
 
-
 const afterSuccessFunction = jest.fn();
 
 const afterSuccess = () => {
