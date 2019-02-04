@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "lib",
     "rootDir": "src",
-    "module": "esnext",
+    "module": "CommonJS",
     "target": "es5",
     "downlevelIteration": true,
     "lib": ["es6", "dom", "esnext.asynciterable"],
@@ -17,6 +17,7 @@
     "suppressImplicitAnyIndexErrors": false,
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "declaration": true
   },
   "exclude": [

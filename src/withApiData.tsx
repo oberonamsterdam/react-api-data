@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiDataRequest, EndpointParams } from './index';
+import {ApiDataBinding, ApiDataRequest, EndpointParams} from './index';
 import { connect } from 'react-redux';
 import { ApiDataState } from './reducer';
 import { getApiDataRequest, getResultData, performApiRequest } from './index';
@@ -22,10 +22,7 @@ export interface WithApiDataProps {
 }
 
 export type WithApiDataChildProps<TPropNames extends string> = {
-    [k in TPropNames]: {
-        request: ApiDataRequest,
-        data?: any;
-    };
+    [k in TPropNames]: ApiDataBinding<any>;
 };
 
 export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: WithApiDataProps, bindings: { [propName in string]: string }, bindingKey: string) => {
@@ -90,23 +87,23 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
 
             render() {
                 const { apiData, params, dispatch, ...componentProps } = this.props;
-                const props: WithApiDataChildProps<TPropNames> =
-                    Object.assign({}, ...Object.keys(bindings)
-                        .map((propName: TPropNames) => {
-                            const endpointKey = bindings[propName];
-                            return {
-                                data: getResultData(apiData, endpointKey, params[propName]),
-                                request: getApiDataRequest(apiData, endpointKey, params[propName]) || {
-                                    networkStatus: 'ready',
-                                    lastCall: 0,
-                                    duration: 0,
-                                    endpointKey
-                                }
-                            };
-                        })
-                    );
 
-                return <WrappedComponent {...componentProps} {...props} />;
+                const addProps: WithApiDataChildProps<string> = {};
+
+                Object.keys(bindings).forEach((propName: TPropNames) => {
+                    const endpointKey: string = bindings[propName];
+                    addProps[propName] = ({
+                        data: getResultData(apiData, endpointKey, params[propName]),
+                        request: getApiDataRequest(apiData, endpointKey, params[propName]) || {
+                            networkStatus: 'ready',
+                            lastCall: 0,
+                            duration: 0,
+                            endpointKey,
+                        }
+                    });
+                });
+
+                return <WrappedComponent {...componentProps} {...addProps} />;
             }
         }
 

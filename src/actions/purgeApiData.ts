@@ -5,7 +5,6 @@ export interface PurgeApiDataAction {
 
 /**
  * Remove all the requests and entities but keep the configurations. This can be usefull when creating a log out feature.
- * @return {{type: string}}
  * @example
  * dispatch(purgeApiData());
  */
