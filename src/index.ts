@@ -9,6 +9,7 @@ import { getEntity } from './selectors/getEntity';
 import { Action } from './reducer';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
+import { ApiDataState } from './reducer';
 
 export {
     withApiData,
@@ -20,7 +21,8 @@ export {
     invalidateApiDataRequest,
     afterRehydrate,
     reducer,
-    useRequestHandler
+    useRequestHandler,
+    ApiDataState,
 };
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
@@ -37,14 +39,7 @@ export interface NormalizedData {
 }
 
 /**
- * Type of the Api-data state
- * TODO: controleer of dit werkt op deze manier
- */
-import { ApiDataState } from './reducer';
-
-/**
  * Map parameter names to values.
- * @typedef {Object.<string,string|number>} EndpointParams
  */
 export interface EndpointParams {
     [paramName: string]: string | number;
@@ -53,7 +48,6 @@ export interface EndpointParams {
 /**
  * Information about a request made to an endpoint.
  */
-
 export interface ApiDataRequest {
     result?: any;
     networkStatus: NetworkStatus;
@@ -78,9 +72,7 @@ export interface ApiDataGlobalConfig {
 
 /**
  * Specification and configuration of an endpoint.
- * @typedef ApiDataEndpointConfig
  */
-
 export interface ApiDataEndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
