@@ -1,11 +1,6 @@
 import React, { Fragment, SFC } from 'react';
 import { ApiDataBinding, withApiData } from '../src';
 
-/**
- * This file mostly exists just to test if the typing is working correctly.
- * TODO: turn this into an actual example project at some point and/or replace this with unit tests.
- */
-
 interface OwnProps {
     article: ApiDataBinding<{
         title: string;

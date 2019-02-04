@@ -3,12 +3,6 @@
 import React, { Fragment } from 'react';
 import { type ApiDataBinding, withApiData } from '../flow';
 
-
-/**
- * This file mostly exists just to test if the typing is working correctly.
- * TODO: turn this into an actual example project at some point and/or replace this with unit tests.
- */
-
 type OwnProps = {
     article: ApiDataBinding<{
         title: string;

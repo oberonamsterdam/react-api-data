@@ -1,5 +1,5 @@
 import { shouldPerformApiRequest } from './withApiData';
-import { getProps } from '../mocks/mockActions';
+import { getProps } from './mocks/mockActions';
 
 const bindings = {
     getData: 'getData'

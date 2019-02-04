@@ -1,4 +1,4 @@
-import { getRequestKey } from '../src/helpers/getRequestKey';
+import { getRequestKey } from '../helpers/getRequestKey';
 
 export const getState: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any) => ({
     globalConfig: {},

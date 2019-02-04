@@ -14,7 +14,7 @@ import type { ApiDataFailAction } from './actions/apiDataFail';
 import type { ApiDataSuccessAction } from './actions/apiDataSuccess';
 import type { ConfigureApiDataAction } from './actions/configureApiData';
 
-declare interface Entities {
+export interface Entities {
     [type: string]: {
         [id: string]: any
     };
@@ -31,7 +31,7 @@ export interface ApiDataState {
     entities: Entities;
 }
 
-declare interface FetchApiDataAction {
+export interface FetchApiDataAction {
     type: 'FETCH_API_DATA';
     payload: {
         requestKey: string,
@@ -40,7 +40,7 @@ declare interface FetchApiDataAction {
     };
 }
 
-declare interface ClearApiData {
+export interface ClearApiData {
     type: 'CLEAR_API_DATA';
 }
 

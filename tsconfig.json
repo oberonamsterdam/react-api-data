@@ -29,6 +29,8 @@
     "jest",
     "src/setupTests.ts",
     "public",
-    "coverage"
+    "coverage",
+    "src/mocks",
+    "src/**/*.test.ts"
   ]
 }

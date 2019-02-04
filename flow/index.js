@@ -3,29 +3,29 @@
 import withApiData from './withApiData';
 import reducer, {
     type Action,
-    afterRehydrate,
     type ApiDataState,
-    configureApiData,
-    getApiDataRequest,
-    getEntity,
-    getResultData,
-    invalidateApiDataRequest,
-    performApiRequest,
-    useRequestHandler
 } from './reducer';
+import { configureApiData } from './actions/configureApiData';
+import { performApiRequest } from './actions/performApiDataRequest';
+import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
+import { afterRehydrate } from './actions/afterRehydrate';
+import { useRequestHandler } from './actions/performApiDataRequest';
+import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { getResultData } from './selectors/getResultData';
+import { getEntity } from './selectors/getEntity';
 import type { ActionCreator } from 'redux';
 
 export {
     withApiData,
     configureApiData,
     performApiRequest,
+    invalidateApiDataRequest,
+    afterRehydrate,
+    useRequestHandler,
     getApiDataRequest,
     getResultData,
     getEntity,
-    invalidateApiDataRequest,
-    afterRehydrate,
     reducer,
-    useRequestHandler
 };
 
 export type NetworkStatus =
@@ -49,7 +49,6 @@ export interface NormalizedData {
 
 /**
  * Map parameter names to values.
- * @typedef  >} EndpointParams
  */
 export interface EndpointParams {
     [paramName: string]: string | number;
@@ -100,7 +99,6 @@ export interface ApiDataGlobalConfig {
 
 /**
  * Specification and configuration of an endpoint.
- * @typedef
  */
 export interface ApiDataEndpointConfig {
     url: string;
