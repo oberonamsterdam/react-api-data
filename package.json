@@ -5,9 +5,10 @@
   "main": "lib/src/index.js",
   "scripts": {
     "test": "jest",
-    "build": "npm run build:clean && npm run build:lib",
+    "build": "npm run build:clean && npm run build:lib && npm run build:flow",
     "build:clean": "rimraf lib/",
     "build:lib": "tsc",
+    "build:flow": "flow example && flow-copy-source flow lib",
     "build:docs": "documentation build lib/index.js -f md > api.md",
     "precommit": "tslint --project .",
     "prepublishOnly": "npm run build"
@@ -34,6 +35,8 @@
     "@types/node": "^10.9.2",
     "@types/react-redux": "^6.0.9",
     "@types/shallowequal": "^0.2.3",
+    "flow-bin": "^0.87.0",
+    "flow-copy-source": "^2.0.2",
     "husky": "^1.0.1",
     "jest": "^23.0.1",
     "redux": "^4.0.1",
