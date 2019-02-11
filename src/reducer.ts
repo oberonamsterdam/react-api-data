@@ -25,14 +25,18 @@
  * THIS STORE ITSELF IS CONSIDERED PRIVATE TO THIS LIB AND IT'S ARCHITECTURE MIGHT CHANGE. An interface is provided through
  * the HOC and the selectors, use those.
  */
-import { Action } from './actions/index';
 import {
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
-    ApiDataRequest,
+    ApiDataRequest, EndpointParams,
     NetworkStatus,
 } from './index';
-import Request , { RequestHandler } from './request';
+import { ConfigureApiDataAction } from './actions/configureApiData';
+import { ApiDataSuccessAction } from './actions/apiDataSuccess';
+import { ApiDataFailAction } from './actions/apiDataFail';
+import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
+import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
+import { PurgeApiDataAction } from './actions/purgeApiData';
 
 // state def
 
@@ -60,7 +64,29 @@ const defaultState = {
     entities: {}
 };
 
-let requestFunction = Request;
+export interface ClearApiDataAction {
+    type: 'CLEAR_API_DATA';
+}
+
+export interface FetchApiDataAction {
+    type: 'FETCH_API_DATA';
+    payload: {
+        requestKey: string,
+        endpointKey: string,
+        params?: EndpointParams,
+    };
+}
+
+export type Action =
+    | ConfigureApiDataAction
+    | FetchApiDataAction
+    | ApiDataSuccessAction
+    | ApiDataFailAction
+    | InvalidateApiDataRequestAction
+    | ClearApiDataAction
+    | ApiDataAfterRehydrateAction
+    | PurgeApiDataAction
+;
 
 // reducer
 
@@ -200,13 +226,3 @@ export const recoverNetworkStatuses = (requests: { [requestKey: string]: ApiData
             {})
     )
 });
-
-/**
- * Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
- * {@link RequestHandler} interface.
- * @param requestHandler
- */
-
-export const useRequestHandler = (requestHandler: RequestHandler) => (
-    requestFunction = requestHandler
-);

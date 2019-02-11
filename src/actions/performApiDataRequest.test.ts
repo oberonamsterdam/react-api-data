@@ -60,12 +60,12 @@ test('It gets an error message when config is empty', () => {
 });
 
 test('The function resolves', () => {
-    state = { apiData: getState('postData', {}, 'ready', 'POST') };
+    state = { apiData: getState('postData', true, {}, 'ready', 'POST') };
     return expect(performApiRequest('postData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
 
 test('The function resolves with custom response', () => {
-    state = { apiData: getState('postData', {}, 'ready', 'POST') };
+    state = { apiData: getState('postData', true, {}, 'ready', 'POST') };
 
     return expect(performApiRequest('postData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
@@ -74,7 +74,7 @@ test('The function resolves with custom response', () => {
     Promise.resolve(response1)
 );
 test('it calls ApiDataSuccess', async (done) => {
-    state = { apiData: getState('postData', {}, 'ready', 'POST') };
+    state = { apiData: getState('postData', true, {}, 'ready', 'POST') };
     // @ts-ignore
     expect(dispatch).toHaveBeenCalledWith(apiDataSuccess(getRequestKey('postData'), state.apiData.endpointConfig, response1.response, undefined));
     done();
@@ -91,7 +91,7 @@ test('it calls ApiDataFail', async (done) => {
 });
 
 test('The function resolves with cacheDuration', () => {
-    state = { apiData: getState('getData', {}, 'success', 'GET', 1000) };
+    state = { apiData: getState('getData', true, {}, 'success', 'GET', 1000) };
 
     return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
@@ -101,7 +101,7 @@ test('it does not trigger the request function with cacheDuration', async (done)
         Promise.resolve(response1)
     );
 
-    const initialState = { apiData: getState('getData', {}, 'success', 'GET', 1000) };
+    const initialState = { apiData: getState('getData', true, {}, 'success', 'GET', 1000) };
     const requestKey = getRequestKey('getData');
     // @ts-ignore
     expect(dispatch).not.toHaveBeenCalledWith(apiDataSuccess(getRequestKey('getData'), initialState.apiData.endpointConfig, response1.response, undefined), apiDataFail(requestKey, response1.response, undefined));
@@ -109,7 +109,7 @@ test('it does not trigger the request function with cacheDuration', async (done)
 });
 
 test('The function resolves with cacheDuration', () => {
-    state = { apiData: getState('getData', {}, 'success', 'GET', -1) };
+    state = { apiData: getState('getData', true, {}, 'success', 'GET', -1) };
 
     return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
@@ -119,7 +119,7 @@ test('The function resolves with cacheDuration', () => {
 );
 
 test('it triggers the request function and api data success when cacheDuration is expired and status: ok', async (done) => {
-    const initialState = { apiData: getState('getData', {}, 'ready', 'GET', -1) };
+    const initialState = { apiData: getState('getData', true, {}, 'ready', 'GET', -1) };
     // @ts-ignore
     expect(dispatch).toHaveBeenCalledWith(apiDataSuccess(getRequestKey('getData'), initialState.apiData.endpointConfig, response1.response, undefined));
     done();
@@ -140,7 +140,7 @@ const beforeSuccess = () => {
 };
 
 test('The function resolves with a beforeSuccess argument', () => {
-    state = { apiData: getState('getData', {}, 'ready', 'GET', 1, beforeSuccess) };
+    state = { apiData: getState('getData', true, {}, 'ready', 'GET', 1, beforeSuccess) };
 
     return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
@@ -150,7 +150,7 @@ test('The function resolves with a beforeSuccess argument', () => {
 );
 
 test('it calls apiDatasuccess with properties added by the beforeSuccess function', async (done) => {
-    const initialState = { apiData: getState('getData', {}, 'ready', 'GET', 1, beforeSuccess) };
+    const initialState = { apiData: getState('getData', true, {}, 'ready', 'GET', 1, beforeSuccess) };
     // @ts-ignore
     expect(dispatch).toHaveBeenCalledWith(apiDataSuccess(getRequestKey('getData'), initialState.apiData.endpointConfig, response3.response, undefined));
     done();
@@ -163,7 +163,7 @@ const afterSuccess = () => {
 };
 
 test('The function resolves with a beforeSuccess argument', () => {
-    state = { apiData: getState('getData', {}, 'ready', 'GET', -1, undefined, afterSuccess) };
+    state = { apiData: getState('getData', true, {}, 'ready', 'GET', -1, undefined, afterSuccess) };
 
     return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
 });
