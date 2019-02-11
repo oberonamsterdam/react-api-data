@@ -7,19 +7,6 @@ import configureMockStore from 'redux-mock-store';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { apiDataFail } from './apiDataFail';
 
-// TODO:
-// - reject wanneer geen config is geset.
-
-// - check of request functie wel/niet wordt aangeroepen. (aan de hand van cachduration)
-// - Wanneer functie gecalled wordt, checken welke acties worden gedispatched (verschillende response statussen/ reject).
-// - check of callbacks uit de config worden aangeroepen.
-// -
-
-//
-// const bindings = {
-//     postData: 'postData'
-// };
-
 const defaultState = {
     apiData: {
         globalConfig: {},
@@ -37,7 +24,6 @@ const mockStore = configureMockStore(middlewares);
 const store: any = mockStore(() => state);
 
 const dispatch = jest.fn();
-// const apiDataFail = jest.fn();
 
 jest.mock('../request', () =>
     jest.fn(() =>
