@@ -87,7 +87,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 abortTimeout = setTimeout(
                     () => {
                         const error = new Error('Timeout');
-
+                        
                         dispatch(apiDataFail(requestKey, error));
                         onError(error);
                         aborted = true;

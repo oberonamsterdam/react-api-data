@@ -177,3 +177,22 @@ test('it calls apiDatasuccess with properties added by the beforeSuccess functio
     expect(afterSuccessFunction).toHaveBeenCalled();
     done();
 });
+
+test('The function resolves with a timeout argument', async (done) => {
+    state = { apiData: getState('getData', true, {}, 'ready', 'GET', -1, undefined, undefined, 2000) };
+    done();
+    return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => store.getState())).resolves.toBeUndefined();
+});
+
+jest.useFakeTimers();
+
+(request as jest.Mock).mockImplementationOnce(() =>
+    Promise.resolve(response1).then(() => jest.advanceTimersByTime(2000))
+);
+
+test('it triggers apidatafail on when timeout if configured', async () => {
+    // @ts-ignore
+    const requestKey = getRequestKey('getData');
+    const error = new Error('Timeout');
+    expect(dispatch).toHaveBeenCalledWith(apiDataFail(requestKey, error));
+});
