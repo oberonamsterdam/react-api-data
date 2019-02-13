@@ -9,6 +9,7 @@ import { configureApiData } from './actions/configureApiData';
 import { performApiRequest } from './actions/performApiDataRequest';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
 import { afterRehydrate } from './actions/afterRehydrate';
+import { purgeApiData } from './actions/purgeApiData';
 import { useRequestHandler } from './actions/performApiDataRequest';
 import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { getResultData } from './selectors/getResultData';
@@ -26,6 +27,7 @@ export {
     getResultData,
     getEntity,
     reducer,
+    purgeApiData,
 };
 
 export type NetworkStatus =
@@ -38,7 +40,7 @@ export type NormalizeResult =
     | number
     | Array<string | number>;
 
-export interface NormalizedData {
+export type NormalizedData = {
     entities: {
         [type: string]: {
             [id: string]: any
@@ -50,7 +52,7 @@ export interface NormalizedData {
 /**
  * Map parameter names to values.
  */
-export interface EndpointParams {
+export type EndpointParams = {
     [paramName: string]: string | number;
 }
 

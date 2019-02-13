@@ -1,7 +1,7 @@
 // @flow
 import type { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../index';
 
-export interface ConfigureApiDataAction {
+export type ConfigureApiDataAction = {
   type: 'CONFIGURE_API_DATA';
   payload: {
     globalConfig: ApiDataGlobalConfig,
@@ -11,7 +11,7 @@ export interface ConfigureApiDataAction {
   };
 }
 
-export var configureApiData: (
+declare export var configureApiData: (
   globalConfig: ApiDataGlobalConfig,
   endpointConfig: {
     [endpointKey: string]: ApiDataEndpointConfig

@@ -1,4 +1,4 @@
 // @flow
-import { EndpointParams } from '../';
+import { type EndpointParams } from '../';
 
-export var formatUrl: (url: string, params?: EndpointParams) => string;
+declare export var formatUrl: (url: string, params?: EndpointParams) => string;
