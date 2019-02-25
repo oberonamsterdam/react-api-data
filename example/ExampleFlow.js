@@ -1,7 +1,9 @@
-import React, { Fragment, SFC } from 'react';
-import { ApiDataBinding, withApiData } from '../src';
+// @flow
 
-interface OwnProps {
+import React, { Fragment } from 'react';
+import { type ApiDataBinding, withApiData } from '../flow';
+
+type OwnProps = {
     article: ApiDataBinding<{
         title: string;
         author: { name: string; };
@@ -21,7 +23,7 @@ const connectApiData = withApiData(
     })
 );
 
-const Example: SFC<OwnProps> = (props) => {
+const Example = (props) => {
     const article = props.article.data;
     if (!article) {
         return null;
