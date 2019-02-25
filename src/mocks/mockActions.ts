@@ -1,11 +1,11 @@
 import { getRequestKey } from '../helpers/getRequestKey';
 
-const setPostRequestProperties = (requestProperties: any) => ({
+export const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
     body: JSON.stringify(requestProperties.body)
 });
 
-const setPostHeaders = (headers: any) => ({
+export const setPostHeaders = (headers: any) => ({
     ...headers,
     'Content-Type': 'application/json',
 });
@@ -22,8 +22,7 @@ export const getState: any = (binding: string, hasRequest?: boolean, params?: an
         beforeSuccess,
         afterSuccess,
         timeout
-    }
-    ,
+    },
         getMoreData: {
 
         }
