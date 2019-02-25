@@ -1,5 +1,5 @@
 import React from 'react';
-import {ApiDataBinding, ApiDataRequest, EndpointParams} from './index';
+import { ApiDataBinding, ApiDataRequest, EndpointParams } from './index';
 import { connect } from 'react-redux';
 import { Action, ApiDataState, getApiDataRequest, getResultData, performApiRequest } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
@@ -45,7 +45,7 @@ export type WithApiDataChildProps<TPropNames extends string> = {
  *  }))
  */
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
-    return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentType<TChildProps> => {
+    return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentClass<TChildProps> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
