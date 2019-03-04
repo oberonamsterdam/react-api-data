@@ -10,6 +10,7 @@ import { getApiDataRequest } from './getApiDataRequest';
  */
 export const getResultData = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams): any | any[] | void => {
     const config = apiDataState.endpointConfig[endpointKey];
+
     const request = getApiDataRequest(apiDataState, endpointKey, params);
 
     if (!config) {

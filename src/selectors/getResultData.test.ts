@@ -62,7 +62,7 @@ test('should return the result of the request if there is no responseSchema in t
         endpointConfig: {
             getData: {
                 url: 'https://myapi.org/myData',
-                method: 'GET',
+                method: 'GET'
             }
         },
         requests: {
@@ -98,21 +98,7 @@ test('should return the result of the request if there is no responseSchema in t
 
     const result = getResultData(apiDataState2, 'getData');
 
-    // TODO: Fix this expect.
-    // expect(result).toEqual(request.result);
-
-    expect(result).toEqual({
-        id: 1,
-        comments: [
-            {   id: 1,
-                content: 'Comment 1',
-            },
-            {
-                id: 2,
-                content: 'Comment 2',
-            }
-        ]
-    });
+    expect(result).toEqual(1);
 });
 
 test('should return denormalized result data', () => {

@@ -7,7 +7,7 @@ test('should return a single entity from normalized data', () => {
 
     // Set up a fake schema for the getEntity function parameter.
     const dataSchema = new schema.Entity('users');
-    const dataListSchema = [dataSchema];
+    // const dataListSchema = [dataSchema];
 
     // Set up apiDataState object.
     const apiDataState: ApiDataState = {
@@ -33,10 +33,7 @@ test('should return a single entity from normalized data', () => {
 
     // Set up a fake id for the getEntity function parameter.
     const id = 'abc';
+    const action = getEntity(apiDataState, dataSchema, id);
 
-    const action = getEntity(apiDataState, dataListSchema, id);
-
-    expect(action).toEqual({
-        entity: denormalize(id, dataListSchema, apiDataState.entities)
-    });
+    expect(action).toEqual(denormalize(id, dataSchema, apiDataState.entities));
 });
