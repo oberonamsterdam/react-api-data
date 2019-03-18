@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "lib",
-    "module": "esnext",
+    "rootDir": "src",
+    "module": "CommonJS",
     "target": "es5",
     "downlevelIteration": true,
     "lib": ["es6", "dom", "esnext.asynciterable"],
@@ -16,9 +17,11 @@
     "suppressImplicitAnyIndexErrors": false,
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "declaration": true
   },
   "exclude": [
+    "example",
     "node_modules",
     "lib",
     "scripts",
@@ -27,6 +30,8 @@
     "jest",
     "src/setupTests.ts",
     "public",
-    "coverage"
+    "coverage",
+    "src/mocks",
+    "src/**/*.test.ts"
   ]
 }

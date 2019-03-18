@@ -1,15 +1,16 @@
 import withApiData from './withApiData';
 import { configureApiData } from './actions/configureApiData';
 import { afterRehydrate } from './actions/afterRehydrate';
+import { purgeApiData } from './actions/purgeApiData';
 import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { getResultData } from './selectors/getResultData';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
-import { performApiRequest } from './actions/performApiDataRequest';
-import { useRequestHandler } from './reducer';
+import { performApiRequest, useRequestHandler } from './actions/performApiDataRequest';
 import { getEntity } from './selectors/getEntity';
-import { Action } from './actions/index';
+import { Action } from './reducer';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
+import { ApiDataState } from './reducer';
 
 export {
     withApiData,
@@ -20,8 +21,10 @@ export {
     getEntity,
     invalidateApiDataRequest,
     afterRehydrate,
+    purgeApiData,
     reducer,
-    useRequestHandler
+    useRequestHandler,
+    ApiDataState,
 };
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
@@ -38,14 +41,7 @@ export interface NormalizedData {
 }
 
 /**
- * Type of the Api-data state
- * TODO: controleer of dit werkt op deze manier
- */
-import { ApiDataState } from './reducer';
-
-/**
  * Map parameter names to values.
- * @typedef {Object.<string,string|number>} EndpointParams
  */
 export interface EndpointParams {
     [paramName: string]: string | number;
@@ -71,16 +67,14 @@ export interface ApiDataGlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
     beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterSuccess?: (request: ApiDataRequest, dispatch: (action: Action) => void, getState: () => any) => void;
+    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
     // todo: add afterFail and deprecate handleErrorResponse
     timeout?: number;
 }
 
 /**
  * Specification and configuration of an endpoint.
- * @typedef ApiDataEndpointConfig
  */
-
 export interface ApiDataEndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -101,7 +95,7 @@ export interface ApiDataEndpointConfig {
     /*
     * return false to not trigger global function
     */
-    afterSuccess?: (request: ApiDataRequest, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */

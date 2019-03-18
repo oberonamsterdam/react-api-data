@@ -1,7 +1,6 @@
 import { ActionCreator } from 'redux';
-import { Action } from './index';
-import { ApiDataState } from '../reducer';
-import { EndpointParams, ApiDataEndpointConfig, ApiDataGlobalConfig } from '../index';
+import { ApiDataState, Action } from '../reducer';
+import { ApiDataEndpointConfig, ApiDataGlobalConfig, EndpointParams } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -9,6 +8,7 @@ import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
+import { RequestHandler } from '../request';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
@@ -19,15 +19,14 @@ export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, glob
 };
 
 const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
-    // eslint-disable-next-line no-unused-vars
-    const id = (val: any, state: ApiDataState) => val;
+    const id = (val: any) => val;
     const fnA = endpointFn || id;
     const fnB = globalFunction || id;
 
     return (value: any, state: ApiDataState) => fnA(fnB(value, state));
 };
 
-const requestFunction = Request;
+let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
@@ -88,10 +87,10 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 abortTimeout = setTimeout(
                     () => {
                         const error = new Error('Timeout');
-
                         dispatch(apiDataFail(requestKey, error));
                         onError(error);
                         aborted = true;
+                        resolve();
                     },
                     timeout
                 );
@@ -138,4 +137,13 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             );
         });
     };
+};
+
+/**
+ * Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
+ * {@link RequestHandler} interface.
+ * @param requestHandler
+ */
+export const useRequestHandler = (requestHandler: RequestHandler) => {
+    requestFunction = requestHandler;
 };

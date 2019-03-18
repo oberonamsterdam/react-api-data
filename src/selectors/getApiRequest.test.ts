@@ -6,8 +6,18 @@ test('it gets the request status of a given endpoint', () => {
     const testTwoEndpoint = 'oberon';
     const params = { one: 'one', two: 'two' };
 
-    const testOne = getApiDataRequest(getState('data', {}, 'ready'), testOneEndpoint);
-    const testTwo = getApiDataRequest(getState('oberon', { oberon: params }, 'ready'), testTwoEndpoint, params);
-    expect(testOne.networkStatus).toEqual('ready');
-    expect(testTwo.networkStatus).not.toEqual('failed');
+    expect(getApiDataRequest(getState('data', true, {}, 'ready'), testOneEndpoint)).toEqual(
+        {
+            lastCall: 10,
+            duration: 0,
+            networkStatus: 'ready'
+        }
+        );
+    expect(getApiDataRequest(getState('oberon', true, { oberon: params }, 'ready'), testTwoEndpoint, params)).not.toEqual(
+        {
+            lastCall: 10,
+            duration: 0,
+            networkStatus: 'success'
+        }
+    );
 });

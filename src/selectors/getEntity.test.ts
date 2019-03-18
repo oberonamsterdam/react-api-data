@@ -23,7 +23,7 @@ test('should return a single entity from normalized data', () => {
         requests: {
             getData: {
                 networkStatus: 'success',
-                lastCall: Date.now(),
+                lastCall: 10,
                 duration: 6000,
                 endpointKey: 'getData'
             }
