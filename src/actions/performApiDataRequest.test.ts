@@ -1,4 +1,4 @@
-import { getState } from '../mocks/mockActions';
+import getState from '../mocks/mockState';
 import { performApiRequest } from './performApiDataRequest';
 import request from '../request';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -13,8 +13,6 @@ const defaultState = {
         entities: {}
     }
 };
-
-let state = defaultState;
 
 const dispatch = jest.fn();
 
@@ -70,11 +68,12 @@ afterEach(() => {
 });
 
 test('It gets an error message when config is empty', () => {
+    const state = defaultState;
     return expect(performApiRequest('postData/', {}, { data: 'json' })(dispatch, () => state)).rejects.toBe('apiData.performApiRequest: no config with key postData/ found!');
 });
 
 test('The function resolves with custom response and calls apiDataSuccess', async () => {
-    state = { apiData: getState('postData', true, {}, 'ready', 'POST') };
+    const state = { apiData: getState('postData', true, {}, 'ready', {method: 'POST'}) };
     mockResponse(response1);
     await (performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state));
     // @ts-ignore
@@ -84,7 +83,7 @@ test('The function resolves with custom response and calls apiDataSuccess', asyn
 
 test('it calls ApiDataFail when ok = false', async () => {
     const requestKey = getRequestKey('postData');
-    state = { apiData: getState('postData', true, {}, 'ready', 'POST') };
+    const state = { apiData: getState('postData', true, {}, 'ready', {method: 'POST'}) };
     mockResponse(response2);
     await (performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state));
     // @ts-ignore
@@ -92,7 +91,7 @@ test('it calls ApiDataFail when ok = false', async () => {
 });
 
 test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
-    state = { apiData: getState('getData', true, {}, 'success', 'GET', 1000) };
+    const state = { apiData: getState('getData', true, {}, 'success', {method: 'GET', cacheDuration: 1000}) };
     mockResponse(response1);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     const requestKey = getRequestKey('getData');
@@ -101,7 +100,7 @@ test('The function resolves with cacheDuration but does not trigger the request 
 });
 
 test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
-    state = { apiData: getState('getData', true, {}, 'success', 'GET', 1000) };
+    const state = { apiData: getState('getData', true, {}, 'success', {method: 'GET', cacheDuration: 1000}) };
     mockResponse(response1);
     await performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
     const requestKey = getRequestKey('getData');
@@ -113,7 +112,8 @@ test('The function resolves with a beforeSuccess argument and triggers apiDataSu
     const beforeSuccess = () => {
         return response3;
     };
-    state = { apiData: getState('getData', true, {}, 'ready', 'GET', 1, beforeSuccess) };
+    // @ts-ignore (no Response mock)
+    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: 1, beforeSuccess}) };
     mockResponse(response3);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     // @ts-ignore
@@ -121,21 +121,20 @@ test('The function resolves with a beforeSuccess argument and triggers apiDataSu
 });
 
 test('The function resolves with an afterSuccess property the afterSuccess function gets called', async () => {
-    const afterSuccessFunction = jest.fn();
-    state = { apiData: getState('getData', true, {}, 'ready', 'GET', -1, undefined, afterSuccessFunction) };
+    const afterSuccess = jest.fn();
+    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: -1, afterSuccess}) };
     mockResponse(response1);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
-    return expect(afterSuccessFunction).toHaveBeenCalled();
+    return expect(afterSuccess).toHaveBeenCalled();
 });
 
 test('The function resolves with a timeout argument', async () => {
-    state = { apiData: getState('getData', true, {}, 'ready', 'GET', -1, undefined, undefined, 2900) };
+    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: -1, timeout: 2900}) };
     jest.useFakeTimers();
     (request as jest.Mock).mockImplementation(() => {
         jest.advanceTimersByTime(3000);
         return Promise.resolve(response1);
-    }
-    );
+    });
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     const error = new Error('Timeout');
     const requestKey = getRequestKey('getData');
