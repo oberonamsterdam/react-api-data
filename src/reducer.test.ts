@@ -13,6 +13,7 @@ import { ApiDataFailAction } from './actions/apiDataFail';
 import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
 import { PurgeApiDataAction } from './actions/purgeApiData';
 import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
+import { schema } from 'normalizr';
 
 test('recoverNetworkStatuses should return a new requests map with loading states reset to ready', () => {
     const input = {
@@ -58,6 +59,8 @@ test('recoverNetworkStatuses should return a new requests map with loading state
     });
 });
 
+const postDataSchema = new schema.Entity('postData');
+
 const initialState: ApiDataState = {
     globalConfig: {
         setHeaders: setPostHeaders,
@@ -72,6 +75,7 @@ const initialState: ApiDataState = {
         postData: {
             url: 'www.postdate.post',
             method: 'POST',
+            responseSchema: postDataSchema
         }
     },
     requests: {},
@@ -96,6 +100,7 @@ describe('CONFIGURE_API_DATA', () => {
                     postData: {
                         url: 'www.postdate.post',
                         method: 'POST',
+                        responseSchema: postDataSchema
                     }
                 }
             }
@@ -186,6 +191,53 @@ describe('API_DATA_SUCCESS', () => {
                     endpointKey: 'postData',
                 }
             }
+        };
+        expect(reducer(updatedState, action)).toEqual(newState);
+    });
+});
+
+describe('API_DATA_SUCCESS with payload entity', () => {
+    test('new state is correct', () => {
+        // @ts-ignore
+        const action: ApiDataSuccessAction = {
+            type: 'API_DATA_SUCCESS',
+            payload: {
+                requestKey: getRequestKey('postData'),
+                response: {
+                    body: { data: 'json', extraData: 'moreJson' },
+                    ok: true,
+                    redirected: false,
+                    status: 200,
+                    statusText: 'ok'
+                },
+                responseBody: { data: 'json', extraData: 'moreJson' },
+                normalizedData: {
+                    entities: { data: 1 },
+                    result: { data: 'json', extraData: 'moreJson' }
+                },
+            },
+        };
+
+        const newState = {
+            ...updatedState,
+            requests: {
+                [getRequestKey('postData')]: {
+                    networkStatus: 'success',
+                    lastCall: 1000,
+                    duration: Date.now() - 1000,
+                    result: { data: 'json', extraData: 'moreJson' },
+                    response: {
+                        body: { data: 'json', extraData: 'moreJson' },
+                        ok: true,
+                        redirected: false,
+                        status: 200,
+                        statusText: 'ok'
+                    },
+                    errorBody: undefined,
+                    endpointKey: 'postData',
+                }
+            },
+            entities: { data: {} },
         };
         expect(reducer(updatedState, action)).toEqual(newState);
     });
