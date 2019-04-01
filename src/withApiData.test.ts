@@ -1,5 +1,10 @@
 import { shouldPerformApiRequest } from './withApiData';
-import { getProps } from './mocks/mockActions';
+import getState from './mocks/mockState';
+
+export const getProps: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any) => ({
+    apiData: getState(binding, hasRequest, params, networkStatus),
+    params
+});
 
 const bindings = {
     getData: 'getData'

@@ -17,7 +17,6 @@ export type RequestHandler = (url: string, requestProperties?: RequestInit) => P
 
 const getHeaders = (requestProperties: RequestInit): HeadersInit => {
     const headers = requestProperties.headers || {};
-
     if ('body' in requestProperties) {
         if (headers instanceof Headers) {
             headers.set('Content-Type', 'application/json');
@@ -27,7 +26,6 @@ const getHeaders = (requestProperties: RequestInit): HeadersInit => {
             headers['Content-Type'] = 'application/json';
         }
     }
-
     return headers;
 };
 
@@ -44,9 +42,7 @@ const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => 
     if (__DEV__) {
         console.log('Executing request: ' + url);
     }
-
     requestProperties.headers = getHeaders(requestProperties);
-
     if (typeof requestProperties.body !== 'string') {
         requestProperties.body = JSON.stringify(requestProperties.body);
     }
@@ -85,11 +81,9 @@ const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => 
         const onRequestError = (error: any) => {
             if (__DEV__) {
                 console.log(`Request failed: ${url}`);
-                console.error(error);
             }
             reject(error);
         };
-
         fetch(url, requestProperties).then(onRequestSuccess, onRequestError);
     });
 });
