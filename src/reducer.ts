@@ -197,7 +197,7 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
 };
 
 // merges newEntities into entities
-const addEntities = (entities: Entities, newEntities: Entities): Entities => Object.keys(newEntities).reduce(
+export const addEntities = (entities: Entities, newEntities: Entities): Entities => Object.keys(newEntities).reduce(
     (result, entityType) => ({
         ...result,
         [entityType]: {

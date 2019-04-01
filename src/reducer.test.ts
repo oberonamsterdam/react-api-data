@@ -1,4 +1,5 @@
 import reducer, {
+    addEntities,
     ApiDataState,
     ClearApiDataAction,
     defaultState,
@@ -204,16 +205,16 @@ describe('API_DATA_SUCCESS with payload entity', () => {
             payload: {
                 requestKey: getRequestKey('postData'),
                 response: {
-                    body: { data: 'json', extraData: 'moreJson' },
+                    body: { id: 1, data: 'json' },
                     ok: true,
                     redirected: false,
                     status: 200,
                     statusText: 'ok'
                 },
-                responseBody: { data: 'json', extraData: 'moreJson' },
+                responseBody: { id: 1, data: 'json' },
                 normalizedData: {
-                    entities: { data: 1 },
-                    result: { data: 'json', extraData: 'moreJson' }
+                    entities: { information: { id: 1, data: 'json' } },
+                    result: { id: 1, data: 'json' }
                 },
             },
         };
@@ -225,9 +226,9 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                     networkStatus: 'success',
                     lastCall: 1000,
                     duration: Date.now() - 1000,
-                    result: { data: 'json', extraData: 'moreJson' },
+                    result: { id: 1, data: 'json' },
                     response: {
-                        body: { data: 'json', extraData: 'moreJson' },
+                        body: { id: 1, data: 'json' },
                         ok: true,
                         redirected: false,
                         status: 200,
@@ -237,7 +238,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                     endpointKey: 'postData',
                 }
             },
-            entities: { data: {} },
+            entities: { information: { id: 1, data: 'json' } },
         };
         expect(reducer(updatedState, action)).toEqual(newState);
     });
@@ -356,5 +357,37 @@ describe('API_DATA_AFTER_REHYDRATE', () => {
             ...invalidateAbleState,
         };
         expect(reducer(invalidateAbleState, action)).toEqual(newState);
+    });
+});
+
+const initialStateWithEntities = {
+    ...initialState,
+    entities: {
+        articles: { id: 1, data: 'json' }
+    }
+};
+describe('addEntities function', () => {
+    test('merged entities correctly', () => {
+        const newEntities = { users: { id: 1, name: 'json', age: 12 } };
+        const addedEntities = {
+            articles: { id: 1, data: 'json' },
+            users: { id: 1, name: 'json', age: 12 }
+        };
+        expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
+    });
+    test('merged entities correctly', () => {
+        const newEntities = { articles: { id: 2, data: 'json' } };
+        const addedEntities = {
+            articles: { id: 2, data: 'json' },
+        };
+        expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
+    });
+
+    test('merged entities correctly', () => {
+        const newEntities = { articles: { comments: ['nice'] } };
+        const addedEntities = {
+            articles: { id: 1, data: 'json', comments: ['nice'] },
+        };
+        expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
     });
 });
