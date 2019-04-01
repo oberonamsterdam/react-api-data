@@ -213,8 +213,8 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                 },
                 responseBody: { id: 1, data: 'json' },
                 normalizedData: {
-                    entities: { information: { id: 1, data: 'json' } },
-                    result: { id: 1, data: 'json' }
+                    entities: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
+                    result: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
                 },
             },
         };
@@ -226,7 +226,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                     networkStatus: 'success',
                     lastCall: 1000,
                     duration: Date.now() - 1000,
-                    result: { id: 1, data: 'json' },
+                    result: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
                     response: {
                         body: { id: 1, data: 'json' },
                         ok: true,
@@ -238,7 +238,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                     endpointKey: 'postData',
                 }
             },
-            entities: { information: { id: 1, data: 'json' } },
+            entities: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
         };
         expect(reducer(updatedState, action)).toEqual(newState);
     });
@@ -363,30 +363,33 @@ describe('API_DATA_AFTER_REHYDRATE', () => {
 const initialStateWithEntities = {
     ...initialState,
     entities: {
-        articles: { id: 1, data: 'json' }
+        articles: { 1: { id: 1, data: 'json' } }
     }
 };
 describe('addEntities function', () => {
     test('merged entities correctly', () => {
-        const newEntities = { users: { id: 1, name: 'json', age: 12 } };
+        const newEntities = { users: { 1: { id: 1, name: 'json', age: 12 } } };
         const addedEntities = {
-            articles: { id: 1, data: 'json' },
-            users: { id: 1, name: 'json', age: 12 }
+            articles: { 1: { id: 1, data: 'json' } },
+            users: { 1: { id: 1, name: 'json', age: 12 } }
         };
         expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
     });
     test('merged entities correctly', () => {
-        const newEntities = { articles: { id: 2, data: 'json' } };
+        const newEntities = { articles: { 2:  { id: 2, data: 'moreJson' } } };
         const addedEntities = {
-            articles: { id: 2, data: 'json' },
+            articles: {
+                1: { id: 1, data: 'json' },
+                2: { id: 2, data: 'moreJson' }
+            }
         };
         expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
     });
 
     test('merged entities correctly', () => {
-        const newEntities = { articles: { comments: ['nice'] } };
+        const newEntities = { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } };
         const addedEntities = {
-            articles: { id: 1, data: 'json', comments: ['nice'] },
+            articles: { 1: { id: 1, data: 'json', comments: ['nice'] } },
         };
         expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
     });
