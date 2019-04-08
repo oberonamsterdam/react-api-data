@@ -9,4 +9,4 @@ export interface ApiDataFailAction {
   };
 }
 
-export var apiDataFail: (requestKey: string, errorBody: any, response?: Response) => ApiDataFailAction;
+declare export var apiDataFail: (requestKey: string, errorBody: any, response?: Response) => ApiDataFailAction;

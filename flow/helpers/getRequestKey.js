@@ -1,4 +1,4 @@
 // @flow
-import { EndpointParams } from '../';
+import { type EndpointParams } from '../';
 
-export var getRequestKey: (endpointKey: string, params?: EndpointParams) => string;
+declare export var getRequestKey: (endpointKey: string, params?: EndpointParams) => string;

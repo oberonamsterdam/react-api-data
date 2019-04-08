@@ -1,7 +1,7 @@
 // @flow
-import { ApiDataState } from '../reducer';
+import { type ApiDataState } from '../reducer';
 
-export var getEntity: (
+declare export var getEntity: (
   apiDataState: ApiDataState,
   schema: any,
   id: string | number

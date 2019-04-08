@@ -1,8 +1,8 @@
 {
   "name": "react-api-data",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Fetch and normalize data from api",
-  "main": "lib/src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watch",

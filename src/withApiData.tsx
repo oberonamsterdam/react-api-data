@@ -57,7 +57,7 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
  */
 
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
-    return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentType<TChildProps> => {
+    return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentClass<TChildProps> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 

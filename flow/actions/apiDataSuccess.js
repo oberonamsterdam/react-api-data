@@ -11,4 +11,4 @@ export interface ApiDataSuccessAction {
   };
 }
 
-export var apiDataSuccess: (requestKey: string, endpointConfig: ApiDataEndpointConfig, response: Response, body: any) => ApiDataSuccessAction
+declare export var apiDataSuccess: (requestKey: string, endpointConfig: ApiDataEndpointConfig, response: Response, body: any) => ApiDataSuccessAction

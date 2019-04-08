@@ -4,4 +4,4 @@ export interface ApiDataAfterRehydrateAction {
   type: 'API_DATA_AFTER_REHYDRATE';
 }
 
-export var afterRehydrate: () => ApiDataAfterRehydrateAction;
+declare export var afterRehydrate: () => ApiDataAfterRehydrateAction;

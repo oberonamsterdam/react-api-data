@@ -14,13 +14,13 @@ import type { ApiDataFailAction } from './actions/apiDataFail';
 import type { ApiDataSuccessAction } from './actions/apiDataSuccess';
 import type { ConfigureApiDataAction } from './actions/configureApiData';
 
-export interface Entities {
+export type Entities = {
     [type: string]: {
         [id: string]: any
     };
 }
 
-export interface ApiDataState {
+export type ApiDataState = {
     globalConfig: ApiDataGlobalConfig;
     endpointConfig: {
         [endpointKey: string]: ApiDataEndpointConfig
