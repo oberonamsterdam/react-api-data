@@ -57,7 +57,7 @@ export interface ApiDataState {
     entities: Entities;
 }
 
-const defaultState = {
+export const defaultState = {
     globalConfig: {},
     endpointConfig: {},
     requests: {},
@@ -114,7 +114,6 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
             };
         case 'API_DATA_SUCCESS': {
             const request = state.requests[action.payload.requestKey];
-
             if (!request) {
                 // for security reasons reject the response if the request has been removed since the call was initiated.
                 // this might be due to a logout between start and end of call
@@ -198,7 +197,7 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
 };
 
 // merges newEntities into entities
-const addEntities = (entities: Entities, newEntities: Entities): Entities => Object.keys(newEntities).reduce(
+export const addEntities = (entities: Entities, newEntities: Entities): Entities => Object.keys(newEntities).reduce(
     (result, entityType) => ({
         ...result,
         [entityType]: {

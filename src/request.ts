@@ -15,8 +15,6 @@ export type RequestHandler = (url: string, requestProperties?: RequestInit) => P
  * @returns {{}}
  */
 
-// TODO: mock header from the fetch api.
-
 const getHeaders = (requestProperties: RequestInit): HeadersInit => {
     const headers = requestProperties.headers || {};
     if ('body' in requestProperties) {
