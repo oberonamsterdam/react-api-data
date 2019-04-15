@@ -23,7 +23,7 @@ const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
     const fnA = endpointFn || id;
     const fnB = globalFunction || id;
 
-    return (value: any, state: ApiDataState) => fnA(fnB(value, state));
+    return (value: any, state: ApiDataState) => fnA(fnB(value, state), state);
 };
 
 let requestFunction = Request;
