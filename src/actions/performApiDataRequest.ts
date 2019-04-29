@@ -1,6 +1,6 @@
 import { ActionCreator } from 'redux';
 import { ApiDataState, Action } from '../reducer';
-import { ApiDataEndpointConfig, ApiDataGlobalConfig, EndpointParams } from '../index';
+import { ApiDataEndpointConfig, ApiDataGlobalConfig, EndpointParams, getResultData } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -39,7 +39,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
     return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
-
         const globalConfig = state.apiData.globalConfig;
         if (!config) {
             const errorMsg = `apiData.performApiRequest: no config with key ${endpointKey} found!`;
@@ -79,7 +78,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
         };
 
-        return new Promise((resolve: () => void) => {
+        return new Promise((resolve: (apiDataBinding?: any) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
@@ -109,7 +108,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     }
                     if (response.ok) {
                         dispatch(apiDataSuccess(requestKey, config, response, responseBody));
-
                         if (config.afterSuccess || globalConfig.afterSuccess) {
                             const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
                             if (config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) === false) {
@@ -123,7 +121,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         dispatch(apiDataFail(requestKey, response, responseBody));
                         onError(response, responseBody);
                     }
-                    resolve();
+                    resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
                 },
                 (error: any) => {
                     if (aborted) {
