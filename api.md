@@ -107,12 +107,14 @@ type Props = {
 ## withApiData
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an ApiDataBinding added to each property key of the bindings param.
+component will get an ApiDataBinding or ApiDataBinding[] added to each property key of the bindings param.
 
 **Parameters**
 
--   `bindings` **{}** maps prop names to endpoint keys
--   `getParams` **GetParams** optionally provide the params of the endpoint
+-   `bindings` **{ [propName in TPropNames]: string }** maps prop names to endpoint keys
+-   `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the params of the bindings, providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key
+-   
+Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Function to wrap your component
 
 **Examples**
 
@@ -132,7 +134,17 @@ withApiData({
  }))
 ```
 
-Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Function to wrap your component
+```javascript
+withApiData({
+   users: 'getWUser'
+ }, (ownProps, state) => ({
+   users: [{
+       userId: 1
+   }, {
+       userId: 2
+   }]
+ }))
+```
 
 ## configureApiData
 

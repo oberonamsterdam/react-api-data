@@ -209,3 +209,25 @@ export const globalConfig: ApiDataGlobalConfig = {
     })
 };
 ```
+
+## Make multiple requests to the same endpoint at once
+```js
+const connectApiData = withApiData({
+    items: 'getItemsInList'
+}, (ownProps, state) => ({
+    items: [{listId: 1}, {listId: 2}, {listId: 3}]
+}));
+
+const ItemsList = (props) => {
+    if(props.items && props.items.reduce((acc, item) => acc && item.request.networkStatus == "success")){
+        return (
+            <ul>
+                {props.items.map(item => (<li>{item.data.title}</li>))}
+            </ul>
+        );
+    }
+    return <p>Loading...</p>;
+}
+
+export default connectApiData(ItemsList);
+```
