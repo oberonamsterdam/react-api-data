@@ -23,7 +23,7 @@ const getHeaders = (requestProperties: RequestInit): HeadersInit => {
                 headers.set('Content-Type', 'application/json');
             }
         } else if (Array.isArray(headers)) {
-            if (headers.reduce((previous, value) => previous && value[0] !== 'Content-Type', true)) {
+            if (!headers.some(header => header[0] === 'Content-Type')) {
                 headers.push(['Content-Type', 'application/json']);
             }
         } else {
