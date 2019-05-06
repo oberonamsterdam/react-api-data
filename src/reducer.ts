@@ -374,15 +374,24 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         const requestProperties = composeConfigFn(config.setRequestProperties, globalConfig.setRequestProperties)(defaultRequestProperties, state);
         requestProperties.headers = composeConfigFn(config.setHeaders, globalConfig.setHeaders)(defaultRequestProperties.headers, state);
 
-        const onError = (responseBody: any, response?: Response) => {
-            if (typeof config.handleErrorResponse === 'function' && config.handleErrorResponse(responseBody, params!, body, dispatch, getState, response) === false) {
+        const onError = (responseBody: any, response?: Response | undefined) => {
+
+            const beforeError = config.beforeError || globalConfig.beforeError;
+
+            if (beforeError && response !== undefined) {
+                const alteredResp = beforeError({ response, body: responseBody });
+                response = alteredResp.response;
+                responseBody = alteredResp.body;
+            }
+
+            const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
+
+            if (typeof config.afterError === 'function' && config.afterError(updatedRequest, dispatch, getState) === false) {
                 return;
             }
-            console.log(config.beforeError);
-            console.log(config.afterError);
 
-            if (typeof globalConfig.handleErrorResponse === 'function') {
-                globalConfig.handleErrorResponse(responseBody, endpointKey, params!, body, dispatch, getState);
+            if (typeof globalConfig.afterError === 'function') {
+                globalConfig.afterError(updatedRequest, dispatch, getState);
             }
         };
 
@@ -398,7 +407,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         const error = new Error('Timeout');
 
                         dispatch(apiDataFail(requestKey, error));
-                        onError(error);
+                        onError(error, undefined);
                         aborted = true;
                         resolve();
                     },
@@ -411,6 +420,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     if (aborted) {
                         return;
                     }
+
                     clearTimeout(abortTimeout);
 
                     const beforeSuccess = config.beforeSuccess || globalConfig.beforeSuccess;
@@ -444,7 +454,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     }
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
-                    onError(undefined, error);
+                    onError(error, error);
                     resolve();
                 }
             );

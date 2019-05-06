@@ -68,8 +68,8 @@ export interface ApiDataGlobalConfig {
     setRequestProperties?: (defaultProperties: any, state: any) => any;
     beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
     afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
-    beforeError?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: (action: Action) => void, getState: () => { apiData: ApiDataState }, response?: Response) => void;
-    afterError?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: (action: Action) => void, getState: () => { apiData: ApiDataState }, response?: Response) => void;
+    beforeError?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
+    afterError?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
     // todo: add afterFail and deprecate handleErrorResponse
     timeout?: number;
 }
@@ -87,17 +87,17 @@ export interface ApiDataEndpointConfig {
     */
     transformResponseBody?: (responseBody: any) => NormalizedData; // todo: this should transform before normalize or without normalize if no schema (so return any)
     /*
-    * return false to not trigger global function
+    * @deprecated Use beforeError instead
     */
     handleErrorResponse?: (responseBody: any, params: EndpointParams, requestBody: any, dispatch: ActionCreator<any>, getState: () => { apiData: ApiDataState }, response?: Response) => boolean | void;
     /*
-    * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
+    * Edit the response before it gets handled by react-api-data.
     */
-    beforeError?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: (action: Action) => void, getState: () => { apiData: ApiDataState }, response?: Response) => void;
+    beforeError?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterError?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: (action: Action) => void, getState: () => { apiData: ApiDataState }, response?: Response) => void;
+    afterError?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
     /*
     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
     */

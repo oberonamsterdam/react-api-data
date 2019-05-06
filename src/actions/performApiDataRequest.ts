@@ -39,7 +39,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
     return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
-
         const globalConfig = state.apiData.globalConfig;
         if (!config) {
             const errorMsg = `apiData.performApiRequest: no config with key ${endpointKey} found!`;
@@ -69,13 +68,34 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }));
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
 
-        const onError = (responseBody: any, response?: Response) => {
-            if (typeof config.handleErrorResponse === 'function' && config.handleErrorResponse(responseBody, params!, body, dispatch, getState, response) === false) {
+        const onError = (responseBody: any, response?: any) => {
+
+            const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
+
+            if (typeof config.afterError === 'function' && config.afterError(updatedRequest, dispatch, getState) === false) {
                 return;
             }
 
-            if (typeof globalConfig.handleErrorResponse === 'function') {
-                globalConfig.handleErrorResponse(responseBody, endpointKey, params!, body, dispatch, getState);
+            if (typeof globalConfig.afterError === 'function') {
+                globalConfig.afterError(updatedRequest, dispatch, getState);
+            }
+        };
+
+        const onBeforeError = (responseBody: any, response?: any) => {
+            const beforeError = config.beforeError || globalConfig.beforeError;
+
+            if (beforeError && responseBody && !responseBody.ok) {
+                const alteredResp = beforeError({ response, body: responseBody });
+                responseBody = alteredResp && alteredResp.body ? alteredResp.body : responseBody;
+                response = alteredResp && alteredResp.response ? alteredResp.response : response;
+
+                if (typeof config.beforeError === 'function' && responseBody === undefined) {
+                    return;
+                }
+
+                if (typeof config.beforeError === 'function') {
+                    globalConfig.beforeError({ response, body: responseBody });
+                }
             }
         };
 
@@ -120,8 +140,10 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                             }
                         }
                     } else {
+                        onBeforeError(responseBody, response);
                         dispatch(apiDataFail(requestKey, response, responseBody));
-                        onError(response, responseBody);
+                        onError(responseBody, response);
+
                     }
                     resolve();
                 },
@@ -131,7 +153,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     }
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
-                    onError(undefined, error);
+                    onError(error.body, error);
                     resolve();
                 }
             );
