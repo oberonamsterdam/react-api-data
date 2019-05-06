@@ -73,7 +73,7 @@ test('It gets an error message when config is empty', () => {
 });
 
 test('The function resolves with custom response and calls apiDataSuccess', async () => {
-    const state = { apiData: getState('postData', true, {}, 'ready', {method: 'POST'}) };
+    const state = { apiData: getState('postData', true, {}, 'ready', { method: 'POST' }) };
     mockResponse(response1);
     await (performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state));
     // @ts-ignore
@@ -83,7 +83,7 @@ test('The function resolves with custom response and calls apiDataSuccess', asyn
 
 test('it calls ApiDataFail when ok = false', async () => {
     const requestKey = getRequestKey('postData');
-    const state = { apiData: getState('postData', true, {}, 'ready', {method: 'POST'}) };
+    const state = { apiData: getState('postData', true, {}, 'ready', { method: 'POST' }) };
     mockResponse(response2);
     await (performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state));
     // @ts-ignore
@@ -91,7 +91,7 @@ test('it calls ApiDataFail when ok = false', async () => {
 });
 
 test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
-    const state = { apiData: getState('getData', true, {}, 'success', {method: 'GET', cacheDuration: 1000}) };
+    const state = { apiData: getState('getData', true, {}, 'success', { method: 'GET', cacheDuration: 1000 }) };
     mockResponse(response1);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     const requestKey = getRequestKey('getData');
@@ -100,7 +100,7 @@ test('The function resolves with cacheDuration but does not trigger the request 
 });
 
 test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
-    const state = { apiData: getState('getData', true, {}, 'success', {method: 'GET', cacheDuration: 1000}) };
+    const state = { apiData: getState('getData', true, {}, 'success', { method: 'GET', cacheDuration: 1000 }) };
     mockResponse(response1);
     await performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
     const requestKey = getRequestKey('getData');
@@ -113,7 +113,7 @@ test('The function resolves with a beforeSuccess argument and triggers apiDataSu
         return response3;
     };
     // @ts-ignore (no Response mock)
-    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: 1, beforeSuccess}) };
+    const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeSuccess }) };
     mockResponse(response3);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     // @ts-ignore
@@ -122,14 +122,14 @@ test('The function resolves with a beforeSuccess argument and triggers apiDataSu
 
 test('The function resolves with an afterSuccess property the afterSuccess function gets called', async () => {
     const afterSuccess = jest.fn();
-    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: -1, afterSuccess}) };
+    const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, afterSuccess }) };
     mockResponse(response1);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     return expect(afterSuccess).toHaveBeenCalled();
 });
 
 test('The function resolves with a timeout argument', async () => {
-    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: -1, timeout: 2900}) };
+    const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, timeout: 2900 }) };
     jest.useFakeTimers();
     (request as jest.Mock).mockImplementation(() => {
         jest.advanceTimersByTime(3000);
@@ -146,7 +146,7 @@ test('The function resolves with a beforeError argument and triggers apiDataFail
         return response2;
     };
     // @ts-ignore (no Response mock)
-    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: 1, beforeError }) };
+    const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeError }) };
     mockResponse(response2);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     // @ts-ignore
@@ -155,7 +155,7 @@ test('The function resolves with a beforeError argument and triggers apiDataFail
 
 test('The function resolves with an afterError property the afterError function gets called', async () => {
     const afterError = jest.fn();
-    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: -1, afterError}) };
+    const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, afterError }) };
     mockResponse(response2);
     await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
     return expect(afterError).toHaveBeenCalled();
