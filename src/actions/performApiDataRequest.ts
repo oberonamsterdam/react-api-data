@@ -1,6 +1,6 @@
 import { ActionCreator } from 'redux';
 import { ApiDataState, Action } from '../reducer';
-import { ApiDataEndpointConfig, ApiDataGlobalConfig, EndpointParams, getResultData } from '../index';
+import { ApiDataBinding, ApiDataEndpointConfig, ApiDataGlobalConfig, EndpointParams, getResultData } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -36,7 +36,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * @return {Promise<void>} Always resolves, use request networkStatus to see if call was succeeded or not.
  */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) => {
-    return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
+    return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
@@ -53,7 +53,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return Promise.resolve();
+            return Promise.resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
         }
 
         const requestKey = getRequestKey(endpointKey, params || {});
@@ -78,7 +78,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
         };
 
-        return new Promise((resolve: (apiDataBinding?: any) => void) => {
+        return new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
@@ -89,7 +89,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         dispatch(apiDataFail(requestKey, error));
                         onError(error);
                         aborted = true;
-                        resolve();
+                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
                     },
                     timeout
                 );
@@ -130,7 +130,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
                     onError(undefined, error);
-                    resolve();
+                    resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
                 }
             );
         });

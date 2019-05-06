@@ -117,5 +117,5 @@ export interface ApiDataEndpointConfig {
  */
 export interface ApiDataBinding<T> {
     data?: T;
-    request: ApiDataRequest;
+    request: ApiDataRequest | void;
 }
