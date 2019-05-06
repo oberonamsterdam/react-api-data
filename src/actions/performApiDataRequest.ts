@@ -81,7 +81,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
         };
 
-        const onBeforeError = (responseBody: any, response?: any) => {
+        const onBeforeError = (responseBody: any, response: any) => {
             const beforeError = config.beforeError || globalConfig.beforeError;
 
             if (beforeError && responseBody && !responseBody.ok) {
@@ -89,11 +89,11 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 responseBody = alteredResp && alteredResp.body ? alteredResp.body : responseBody;
                 response = alteredResp && alteredResp.response ? alteredResp.response : response;
 
-                if (typeof config.beforeError === 'function' && responseBody === undefined) {
+                if (typeof config.beforeError === 'function' && !response) {
                     return;
                 }
 
-                if (typeof config.beforeError === 'function') {
+                if (globalConfig.beforeError && response !== undefined && responseBody !== undefined) {
                     globalConfig.beforeError({ response, body: responseBody });
                 }
             }
