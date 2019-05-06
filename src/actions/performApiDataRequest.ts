@@ -53,7 +53,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return Promise.resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
+            return Promise.resolve({ data: getResultData(getState().apiData, endpointKey, params), request: apiDataRequest });
         }
 
         const requestKey = getRequestKey(endpointKey, params || {});
@@ -89,7 +89,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         dispatch(apiDataFail(requestKey, error));
                         onError(error);
                         aborted = true;
-                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
+                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params)! }
+                        );
                     },
                     timeout
                 );
@@ -108,20 +109,18 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     }
                     if (response.ok) {
                         dispatch(apiDataSuccess(requestKey, config, response, responseBody));
+                        const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
                         if (config.afterSuccess || globalConfig.afterSuccess) {
-                            const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
-                            if (config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) === false) {
-                                return;
-                            }
-                            if (globalConfig.afterSuccess) {
+                            if (config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) !== false && globalConfig.afterSuccess) {
                                 globalConfig.afterSuccess(updatedRequest, dispatch, getState);
                             }
                         }
+                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: updatedRequest! });
                     } else {
                         dispatch(apiDataFail(requestKey, response, responseBody));
                         onError(response, responseBody);
+                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params)! });
                     }
-                    resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
                 },
                 (error: any) => {
                     if (aborted) {
@@ -130,7 +129,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
                     onError(undefined, error);
-                    resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params) });
+                    resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params)! });
                 }
             );
         });
