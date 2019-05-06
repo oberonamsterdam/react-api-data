@@ -140,3 +140,23 @@ test('The function resolves with a timeout argument', async () => {
     const requestKey = getRequestKey('getData');
     return expect(dispatch).toHaveBeenCalledWith(apiDataFail(requestKey, error));
 });
+
+test('The function resolves with a beforeError argument and triggers apiDataFail with the beforeError response', async () => {
+    const beforeError = () => {
+        return response2;
+    };
+    // @ts-ignore (no Response mock)
+    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: 1, beforeError }) };
+    mockResponse(response2);
+    await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
+    // @ts-ignore
+    return expect(dispatch).toHaveBeenCalledWith(apiDataFail(getRequestKey('getData'), response2.response, undefined));
+});
+
+test('The function resolves with an afterError property the afterError function gets called', async () => {
+    const afterError = jest.fn();
+    const state = { apiData: getState('getData', true, {}, 'ready', {method: 'GET', cacheDuration: -1, afterError}) };
+    mockResponse(response2);
+    await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
+    return expect(afterError).toHaveBeenCalled();
+});

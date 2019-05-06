@@ -68,8 +68,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }));
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
 
-        const onError = (responseBody: any, response?: any) => {
-
+        const onError = () => {
             const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
 
             if (typeof config.afterError === 'function' && config.afterError(updatedRequest, dispatch, getState) === false) {
@@ -108,7 +107,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     () => {
                         const error = new Error('Timeout');
                         dispatch(apiDataFail(requestKey, error));
-                        onError(error);
+                        onError();
                         aborted = true;
                         resolve();
                     },
@@ -142,7 +141,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     } else {
                         onBeforeError(responseBody, response);
                         dispatch(apiDataFail(requestKey, response, responseBody));
-                        onError(responseBody, response);
+                        onError();
 
                     }
                     resolve();
@@ -153,7 +152,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     }
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
-                    onError(error.body, error);
+                    onError();
                     resolve();
                 }
             );
