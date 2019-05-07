@@ -71,7 +71,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     if (Array.isArray(this.props.params[bindingKey])) {
                         const paramsArray: EndpointParams[] = this.props.params[bindingKey] as EndpointParams[];
                         paramsArray.forEach(params => {
-                            if (shouldPerformApiRequest({ ...newProps, params: { [bindingKey] : newProps.params[bindingKey] } }, { ...this.props as WithApiDataProps, params: { [bindingKey] : params } }, bindings, bindingKey)) {
+                            if (shouldPerformApiRequest({ ...newProps, params: { [bindingKey]: newProps.params[bindingKey] } }, { ...this.props as WithApiDataProps, params: { [bindingKey]: params } }, bindings, bindingKey)) {
                                 this.props.dispatch(performApiRequest(bindings[bindingKey], params));
                             }
                         });
@@ -91,7 +91,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
 
                     // performApiRequest will check if fetch is needed
                     if (Array.isArray(params[propName])) {
-                        const paramsArray: EndpointParams[] = this.props.params[propName] as EndpointParams[];
+                        const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
                         paramsArray.forEach(propNameParams => {
                             dispatch(performApiRequest(endpointKey, propNameParams));
                         });
@@ -110,9 +110,9 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     const endpointKey: string = bindings[propName];
                     if (Array.isArray(params[propName])) {
                         const paramsArray: EndpointParams[] = (params[propName] as EndpointParams[]);
-                        addProps[propName] = paramsArray.map(propNameParams => getApiDataBinding(apiData, endpointKey, propNameParams, dispatch));
+                        addProps[propName] = paramsArray.map(propNameParams => getApiDataBinding(apiData, endpointKey, propNameParams));
                     } else {
-                        addProps[propName] = getApiDataBinding(apiData, endpointKey, params[propName] as EndpointParams, dispatch);
+                        addProps[propName] = getApiDataBinding(apiData, endpointKey, params[propName] as EndpointParams);
                     }
                 });
 
@@ -129,7 +129,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
     };
 }
 
-function getApiDataBinding(apiData: ApiDataState, endpointKey: string, params: EndpointParams, dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState }, void, Action>>) {
+function getApiDataBinding(apiData: ApiDataState, endpointKey: string, params: EndpointParams) {
     return ({
         data: getResultData(apiData, endpointKey, params),
         request: getApiDataRequest(apiData, endpointKey, params) || {

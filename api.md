@@ -107,12 +107,12 @@ type Props = {
 ## withApiData
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an ApiDataBinding or ApiDataBinding[] added to each property key of the bindings param.
+component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param.
 
 **Parameters**
 
 -   `bindings` **{ [propName in TPropNames]: string }** maps prop names to endpoint keys
--   `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the params of the bindings, providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key
+-   `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the URL parameters. Providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key.
 -   
 Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Function to wrap your component
 
@@ -120,30 +120,19 @@ Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Ref
 
 ```javascript
 withApiData({
-   wishList: 'getWishLists',
-   settings: 'getSettings'
- }, (ownProps, state) => ({
-   wishList: {
-     projectSlug: ownProps.match.params.projectSlug,
-     env: ownProps.match.params.env
-   },
-   settings: {
-     projectSlug: ownProps.match.params.projectSlug,
-     env: ownProps.match.params.env
-   }
- }))
-```
-
-```javascript
-withApiData({
-   users: 'getWUser'
- }, (ownProps, state) => ({
-   users: [{
-       userId: 1
-   }, {
-       userId: 2
-   }]
- }))
+    article: 'getArticle',
+    users: 'getUser'
+}, (ownProps, state) => ({
+    article: {
+        id: ownProps.articleId,
+    },
+    // sometimes you need to call one endpoint multiple times (simultaneously) with different parameter values:
+    users: state.users.map(user => ({
+        userId: user.id
+    })),
+}))
+// props.article will be an ApiDataBinding
+// props.users will be an array of ApiDataBinding
 ```
 
 ## configureApiData

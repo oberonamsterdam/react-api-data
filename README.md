@@ -219,7 +219,7 @@ const connectApiData = withApiData({
 }));
 
 const ItemsList = (props) => {
-    if(props.items && props.items.reduce((acc, item) => acc && item.request.networkStatus == "success")){
+    if (props.items.every(item => item.request.networkStatus === 'success')) {
         return (
             <ul>
                 {props.items.map(item => (<li>{item.data.title}</li>))}
