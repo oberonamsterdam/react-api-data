@@ -40,7 +40,6 @@ const __DEV__ = process.env.NODE_ENV === 'development';
 /**
  * Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
  * to use {@link withApiData}.
- * @return {Promise<void>} Always resolves, use request networkStatus to see if call was succeeded or not.
  */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) => {
     return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {

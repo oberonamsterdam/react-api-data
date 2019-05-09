@@ -157,7 +157,7 @@ to use [withApiData](#withapidata).
 -   `params` **[EndpointParams](#endpointparams)** 
 -   `responseBody` **any** 
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** Always resolves, use request networkStatus to see if call was succeeded or not.
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;ApiDataBinding>** Rejects when endpointKey is unkown. Otherwise resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. 
 
 ## invalidateApiDataRequest
 
