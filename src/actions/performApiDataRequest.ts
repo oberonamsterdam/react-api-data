@@ -110,11 +110,12 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     if (response.ok) {
                         dispatch(apiDataSuccess(requestKey, config, response, responseBody));
                         const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
-                        if (config.afterSuccess || globalConfig.afterSuccess) {
-                            if (config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) !== false && globalConfig.afterSuccess) {
-                                globalConfig.afterSuccess(updatedRequest, dispatch, getState);
-                            }
+
+                        // don't execute globalConfig.afterSuccess if config.afterSuccess returns false, otherwise execute both
+                        if ((config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) !== false || !config.afterSuccess) && globalConfig.afterSuccess) {
+                            globalConfig.afterSuccess(updatedRequest, dispatch, getState);
                         }
+
                         resolve({ data: getResultData(getState().apiData, endpointKey, params), request: updatedRequest! });
                     } else {
                         dispatch(apiDataFail(requestKey, response, responseBody));
