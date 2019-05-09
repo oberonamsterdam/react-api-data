@@ -1,6 +1,13 @@
 import { ActionCreator } from 'redux';
 import { ApiDataState, Action } from '../reducer';
-import { ApiDataBinding, ApiDataEndpointConfig, ApiDataGlobalConfig, EndpointParams, getResultData } from '../index';
+import {
+    ApiDataBinding,
+    ApiDataEndpointConfig,
+    ApiDataGlobalConfig,
+    ApiDataRequest,
+    EndpointParams,
+    getResultData
+} from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -47,13 +54,20 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
             return Promise.reject(errorMsg);
         }
+
+        // promise resolve value, get it at the end to get up to date values
+        const getApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => ({
+            data: getResultData(getState().apiData, endpointKey, params),
+            request: request || getApiDataRequest(getState().apiData, endpointKey, params)!,
+        });
+
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return Promise.resolve({ data: getResultData(getState().apiData, endpointKey, params), request: apiDataRequest });
+            return Promise.resolve(getApiDataBinding(apiDataRequest));
         }
 
         const requestKey = getRequestKey(endpointKey, params || {});
@@ -82,6 +96,9 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
+
+
+
             if (timeout) {
                 abortTimeout = setTimeout(
                     () => {
@@ -89,8 +106,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         dispatch(apiDataFail(requestKey, error));
                         onError(error);
                         aborted = true;
-                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params)! }
-                        );
+                        resolve(getApiDataBinding());
                     },
                     timeout
                 );
@@ -116,11 +132,11 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                             globalConfig.afterSuccess(updatedRequest, dispatch, getState);
                         }
 
-                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: updatedRequest! });
+                        resolve(getApiDataBinding(updatedRequest));
                     } else {
                         dispatch(apiDataFail(requestKey, response, responseBody));
                         onError(response, responseBody);
-                        resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params)! });
+                        resolve(getApiDataBinding());
                     }
                 },
                 (error: any) => {
@@ -130,7 +146,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
                     onError(undefined, error);
-                    resolve({ data: getResultData(getState().apiData, endpointKey, params), request: getApiDataRequest(getState().apiData, endpointKey, params)! });
+                    resolve(getApiDataBinding());
                 }
             );
         });
