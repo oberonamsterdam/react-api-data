@@ -11,6 +11,7 @@ import { Action } from './reducer';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
+import { ThunkAction } from 'redux-thunk';
 
 export {
     withApiData,
@@ -70,6 +71,7 @@ export interface ApiDataGlobalConfig {
     afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
     // todo: add afterFail and deprecate handleErrorResponse
     timeout?: number;
+    autoTrigger?: boolean;
 }
 
 /**
@@ -106,6 +108,7 @@ export interface ApiDataEndpointConfig {
     setRequestProperties?: (defaultProperties: any, state: any) => any;
 
     timeout?: number;
+    autoTrigger?: boolean;
 }
 
 /**
@@ -118,4 +121,5 @@ export interface ApiDataEndpointConfig {
 export interface ApiDataBinding<T> {
     data?: T;
     request: ApiDataRequest;
+    perform: (params: EndpointParams, body: string | FormData | any) => ThunkAction<{}, { apiData: ApiDataState; }, void, Action>;
 }
