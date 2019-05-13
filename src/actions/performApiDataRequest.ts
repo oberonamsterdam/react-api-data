@@ -19,18 +19,28 @@ import { RequestHandler } from '../request';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
-    const requestProperties = composeConfigFn(endpointConfig.setRequestProperties, globalConfig.setRequestProperties)(defaultProperties, state);
-    requestProperties.headers = composeConfigFn(endpointConfig.setHeaders, globalConfig.setHeaders)(defaultProperties.headers, state);
+    const requestProperties = composeConfigPipeFn(endpointConfig.setRequestProperties, globalConfig.setRequestProperties)(defaultProperties, state);
+    requestProperties.headers = composeConfigPipeFn(endpointConfig.setHeaders, globalConfig.setHeaders)(defaultProperties.headers, state);
 
     return requestProperties;
 };
 
-const composeConfigFn = (endpointFn?: any, globalFunction?: any): any => {
+// passes return value from endpoint function to global function
+const composeConfigPipeFn = (endpointFn?: any, globalFunction?: any): any => {
     const id = (val: any) => val;
     const fnA = endpointFn || id;
     const fnB = globalFunction || id;
 
-    return (value: any, state: ApiDataState) => fnA(fnB(value, state), state);
+    return (value: any, ...args: any[]) => fnA(fnB(value, ...args), ...args);
+};
+
+// calls global function after endpoint function if endpoint function does not return false
+const composeConfigOverrideFn = (endpointFn?: any, globalFn?: any): any => {
+    const fallback = (val: any) => undefined;
+    const fnA = endpointFn || fallback;
+    const fnB = globalFn || fallback;
+
+    return (...args: any[]) => fnA(...args) !== false && fnB(...args);
 };
 
 let requestFunction = Request;
@@ -93,35 +103,16 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
         };
 
-        const onBeforeError = (responseBody: any, response: any) => {
-            const beforeError = config.beforeError || globalConfig.beforeError;
-
-            if (beforeError && responseBody && !responseBody.ok) {
-                const alteredResp = beforeError({ response, body: responseBody });
-                responseBody = alteredResp && alteredResp.body ? alteredResp.body : responseBody;
-                response = alteredResp && alteredResp.response ? alteredResp.response : response;
-
-                if (typeof config.beforeError === 'function' && !response) {
-                    return;
-                }
-
-                if (globalConfig.beforeError && response !== undefined && responseBody !== undefined) {
-                    globalConfig.beforeError({ response, body: responseBody });
-                }
-            }
-        };
-
         return new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
 
-
-
             if (timeout) {
                 abortTimeout = setTimeout(
                     () => {
                         const error = new Error('Timeout');
+                        // todo: call handleError instead
                         dispatch(apiDataFail(requestKey, error));
                         onError();
                         aborted = true;
@@ -131,32 +122,16 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 );
             }
             requestFunction(formatUrl(config.url, params), requestProperties).then(
-                ({ response, body: responseBody }: HandledResponse) => {
+                (handledResponse: HandledResponse) => {
                     if (aborted) {
                         return;
                     }
                     clearTimeout(abortTimeout);
-                    const beforeSuccess = config.beforeSuccess || globalConfig.beforeSuccess;
-                    if (response.ok && beforeSuccess) {
-                        const alteredResp = beforeSuccess({ response, body: responseBody });
-                        response = alteredResp.response;
-                        responseBody = alteredResp.body;
-                    }
-                    if (response.ok) {
-                        dispatch(apiDataSuccess(requestKey, config, response, responseBody));
-                        const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
 
-                        // don't execute globalConfig.afterSuccess if config.afterSuccess returns false, otherwise execute both
-                        if ((config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) !== false || !config.afterSuccess) && globalConfig.afterSuccess) {
-                            globalConfig.afterSuccess(updatedRequest, dispatch, getState);
-                        }
-
-                        resolve(getApiDataBinding(updatedRequest));
+                    if (handledResponse.response.ok) {
+                        handleSuccess(handledResponse)
                     } else {
-                        onBeforeError(responseBody, response);
-                        dispatch(apiDataFail(requestKey, response, responseBody));
-                        onError();
-                        resolve(getApiDataBinding());
+                        handleFail(handledResponse);
                     }
                 },
                 (error: any) => {
@@ -164,11 +139,48 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         return;
                     }
                     clearTimeout(abortTimeout);
-                    dispatch(apiDataFail(requestKey, undefined, error));
+                    // todo: call handleError instead
+                    dispatch(apiDataFail(requestKey, error));
                     onError();
                     resolve(getApiDataBinding());
                 }
             );
+
+            const handleSuccess = ({ response, body: responseBody }: HandledResponse) => {
+                // before success cb
+                const beforeSuccess = composeConfigPipeFn(config.beforeSuccess, globalConfig.beforeSuccess);
+                const alteredResp = beforeSuccess({ response, body: responseBody });
+                response = alteredResp.response;
+                responseBody = alteredResp.body;
+
+                // dispatch success
+                dispatch(apiDataSuccess(requestKey, config, response, responseBody));
+                const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
+
+                // after success cb
+                const afterSuccess = composeConfigOverrideFn(config.afterSuccess, globalConfig.afterSuccess);
+                afterSuccess(updatedRequest, dispatch, getState);
+
+                resolve(getApiDataBinding(updatedRequest));
+            };
+
+            const handleFail = (responseBody: any, response?: Response) => {
+                // before error cb
+                const beforeError = composeConfigPipeFn(config.beforeError, globalConfig.beforeError);
+                const alteredResp = beforeError({ response, body: responseBody });
+                response = alteredResp.response;
+                responseBody = alteredResp.body;
+
+                // dispatch fail
+                dispatch(apiDataFail(requestKey, responseBody, response));
+                const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
+
+                // after error cb
+                const afterError = composeConfigOverrideFn(config.afterError, globalConfig.afterError);
+                afterError(updatedRequest, dispatch, getState);
+
+                resolve(getApiDataBinding());
+            };
         });
     };
 };
