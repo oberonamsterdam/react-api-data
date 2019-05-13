@@ -2,141 +2,144 @@ import { apiDataSuccess } from './apiDataSuccess';
 
 import { normalize, schema } from 'normalizr';
 
-test('should set up the ApiDataSuccessAction action object without transformResponseBody and normalizedData provided', () => {
-    // Set up a fake config object for the endpointConfig parameter.
-    const config = {
-        url: 'https://myapi.org/myData',
-        method: 'GET',
-        cacheDuration: 60000
-    };
+describe('should handle the ApiDataSuccesAction correctly', () => {
 
-    // Set up a fake response object for the response parameter.
-    const response = {
-        ok: false,
-        redirected: false,
-        data: 'test-data',
-        statusText: 'Not Found',
-        url: 'https://myapi.org/myData'
-    };
+    test('should set up the ApiDataSuccessAction action object without transformResponseBody and normalizedData provided', () => {
+        // Set up a fake config object for the endpointConfig parameter.
+        const config = {
+            url: 'https://myapi.org/myData',
+            method: 'GET',
+            cacheDuration: 60000
+        };
 
-    // @ts-ignore
-    const action = apiDataSuccess('getData', config, response, { data: 'json' });
+        // Set up a fake response object for the response parameter.
+        const response = {
+            ok: false,
+            redirected: false,
+            data: 'test-data',
+            statusText: 'Not Found',
+            url: 'https://myapi.org/myData'
+        };
 
-    expect(action).toEqual({
-        type: 'API_DATA_SUCCESS',
-        payload: {
-            requestKey: 'getData',
-            response,
-            responseBody: { data: 'json' },
-            normalizedData: undefined
-        }
+        // @ts-ignore
+        const action = apiDataSuccess('getData', config, response, {data: 'json'});
+
+        expect(action).toEqual({
+            type: 'API_DATA_SUCCESS',
+            payload: {
+                requestKey: 'getData',
+                response,
+                responseBody: {data: 'json'},
+                normalizedData: undefined
+            }
+        });
     });
-});
 
-test('should set up the ApiDataSuccessAction action object and call normalize successfully', () => {
-    // Set up a fake response object for the response parameter.
-    const response = {
-        ok: false,
-        redirected: false,
-        data: 'test-data',
-        statusText: 'Not Found',
-        url: 'https://myapi.org/myData'
-    };
+    test('should set up the ApiDataSuccessAction action object and call normalize successfully', () => {
+        // Set up a fake response object for the response parameter.
+        const response = {
+            ok: false,
+            redirected: false,
+            data: 'test-data',
+            statusText: 'Not Found',
+            url: 'https://myapi.org/myData'
+        };
 
-    // Set up a fake body argument to be normalizd.
-    const body: any = [
-        {
-            id: '123',
-            data: 'json'
-        },
-        {
-            id: '456',
-            data: 'json'
-        }
-    ];
+        // Set up a fake body argument to be normalizd.
+        const body: any = [
+            {
+                id: '123',
+                data: 'json'
+            },
+            {
+                id: '456',
+                data: 'json'
+            }
+        ];
 
-    // Set up schema.
-    const dataSchema = new schema.Entity('data');
-    const dataListSchema = [dataSchema];
+        // Set up schema.
+        const dataSchema = new schema.Entity('data');
+        const dataListSchema = [dataSchema];
 
-    // Set up a fake config object for the endpointConfig parameter.
-    const config = {
-        url: 'https://myapi.org/myData',
-        method: 'GET',
-        cacheDuration: 60000,
-        responseSchema: dataListSchema
-    };
+        // Set up a fake config object for the endpointConfig parameter.
+        const config = {
+            url: 'https://myapi.org/myData',
+            method: 'GET',
+            cacheDuration: 60000,
+            responseSchema: dataListSchema
+        };
 
-    // @ts-ignore
-    const action = apiDataSuccess('getData', config, response, body);
+        // @ts-ignore
+        const action = apiDataSuccess('getData', config, response, body);
 
-    expect(action).toEqual({
-        type: 'API_DATA_SUCCESS',
-        payload: {
-            requestKey: 'getData',
-            response,
-            responseBody: body,
-            normalizedData: normalize(body, config.responseSchema)
-        }
+        expect(action).toEqual({
+            type: 'API_DATA_SUCCESS',
+            payload: {
+                requestKey: 'getData',
+                response,
+                responseBody: body,
+                normalizedData: normalize(body, config.responseSchema)
+            }
+        });
     });
-});
 
-test('should not return an invalid ApiDataSuccessAction action object', () => {
-    // Set up a fake response object for the response parameter.
-    const response = {
-        ok: false,
-        redirected: false,
-        data: 'test-data',
-        statusText: 'Not Found',
-        url: 'https://myapi.org/myData'
-    };
+    test('should not return an invalid ApiDataSuccessAction action object', () => {
+        // Set up a fake response object for the response parameter.
+        const response = {
+            ok: false,
+            redirected: false,
+            data: 'test-data',
+            statusText: 'Not Found',
+            url: 'https://myapi.org/myData'
+        };
 
-    // Set up a fake body argument to be normalizd.
-    const body1: any = [
-        {
-            id: '123',
-            data: 'json'
-        },
-        {
-            id: '456',
-            data: 'json'
-        }
-    ];
+        // Set up a fake body argument to be normalizd.
+        const body1: any = [
+            {
+                id: '123',
+                data: 'json'
+            },
+            {
+                id: '456',
+                data: 'json'
+            }
+        ];
 
-    // Set up a fake body argument to be normalizd.
-    const body2: any = [
-        {
-            id: 'abc',
-            data: 'json'
-        },
-        {
-            id: 'def',
-            data: 'json'
-        }
-    ];
+        // Set up a fake body argument to be normalizd.
+        const body2: any = [
+            {
+                id: 'abc',
+                data: 'json'
+            },
+            {
+                id: 'def',
+                data: 'json'
+            }
+        ];
 
-    // Set up schema.
-    const dataSchema = new schema.Entity('data');
-    const dataListSchema = [dataSchema];
+        // Set up schema.
+        const dataSchema = new schema.Entity('data');
+        const dataListSchema = [dataSchema];
 
-    // Set up a fake config object for the endpointConfig parameter.
-    const config = {
-        url: 'https://myapi.org/myData',
-        method: 'GET',
-        cacheDuration: 60000,
-        responseSchema: dataListSchema
-    };
+        // Set up a fake config object for the endpointConfig parameter.
+        const config = {
+            url: 'https://myapi.org/myData',
+            method: 'GET',
+            cacheDuration: 60000,
+            responseSchema: dataListSchema
+        };
 
-    // @ts-ignore
-    const action = apiDataSuccess('getData', config, response, body1);
+        // @ts-ignore
+        const action = apiDataSuccess('getData', config, response, body1);
 
-    expect(action).not.toEqual({
-        type: 'API_DATA_SUCCESS',
-        payload: {
-            requestKey: 'getData',
-            response,
-            responseBody: body2,
-            normalizedData: normalize(body1, config.responseSchema)
-        }
+        expect(action).not.toEqual({
+            type: 'API_DATA_SUCCESS',
+            payload: {
+                requestKey: 'getData',
+                response,
+                responseBody: body2,
+                normalizedData: normalize(body1, config.responseSchema)
+            }
+        });
     });
 });

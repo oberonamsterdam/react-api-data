@@ -3,12 +3,7 @@ import { denormalize, schema } from 'normalizr';
 import { getEntity } from './getEntity';
 import { ApiDataState } from '../reducer';
 
-test('should return a single entity from normalized data', () => {
-
-    // Set up a fake schema for the getEntity function parameter.
-    const dataSchema = new schema.Entity('users');
-    // const dataListSchema = [dataSchema];
-
+describe(' getEntity function should return a single entity from normalized data', () => {
     // Set up apiDataState object.
     const apiDataState: ApiDataState = {
         globalConfig: {
@@ -31,9 +26,22 @@ test('should return a single entity from normalized data', () => {
         entities: { users: { abc: '1234' } }
     };
 
-    // Set up a fake id for the getEntity function parameter.
-    const id = 'abc';
-    const action = getEntity(apiDataState, dataSchema, id);
-
-    expect(action).toEqual(denormalize(id, dataSchema, apiDataState.entities));
+    test('returns a denormalized data object from the entities in the endPointConfig', () => {
+        const dataSchema = new schema.Entity('users');
+        const id = 'abc';
+        const entity = getEntity(apiDataState, dataSchema, id);
+        expect(entity).toEqual(denormalize(id, dataSchema, apiDataState.entities));
+    });
+    test('returns undefined because no schema found', () => {
+        const dataSchema = new schema.Entity('clients');
+        const id = 'abc';
+        const entity = getEntity(apiDataState, dataSchema, id);
+        expect(entity).toEqual(undefined);
+    });
+    test('returns undefined because no id found', () => {
+        const dataSchema = new schema.Entity('users');
+        const id = 'cba';
+        const entity = getEntity(apiDataState, dataSchema, id);
+        expect(entity).toEqual(undefined);
+    });
 });
