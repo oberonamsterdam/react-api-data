@@ -13,6 +13,17 @@ or
 
 Make sure _fetch_ is available globally, polyfill it if needed to support older environments.
 
+## Install dependencies
+
+React-api-data requires the installation of the peer-dependencies react-redux, redux-thunk and normalizr. 
+These can be installed with the following command:
+
+`npm install react-redux redux-thunk normalizr`
+
+or
+
+`yarn add react-redux redux-thunk normalizr`
+
 ## API
 
 [API specification](api.md)
