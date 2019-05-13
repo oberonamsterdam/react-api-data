@@ -1,6 +1,13 @@
 import { ActionCreator } from 'redux';
 import { ApiDataState, Action } from '../reducer';
-import { ApiDataEndpointConfig, ApiDataGlobalConfig, EndpointParams } from '../index';
+import {
+    ApiDataBinding,
+    ApiDataEndpointConfig,
+    ApiDataGlobalConfig,
+    ApiDataRequest,
+    EndpointParams,
+    getResultData
+} from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -33,10 +40,9 @@ const __DEV__ = process.env.NODE_ENV === 'development';
 /**
  * Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
  * to use {@link withApiData}.
- * @return {Promise<void>} Always resolves, use request networkStatus to see if call was succeeded or not.
  */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) => {
-    return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<void> => {
+    return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
@@ -47,13 +53,20 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
             return Promise.reject(errorMsg);
         }
+
+        // promise resolve value, get it at the end to get up to date values
+        const getApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => ({
+            data: getResultData(getState().apiData, endpointKey, params),
+            request: request || getApiDataRequest(getState().apiData, endpointKey, params)!,
+        });
+
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return Promise.resolve();
+            return Promise.resolve(getApiDataBinding(apiDataRequest));
         }
 
         const requestKey = getRequestKey(endpointKey, params || {});
@@ -98,10 +111,13 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             }
         };
 
-        return new Promise((resolve: () => void) => {
+        return new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
+
+
+
             if (timeout) {
                 abortTimeout = setTimeout(
                     () => {
@@ -109,7 +125,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         dispatch(apiDataFail(requestKey, error));
                         onError();
                         aborted = true;
-                        resolve();
+                        resolve(getApiDataBinding());
                     },
                     timeout
                 );
@@ -128,23 +144,20 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     }
                     if (response.ok) {
                         dispatch(apiDataSuccess(requestKey, config, response, responseBody));
+                        const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
 
-                        if (config.afterSuccess || globalConfig.afterSuccess) {
-                            const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
-                            if (config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) === false) {
-                                return;
-                            }
-                            if (globalConfig.afterSuccess) {
-                                globalConfig.afterSuccess(updatedRequest, dispatch, getState);
-                            }
+                        // don't execute globalConfig.afterSuccess if config.afterSuccess returns false, otherwise execute both
+                        if ((config.afterSuccess && config.afterSuccess(updatedRequest, dispatch, getState) !== false || !config.afterSuccess) && globalConfig.afterSuccess) {
+                            globalConfig.afterSuccess(updatedRequest, dispatch, getState);
                         }
+
+                        resolve(getApiDataBinding(updatedRequest));
                     } else {
                         onBeforeError(responseBody, response);
                         dispatch(apiDataFail(requestKey, response, responseBody));
                         onError();
-
+                        resolve(getApiDataBinding());
                     }
-                    resolve();
                 },
                 (error: any) => {
                     if (aborted) {
@@ -153,7 +166,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
                     onError();
-                    resolve();
+                    resolve(getApiDataBinding());
                 }
             );
         });
