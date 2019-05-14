@@ -18,11 +18,11 @@ Make sure _fetch_ is available globally, polyfill it if needed to support older 
 React-api-data requires the installation of the peer-dependencies react-redux, redux-thunk and normalizr. 
 These can be installed with the following command:
 
-`npm install react-redux redux-thunk normalizr`
+`npm install redux react-redux redux-thunk normalizr`
 
 or
 
-`yarn add react-redux redux-thunk normalizr`
+`yarn add redux react-redux redux-thunk normalizr`
 
 ## API
 
