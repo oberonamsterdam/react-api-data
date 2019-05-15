@@ -57,7 +57,9 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
  */
 
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
-    return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentClass<TChildProps> => {
+    // note: return type ComponentType<TChildProps> and ComponentClass<TChildProps> have been replaced with <any> because
+    // these generics don't support the new feature of params array with array of ApiDataBinding as a result
+    return (WrappedComponent: React.ComponentType<any>): React.ComponentClass<any> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
