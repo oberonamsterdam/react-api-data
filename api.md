@@ -54,7 +54,7 @@ Type: {result: any?, networkStatus: [NetworkStatus](#networkstatus), lastCall: [
 
 Global configuration for all endpoints.
 
-Type: {handleErrorResponse: function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, endpointKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?, setHeaders: function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, setRequestProperties: function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, beforeSuccess: function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?, afterSuccess: function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?, timeout: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?}
+Type: {handleErrorResponse: function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, endpointKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?, setHeaders: function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, setRequestProperties: function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, beforeSuccess: function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?, afterSuccess: function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?, timeout: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?, autoTrigger: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?}
 
 **Properties**
 
@@ -64,12 +64,15 @@ Type: {handleErrorResponse: function (response: [Response](https://developer.moz
 -   `beforeSuccess` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?** 
 -   `afterSuccess` **function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+-   `autoTrigger` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+
+`autoTrigger` defaults to `true` for GET requests and `false` for all other requests.
 
 ## ApiDataEndpointConfig
 
 Specification and configuration of an endpoint.
 
-Type: {url: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), method: (`"GET"` \| `"POST"` \| `"PUT"` \| `"PATCH"` \| `"DELETE"`), cacheDuration: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?, responseSchema: ([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>)?, transformResponseBody: function (responseBody: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): NormalizedData?, handleErrorResponse: function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?, beforeSuccess: function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?, afterSuccess: function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?, setHeaders: function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, setRequestProperties: function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, timeout: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?}
+Type: {url: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), method: (`"GET"` \| `"POST"` \| `"PUT"` \| `"PATCH"` \| `"DELETE"`), cacheDuration: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?, responseSchema: ([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>)?, transformResponseBody: function (responseBody: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): NormalizedData?, handleErrorResponse: function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?, beforeSuccess: function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?, afterSuccess: function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?, setHeaders: function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, setRequestProperties: function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, timeout: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?, autoTrigger: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?}
 
 **Properties**
 
@@ -84,6 +87,9 @@ Type: {url: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Ref
 -   `setHeaders` **function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `setRequestProperties` **function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+-   `autoTrigger` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+
+`autoTrigger` defaults to `true` for GET requests and `false` for all other requests.
 
 ## ApiDataBinding
 
@@ -95,6 +101,9 @@ Type: {data: T?, request: [ApiDataRequest](#apidatarequest)}
 
 -   `data` **T?** 
 -   `request` **[ApiDataRequest](#apidatarequest)** 
+-   `perform` **(params: EndpointParams, body: Object | string | FormData) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;ApiDataBinding>**
+
+The perform property response property resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original ApiDataBinding and the resolved promise contain the result of the performed request.
 
 **Examples**
 
@@ -113,7 +122,7 @@ component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#api
 
 -   `bindings` **{ [propName in TPropNames]: string }** maps prop names to endpoint keys
 -   `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the URL parameters. Providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key.
--   
+
 Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Function to wrap your component
 
 **Examples**
@@ -121,7 +130,8 @@ Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Ref
 ```javascript
 withApiData({
     article: 'getArticle',
-    users: 'getUser'
+    users: 'getUser',
+    editArticle: 'editArticle' // an endpoint with autoTrigger false
 }, (ownProps, state) => ({
     article: {
         id: ownProps.articleId,
@@ -130,9 +140,20 @@ withApiData({
     users: state.users.map(user => ({
         userId: user.id
     })),
+    editArticle: {}
 }))
 // props.article will be an ApiDataBinding
 // props.users will be an array of ApiDataBinding
+// props.editArticle will be an ApiDataBinding
+
+// perform can be used to trigger calls with autoTrigger: false
+props.editArticle.perform({
+    id: props.articleId
+}, {
+    title: 'New Title',
+    content: 'New article content'
+});
+
 ```
 
 ## configureApiData

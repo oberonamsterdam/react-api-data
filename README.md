@@ -101,6 +101,81 @@ fetching the data if needed, and binding the data to your component.
 
 ## Posting data
 
+Part of the endpointConfig could be:
+
+```js
+const endpointConfig = {
+    getComments: {
+        url: 'http://www.example.com/getComments',
+        method: 'GET',
+        responseSchema: commentsSchema,
+        autoTrigger: true // could be omitted as true is also the default value for endpoints with method: 'GET'
+    },
+    postComment: {
+        url: 'http://www.example.com/postComment',
+        method: 'POST',
+        responseSchema: commentSchema,
+        autoTrigger: false, // could be omitted as false is also the default value for endpoints with method: 'POST'
+        afterSuccess: (request, dispatch) => {
+            dispatch(invalidateApiDataRequest('getComments')); // triggers reload of getComments
+        }
+    }
+};
+```
+
+```js
+import React from 'react';
+import { withApiData } from 'react-api-data';
+
+// bind api data to a component
+
+const connectApiData = withApiData({
+    // specify property name and endpoint
+    postComment: 'postComment'
+}, (ownProps, state) => ({
+    // provide URL parameters, can be empty objects for autoTrigger: false endpoints
+    postComment: {}
+}));
+
+class WriteComment extends React.Component {
+    state = {
+        comment: ''
+    }
+
+    render () {
+        const status = this.props.postComment.request ? this.props.postComment.request.networkStatus : 'ready';
+
+        return (
+            <div>
+                <h1>Post a comment</h1>
+                {status === 'ready'; && (
+                    <div>
+                        <textarea onChange={event => this.setState({comment: event.target.value})} />
+                        <button onClick={() => this.props.postComment.perform({}, {comment: this.state.comment})}>Submit</button>
+                    </div>
+                )}
+                {status === 'loading' && (
+                    <div>Submitting...</div>
+                )}
+                {status === 'failed' && (
+                    <div>
+                        Something went wrong.
+                        <button onClick={() => this.props.postComment.perform({}, {comment: this.state.comment})}>Try again</button>
+                    </div>
+                )}
+                {status === 'success' && (
+                    <div>Submitted!</div>
+                )}
+            </div>
+        );
+    }
+}
+
+export default connectApiData(WriteComment);
+```
+
+## Alternative data posting
+
 ```js
 import React from 'react';
 import { connect } from 'react-redux';
@@ -187,11 +262,13 @@ export default {
 ```
 
 ## Manually clearing cache
+
 ```js
 dispatch(invalidateApiDataRequest('getComments'));
 ```
 
 ## Removing api data from the store
+
 ```js
 import { performApiRequest, purgeApiData } from 'react-api-data';
 
@@ -201,6 +278,7 @@ export const logout = () => (dispatch) => {
 ```
 
 ## Including Cookies in your Request
+
 ```js
 export const globalConfig: ApiDataGlobalConfig = {
     setRequestProperties: (defaultProperties) => ({
@@ -211,6 +289,7 @@ export const globalConfig: ApiDataGlobalConfig = {
 ```
 
 ## Make multiple requests to the same endpoint at once
+
 ```js
 const connectApiData = withApiData({
     items: 'getItemsInList'

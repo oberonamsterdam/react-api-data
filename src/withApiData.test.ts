@@ -73,25 +73,13 @@ describe('shouldAutoTrigger', () => {
             getProps(endpoint, true, emptyParams, 'ready', { method: 'GET' }), 'getData');
         expect(testAutoTrigger).toBe(true);
     });
-    test('POST does not trigger', () => {
-        const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'POST' }), 'getData');
-        expect(testAutoTrigger).toBe(false);
-    });
-    test('PUT does not trigger', () => {
-        const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'PUT' }), 'getData');
-        expect(testAutoTrigger).toBe(false);
-    });
-    test('DELETE does not trigger', () => {
-        const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'DELETE' }), 'getData');
-        expect(testAutoTrigger).toBe(false);
-    });
-    test('PATCH does not trigger', () => {
-        const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'PATCH' }), 'getData');
-        expect(testAutoTrigger).toBe(false);
+    test('POST/PUT/DELETE/PATCH does not trigger', () => {
+        const methods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+        methods.forEach(method => {
+            const testAutoTrigger = shouldAutoTrigger(
+                getProps(endpoint, true, emptyParams, 'ready', { method }), 'getData');
+            expect(testAutoTrigger).toBe(false);
+        });
     });
     test('GET with endpointConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
