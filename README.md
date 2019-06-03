@@ -38,7 +38,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { configureApiData, reducer } from 'react-api-data';
 import thunk from 'redux-thunk';
 
-// define normalizr response schemas
+// optionally define normalizr response schemas
 
 const authorSchema = new schema.Entity('Author');
 const articleSchema = new schema.Entity('Article', {
