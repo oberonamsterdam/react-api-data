@@ -45,10 +45,8 @@ const endpointConfig = {
     saveArticle: {
         url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
         method: 'POST',
-        responseSchema: saveSchema,
-        autoTrigger: false, // could be omitted as false is also the default value for endpoints with method: 'POST'
         afterSuccess: (request, dispatch) => {
-            dispatch(invalidateApiDataRequest('getArticle')); // triggers reload of getComments
+            dispatch(invalidateApiDataRequest('getArticle')); // triggers reload of getArticle
         }
     }
 };
@@ -69,12 +67,11 @@ import { withApiData } from 'react-api-data';
 
 const connectApiData = withApiData({
     // specify property name and endpoint
-    article: 'getArticle',
+    getArticle: 'getArticle',
     saveArticle: 'saveArticle'
 }, (ownProps, state) => ({
-    // provide URL parameters, can be empty objects for autoTrigger: false endpoints
-    article: {articleId: ownProps.articleId, userId: state.userId || ''},
-    saveArticle: {}
+    // provide URL parameters, can be omitted for autoTrigger: false endpoints or for endpoints without parameters
+    getArticle: {articleId: ownProps.articleId, userId: state.userId || ''}
 }));
 
 
@@ -84,23 +81,28 @@ class EditArticle extends React.Component {
     }
 
     render() {
-        switch(this.props.article.request.networkStatus) {
+        const getArticle = this.props.getArticle;
+        const article = getArticle.data;
+        const saveArticle = this.props.saveArticle;
+
+        switch(getArticle.request.networkStatus) {
             case 'loading': return 'Loading...';
             case 'failed': return 'Something went wrong :(';
             case 'success': {
-                const article = this.props.article.data;
                 return (
                     <div>
                         <h1>{article.title}</h1>
                         <em>{article.author.name}</em><br />
                         <textarea onChange={event => this.setState({body: event.target.value})}>{article.body}</textarea>
-                        {this.props.saveArticle.request.networkStatus !== 'failed' && (
+
+                        {saveArticle.request.networkStatus === 'failed' && (
                             <p>Error while saving article, please try again.</p>
                         )}
-                        {this.props.saveArticle.request.networkStatus !== 'loading' ? (
-                            <button onClick={() => this.props.saveArticle.perform({articleId: this.props.articleId}, {body: this.state.body})}>Submit</button>
-                        ) : (
+
+                        {saveArticle.request.networkStatus === 'loading' ? (
                             <p>Saving...</p>
+                        ) : (
+                            <button onClick={() => saveArticle.perform({articleId: this.props.articleId}, {body: this.state.body})}>Submit</button>
                         )}
                     </div>
                 );
