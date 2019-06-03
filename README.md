@@ -52,6 +52,13 @@ const endpointConfig = {
         url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId/:userId',
         method: 'GET',
         responseSchema: articleSchema
+    },
+    saveArticle: {
+        url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
+        method: 'POST',
+        afterSuccess: (request, dispatch) => {
+            dispatch(invalidateApiDataRequest('getArticle')); // triggers reload of getArticle
+        }
     }
 };
 
@@ -71,27 +78,48 @@ import { withApiData } from 'react-api-data';
 
 const connectApiData = withApiData({
     // specify property name and endpoint
-    article: 'getArticle'
+    getArticle: 'getArticle',
+    saveArticle: 'saveArticle'
 }, (ownProps, state) => ({
-    // provide URL parameters
-    article: {articleId: ownProps.articleId, userId: state.userId || ''}
+    // provide URL parameters, can be omitted for autoTrigger: false endpoints or for endpoints without parameters
+    getArticle: {articleId: ownProps.articleId, userId: state.userId || ''}
 }));
 
-const Article = (props) => {
-    switch(props.article.request.networkStatus) {
-        case 'loading': return 'Loading...';
-        case 'failed': return 'Something went wrong :(';
-        case 'success': {
-            const article = props.article.data;
-            return (
-                <div>
-                    <h1>{article.title}</h1>
-                    <em>{article.author.name}</em><br />
-                    {article.body}
-                </div>
-            );
+
+class EditArticle extends React.Component {
+    state = {
+        body: ''
+    }
+
+    render() {
+        const getArticle = this.props.getArticle;
+        const article = getArticle.data;
+        const saveArticle = this.props.saveArticle;
+
+        switch(getArticle.request.networkStatus) {
+            case 'loading': return 'Loading...';
+            case 'failed': return 'Something went wrong :(';
+            case 'success': {
+                return (
+                    <div>
+                        <h1>{article.title}</h1>
+                        <em>{article.author.name}</em><br />
+                        <textarea onChange={event => this.setState({body: event.target.value})}>{article.body}</textarea>
+
+                        {saveArticle.request.networkStatus === 'failed' && (
+                            <p>Error while saving article, please try again.</p>
+                        )}
+
+                        {saveArticle.request.networkStatus === 'loading' ? (
+                            <p>Saving...</p>
+                        ) : (
+                            <button onClick={() => saveArticle.perform({articleId: this.props.articleId}, {body: this.state.body})}>Submit</button>
+                        )}
+                    </div>
+                );
+            }
+            default: return null;
         }
-        default: return null;
     }
 };
 
@@ -106,77 +134,15 @@ applications. This package is the result of eliminating repetitive code around A
 fetching and storing API data into one single package. It provides an easy to use interface that aims to minimize the
 amount of code needed to use data from external APIs, while maintaining maximum flexibility to support any non-standard
 API. The idea is that you can just bind data from a given API endpoint to your component, react-api-data takes care of
-fetching the data if needed, and binding the data to your component. 
+fetching the data if needed, and binding the data to your component.
 
 # Examples
 
-## Posting data
-
-```js
-import React from 'react';
-import { connect } from 'react-redux';
-import { getApiDataRequest, performApiRequest } from 'react-api-data';
-
-const mapStateToProps = state => ({
-    request: getApiDataRequest(state.apiData, 'postComment')
-});
-
-const mapDispatchToProps = dispatch => ({
-    onSubmit: comment => { dispatch(performApiRequest('postComment', {}, {comment})); },
-    onSuccess: () => { dispatch(invalidateApiDataRequest('getComments'))}
-});
-
-class WriteComment extends React.Component {
-    state = {
-        comment: ''
-    }
-
-    componentDidUpdate(prevProps) {
-        if (
-            prevProps.articleResponse.request
-            && this.props.articleResponse.request
-            && prevProps.articleResponse.request.networkStatus === 'loading'
-            && this.props.articleResponse.request.networkStatus === 'success'
-        ) {
-            this.props.onSuccess();
-        }
-    }
-    
-    render () {
-        const status = this.props.request ? this.props.request.networkStatus : '';
-        
-        return (
-            <div>
-                <h1>Post a comment</h1>
-                {status === '' && (
-                    <div>
-                        <textarea onChange={event => this.setState({comment: event.target.value})} />
-                        <button onClick={() => this.props.onSubmit(this.state.comment)}>Submit</button>
-                    </div>
-                )}
-                {status === 'loading' && (
-                    <div>Submitting...</div>
-                )}
-                {status === 'failed' && (
-                    <div>
-                        Something went wrong.
-                        <button onClick={() => this.props.onSubmit(this.state.comment)}>Try again</button>
-                    </div>
-                )}
-                {status === 'success' && (
-                    <div>Submitted!</div>
-                )}
-            </div>
-        );
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(WriteComment);
-```
-
 ## Caching API responses
-Responses from successful API calls will be kept in memory so the same call won't be re-triggered a second time. This is especially useful when using *withApiData* for the same endpoint on multiple components. 
-You can set a *cacheDuration* to specify how long the response is considered valid, or to disable the caching entirely. 
+
+Responses from successful API calls will be kept in memory so the same call won't be re-triggered a second time. This is especially useful when using *withApiData* for the same endpoint on multiple components.
+You can set a *cacheDuration* to specify how long the response is considered valid, or to disable the caching entirely.
+
 ```js
 export default {
     getArticle: {
@@ -198,11 +164,13 @@ export default {
 ```
 
 ## Manually clearing cache
+
 ```js
 dispatch(invalidateApiDataRequest('getComments'));
 ```
 
 ## Removing api data from the store
+
 ```js
 import { performApiRequest, purgeApiData } from 'react-api-data';
 
@@ -212,6 +180,7 @@ export const logout = () => (dispatch) => {
 ```
 
 ## Including Cookies in your Request
+
 ```js
 export const globalConfig: ApiDataGlobalConfig = {
     setRequestProperties: (defaultProperties) => ({
@@ -222,6 +191,7 @@ export const globalConfig: ApiDataGlobalConfig = {
 ```
 
 ## Make multiple requests to the same endpoint at once
+
 ```js
 const connectApiData = withApiData({
     items: 'getItemsInList'

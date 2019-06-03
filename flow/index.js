@@ -97,6 +97,7 @@ export interface ApiDataGlobalConfig {
         getState: () => any
     ) => void;
     timeout?: number;
+    autoTrigger?: boolean;
 }
 
 /**
@@ -133,6 +134,7 @@ export interface ApiDataEndpointConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
     timeout?: number;
+    autoTrigger?: boolean;
 }
 
 /**
@@ -144,4 +146,13 @@ users: ApiDataBinding<Array<User>>
 export interface ApiDataBinding<T> {
     data?: T;
     request: ApiDataRequest;
+    perform: (
+        params?: EndpointParams | void,
+        body?: any
+      ) => (
+        dispatch: ActionCreator<Action>,
+        getState: () => {
+          apiData: ApiDataState
+        }
+      ) => Promise<ApiDataBinding<T>>;
 }

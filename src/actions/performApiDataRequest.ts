@@ -1,18 +1,18 @@
 import { ActionCreator } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 import { ApiDataState, Action } from '../reducer';
 import {
     ApiDataBinding,
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
-    ApiDataRequest,
-    EndpointParams,
-    getResultData
+    EndpointParams
 } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
+import { getApiDataBinding } from '../helpers/getApiDataBinding';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
@@ -42,7 +42,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * to use {@link withApiData}.
  */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) => {
-    return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
+    return (dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
@@ -54,19 +54,13 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             return Promise.reject(errorMsg);
         }
 
-        // promise resolve value, get it at the end to get up to date values
-        const getApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => ({
-            data: getResultData(getState().apiData, endpointKey, params),
-            request: request || getApiDataRequest(getState().apiData, endpointKey, params)!,
-        });
-
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return Promise.resolve(getApiDataBinding(apiDataRequest));
+            return Promise.resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch, apiDataRequest));
         }
 
         const requestKey = getRequestKey(endpointKey, params || {});
@@ -96,8 +90,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             let abortTimeout: any;
             let aborted = false;
 
-
-
             if (timeout) {
                 abortTimeout = setTimeout(
                     () => {
@@ -105,7 +97,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         dispatch(apiDataFail(requestKey, error));
                         onError(error);
                         aborted = true;
-                        resolve(getApiDataBinding());
+                        resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
                     },
                     timeout
                 );
@@ -131,11 +123,11 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                             globalConfig.afterSuccess(updatedRequest, dispatch, getState);
                         }
 
-                        resolve(getApiDataBinding(updatedRequest));
+                        resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch, updatedRequest));
                     } else {
                         dispatch(apiDataFail(requestKey, response, responseBody));
                         onError(response, responseBody);
-                        resolve(getApiDataBinding());
+                        resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
                     }
                 },
                 (error: any) => {
@@ -145,7 +137,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
                     dispatch(apiDataFail(requestKey, undefined, error));
                     onError(undefined, error);
-                    resolve(getApiDataBinding());
+                    resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
                 }
             );
         });
