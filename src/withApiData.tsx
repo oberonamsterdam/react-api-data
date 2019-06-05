@@ -33,8 +33,8 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
         !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
     const apiDataChanged = newProps.apiData !== oldProps.apiData;
     return (keyParamsHaveChanged(bindingKey)
-        || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)) && shouldAutoTrigger(newProps, bindingKey) === true)) 
-        || (apiDataChanged && shouldAutoTrigger(oldProps, bindingKey) === false && shouldAutoTrigger(newProps, bindingKey) === true);
+        || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)) && shouldAutoTrigger(newProps, bindings[bindingKey]) === true)) 
+        || (apiDataChanged && shouldAutoTrigger(oldProps, bindings[bindingKey]) === false && shouldAutoTrigger(newProps, bindings[bindingKey]) === true);
 };
 
 export const shouldAutoTrigger = (props: WithApiDataProps, endpointKey: string) => {
