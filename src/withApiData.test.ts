@@ -19,9 +19,15 @@ const endpoint = 'getData';
 describe('shouldPerformApiRequest', () => {
     test('The request status or params has been changed, binding are set correctly and status is ready', () => {
         const testOne = shouldPerformApiRequest(
-            getProps(endpoint, true, {}, 'ready'),
-            getProps(endpoint, true, {}, 'success'), bindings, 'getData');
+            getProps(endpoint, true, {}, 'ready', { autoTrigger: true }),
+            getProps(endpoint, true, {}, 'success', { autoTrigger: true }), bindings, 'getData');
         expect(testOne).toBe(true);
+    });
+    test('The request status or params has been changed, binding are set correctly and status is ready, but method is POST so autoTrigger is false', () => {
+        const testOne = shouldPerformApiRequest(
+            getProps(endpoint, true, {}, 'ready', { method: 'POST' }),
+            getProps(endpoint, true, {}, 'success', { method: 'POST' }), bindings, 'getData');
+        expect(testOne).toBe(false);
     });
     test('The request status or params has been changed, or bindings are set correctly and status is not changed (should be false)', () => {
         const testTwo = shouldPerformApiRequest(
@@ -37,8 +43,8 @@ describe('shouldPerformApiRequest', () => {
     });
     test('The request status or params has been changed, when params are set and status has changed', () => {
         const testFour = shouldPerformApiRequest(
-            getProps(endpoint, true, { getData: { one: 'one' } }, 'ready'),
-            getProps(endpoint, true, { getData: { one: 'one' } }, 'success'), bindings, 'getData');
+            getProps(endpoint, true, { getData: { one: 'one' } }, 'ready', { autoTrigger: true }),
+            getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { autoTrigger: true }), bindings, 'getData');
         expect(testFour).toBe(true);
     });
     test('The request status or params has been changed, when params are set but status hasn\'t changed', () => {
