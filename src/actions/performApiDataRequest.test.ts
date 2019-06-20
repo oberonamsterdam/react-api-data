@@ -109,15 +109,6 @@ describe('performApiDataRequest', () => {
     test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
         const state = { apiData: getState('getData', true, {}, 'success', { method: 'GET', cacheDuration: 1000 }) };
         mockResponse(response1);
-        await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
-        const requestKey = getRequestKey('getData');
-        // @ts-ignore
-        return expect(dispatch).not.toHaveBeenCalledWith(apiDataSuccess(getRequestKey('getData'), state.apiData.endpointConfig, response1.response, undefined), apiDataFail(requestKey, response1.response, undefined));
-    });
-
-    test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
-        const state = { apiData: getState('getData', true, {}, 'success', { method: 'GET', cacheDuration: 1000 }) };
-        mockResponse(response1);
         await performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
         const requestKey = getRequestKey('getData');
         // @ts-ignore
