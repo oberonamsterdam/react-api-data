@@ -95,19 +95,19 @@ export interface ApiDataEndpointConfig {
     /*
     * Edit the response before it gets handled by react-api-data.
     */
-    beforeError?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
+    beforeError?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterError?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterError?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
     /*
     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
     */
-    beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */
@@ -119,6 +119,22 @@ export interface ApiDataEndpointConfig {
 
     timeout?: number;
     autoTrigger?: boolean;
+}
+
+export interface ApiDataConfigBeforeProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+}
+
+export interface ApiDataConfigAfterProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+    resultData: any;
+    // redux functions
+    dispatch: Function;
+    getState: Function;
 }
 
 /**

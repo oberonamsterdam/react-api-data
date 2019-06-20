@@ -2,7 +2,7 @@ import { ActionCreator } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { ApiDataState, Action } from '../reducer';
 import {
-    ApiDataBinding,
+    ApiDataBinding, ApiDataConfigBeforeProps,
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
     EndpointParams
@@ -121,11 +121,17 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 }
             );
 
+            const beforeProps = (): ApiDataConfigBeforeProps => ({
+                request: getApiDataRequest(state.apiData, endpointKey, params)!, // there should always be a request after dispatching fetch
+                requestBody: body,
+                endpointKey
+            });
+
             function handleSuccess ({ response, body: responseBody }: HandledResponse, skipBefore = false) {
                 if (!skipBefore) {
                     // before success cb, allows turning this into fail by altering ok value
                     const beforeSuccess = composeConfigPipeFn(config.beforeSuccess, globalConfig.beforeSuccess);
-                    const alteredResp = beforeSuccess({ response, body: responseBody });
+                    const alteredResp = beforeSuccess({ response, body: responseBody }, beforeProps());
                     response = alteredResp.response;
                     responseBody = alteredResp.body;
 
@@ -149,7 +155,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 if (!skipBefore) {
                     // before error cb, allows turning this into success by altering ok value
                     const beforeError = composeConfigPipeFn(config.beforeError, globalConfig.beforeError);
-                    const alteredResp = beforeError({ response, body: responseBody });
+                    const alteredResp = beforeError({ response, body: responseBody }, beforeProps());
                     response = alteredResp.response;
                     responseBody = alteredResp.body;
 
