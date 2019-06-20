@@ -157,11 +157,12 @@ describe('FETCH_API_DATA', () => {
 
 describe('API_DATA_SUCCESS', () => {
     test('new state is correct', () => {
+        const requestKey = getRequestKey('postData');
         // @ts-ignore
         const action: ApiDataSuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
-                requestKey: getRequestKey('postData'),
+                requestKey,
                 response: {
                     body: { data: 'json', extraData: 'moreJson' },
                     ok: true,
@@ -173,13 +174,15 @@ describe('API_DATA_SUCCESS', () => {
             },
         };
 
-        const newState = {
+        const resultState = reducer(updatedState, action);
+
+        expect(resultState).toEqual({
             ...updatedState,
             requests: {
-                [getRequestKey('postData')]: {
+                [requestKey]: {
                     networkStatus: 'success',
                     lastCall: 1000,
-                    duration: Date.now() - 1000,
+                    duration: resultState.requests[requestKey].duration,
                     result: { data: 'json', extraData: 'moreJson' },
                     response: {
                         body: { data: 'json', extraData: 'moreJson' },
@@ -192,8 +195,10 @@ describe('API_DATA_SUCCESS', () => {
                     endpointKey: 'postData',
                 }
             }
-        };
-        expect(reducer(updatedState, action)).toEqual(newState);
+        });
+
+        // compare duration in seconds (execution may take time, causing using Date.now() to be too precise in ms).
+        expect(Math.round(resultState.requests[requestKey].duration / 1000)).toBe(Math.round((Date.now() - 1000) / 1000));
     });
 });
 
