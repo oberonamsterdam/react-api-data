@@ -44,7 +44,8 @@ const response2 = {
         redirected: false,
         status: 200,
         statusText: 'ok'
-    }
+    },
+    body: { msg: 'error' }
 };
 
 const response3 = {
@@ -99,7 +100,7 @@ describe('performApiDataRequest', () => {
         mockResponse(response2);
         await (performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state));
         // @ts-ignore
-        return expect(dispatch).toHaveBeenCalledWith(apiDataFail(requestKey, undefined, response2.response));
+        return expect(dispatch).toHaveBeenCalledWith(apiDataFail(requestKey, response2.body, response2.response));
     });
 
     test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
@@ -182,32 +183,34 @@ describe('performApiDataRequest', () => {
 
         // @ts-ignore (no Response mock)
         const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeError: endpointBeforeError }, { beforeError: globalBeforeError }) };
-        mockResponse(response3);
+        mockResponse(response2);
         await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
         return expect(dispatch)
-            .toHaveBeenCalledWith(apiDataFail(
-                getRequestKey('getData'),
-                { ...response3.body, endpoint: true, global: true },
-                // @ts-ignore fake Response object
-                response3.response,
-            ));
+            .toHaveBeenCalledWith(
+                apiDataFail(
+                    getRequestKey('getData'),
+                    { ...response2.body, endpoint: true, global: true },
+                    // @ts-ignore fake Response object
+                    response2.response,
+                )
+            );
     });
 
     test('beforeError should be able to turn fail into success', async () => {
-        const beforeSuccess = (resp: HandledResponse) => ({
+        const beforeError = (resp: HandledResponse) => ({
             response: {...resp.response, ok: true},
             body: resp.body
         });
-        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeSuccess }) };
-        mockResponse(response3);
+        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeError }) };
+        mockResponse(response2);
         await performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
         expect(dispatch)
             .toHaveBeenCalledWith(apiDataSuccess(
                 getRequestKey('getData'),
                 state.apiData.endpointConfig,
                 // @ts-ignore fake Response
-                { ...response3.response, ok: true },
-                response3.body,
+                { ...response2.response, ok: true },
+                response2.body,
             ));
 
     });
@@ -233,17 +236,17 @@ describe('performApiDataRequest', () => {
         expect(globalAfterSuccess).not.toHaveBeenCalled();
     });
 
-    test('The function resolves with a timeout argument', async () => {
+    test('should dispatch a failure when a timeout gets exceeded', async () => {
         const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, timeout: 2900 }) };
         jest.useFakeTimers();
         (request as jest.Mock).mockImplementation(() => {
             jest.advanceTimersByTime(3000);
             return Promise.resolve(response1);
         });
-        await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
+        await performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
         const error = new Error('Timeout');
         const requestKey = getRequestKey('getData');
-        return expect(dispatch).toHaveBeenCalledWith(apiDataFail(requestKey, error));
+        expect(dispatch).toHaveBeenCalledWith(apiDataFail(requestKey, error));
     });
 
     test('The function resolves with a result argument', () => {
@@ -261,7 +264,7 @@ describe('performApiDataRequest', () => {
         mockResponse(response2);
         await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
         // @ts-ignore
-        return expect(dispatch).toHaveBeenCalledWith(apiDataFail(getRequestKey('getData'), undefined, response2.response));
+        return expect(dispatch).toHaveBeenCalledWith(apiDataFail(getRequestKey('getData'), response2.body, response2.response));
     });
 
     test('The function resolves with an afterError property the afterError function gets called', async () => {

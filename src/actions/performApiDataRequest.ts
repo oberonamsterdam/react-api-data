@@ -48,8 +48,8 @@ let requestFunction = Request;
 const __DEV__ = process.env.NODE_ENV === 'development';
 
 /**
- * Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
- * to use {@link withApiData}.
+ * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
+ * This is an action creator, so make sure to dispatch the return value.
  */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) => {
     return (dispatch: ActionCreator<Action>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
@@ -91,18 +91,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }));
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
 
-        const onError = () => {
-            const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
-
-            if (typeof config.afterError === 'function' && config.afterError(updatedRequest, dispatch, getState) === false) {
-                return;
-            }
-
-            if (typeof globalConfig.afterError === 'function') {
-                globalConfig.afterError(updatedRequest, dispatch, getState);
-            }
-        };
-
         return new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
@@ -111,12 +99,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             if (timeout) {
                 abortTimeout = setTimeout(
                     () => {
-                        const error = new Error('Timeout');
-                        // todo: call handleError instead
-                        dispatch(apiDataFail(requestKey, error));
-                        onError();
                         aborted = true;
-                        resolve(getApiDataBinding());
+                        handleFail(new Error('Timeout'));
                     },
                     timeout
                 );
@@ -131,7 +115,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     if (handledResponse.response.ok) {
                         handleSuccess(handledResponse)
                     } else {
-                        handleFail(handledResponse);
+                        handleFail(handledResponse.body, handledResponse.response);
                     }
                 },
                 (error: any) => {
@@ -139,19 +123,22 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         return;
                     }
                     clearTimeout(abortTimeout);
-                    // todo: call handleError instead
-                    dispatch(apiDataFail(requestKey, error));
-                    onError();
-                    resolve(getApiDataBinding());
+                    handleFail(error);
                 }
             );
 
-            const handleSuccess = ({ response, body: responseBody }: HandledResponse) => {
-                // before success cb
-                const beforeSuccess = composeConfigPipeFn(config.beforeSuccess, globalConfig.beforeSuccess);
-                const alteredResp = beforeSuccess({ response, body: responseBody });
-                response = alteredResp.response;
-                responseBody = alteredResp.body;
+            function handleSuccess ({ response, body: responseBody }: HandledResponse, skipBefore = false) {
+                if (!skipBefore) {
+                    // before success cb, allows turning this into fail by altering ok value
+                    const beforeSuccess = composeConfigPipeFn(config.beforeSuccess, globalConfig.beforeSuccess);
+                    const alteredResp = beforeSuccess({ response, body: responseBody });
+                    response = alteredResp.response;
+                    responseBody = alteredResp.body;
+
+                    if (!response.ok) {
+                        handleFail(responseBody, response, true);
+                    }
+                }
 
                 // dispatch success
                 dispatch(apiDataSuccess(requestKey, config, response, responseBody));
@@ -162,14 +149,21 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 afterSuccess(updatedRequest, dispatch, getState);
 
                 resolve(getApiDataBinding(updatedRequest));
-            };
+            }
 
-            const handleFail = (responseBody: any, response?: Response) => {
-                // before error cb
-                const beforeError = composeConfigPipeFn(config.beforeError, globalConfig.beforeError);
-                const alteredResp = beforeError({ response, body: responseBody });
-                response = alteredResp.response;
-                responseBody = alteredResp.body;
+            function handleFail (responseBody: any, response?: Response, skipBefore = false) {
+                if (!skipBefore) {
+                    // before error cb, allows turning this into success by altering ok value
+                    const beforeError = composeConfigPipeFn(config.beforeError, globalConfig.beforeError);
+                    const alteredResp = beforeError({ response, body: responseBody });
+                    response = alteredResp.response;
+                    responseBody = alteredResp.body;
+
+                    if (response && response.ok) {
+                        handleSuccess({response, body: responseBody}, true);
+                    }
+                }
+
 
                 // dispatch fail
                 dispatch(apiDataFail(requestKey, responseBody, response));
@@ -180,7 +174,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 afterError(updatedRequest, dispatch, getState);
 
                 resolve(getApiDataBinding());
-            };
+            }
         });
     };
 };
