@@ -4,7 +4,7 @@ import request, {HandledResponse} from '../request';
 import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { apiDataFail } from './apiDataFail';
-import { getApiDataRequest, getResultData } from '..';
+import { getApiDataRequest, getResultData, EndpointParams } from '..';
 
 const defaultState = {
     apiData: {
@@ -81,8 +81,11 @@ describe('performApiDataRequest', () => {
     test('The function resolves when request is loading with result data', () => {
         const state = { apiData: getState('postData', true, {}, 'loading', { method: 'POST' }) };
         const result = { data: getResultData(state.apiData, 'postData', {}), request: getApiDataRequest(state.apiData, 'postData', {}) };
-        return expect(performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state)).resolves.toEqual(result);
-
+        return performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state).then(output => {
+            expect(output.data).toEqual(result.data);
+            expect(output.request).toEqual(result.request);
+            expect(typeof output.perform).toEqual('function');
+        });
     });
 
     test('The function resolves with custom response and calls apiDataSuccess', async () => {
@@ -251,8 +254,12 @@ describe('performApiDataRequest', () => {
 
     test('The function resolves with a result argument', () => {
         const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 50000 }) };
-        const result = { data: getResultData(state.apiData, 'getData', {}), request: getApiDataRequest(state.apiData, 'getData', {}) };
-        return expect(performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state)).resolves.toEqual(result);
+        const result = { data: getResultData(state.apiData, 'getData', {}), request: getApiDataRequest(state.apiData, 'getData', {}), perform: (myParams: EndpointParams, body: any) => dispatch(performApiRequest('getData', myParams, body)) };
+        return performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state).then(output => {
+            expect(output.data).toEqual(result.data);
+            expect(output.request).toEqual(result.request);
+            expect(typeof output.perform).toEqual('function');
+        });
     });
 
     test('The function resolves with a beforeError argument and triggers apiDataFail with the beforeError response', async () => {

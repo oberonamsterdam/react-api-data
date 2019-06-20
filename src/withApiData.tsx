@@ -2,12 +2,13 @@ import React from 'react';
 import { ApiDataBinding, ApiDataRequest, EndpointParams } from './index';
 import { connect } from 'react-redux';
 import { ApiDataState } from './reducer';
-import { getApiDataRequest, getResultData, performApiRequest } from './index';
+import { getApiDataRequest, performApiRequest } from './index';
 import { Action } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ActionCreator } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { getApiDataBinding } from './helpers/getApiDataBinding';
 
 type GetParams<TPropName extends string> = (ownProps: any, state: any) => { [paramName in TPropName]?: EndpointParams | EndpointParams[] };
 
@@ -31,7 +32,19 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
     const hasBeenInvalidated = (oldRequest?: ApiDataRequest, newRequest?: ApiDataRequest) =>
         !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
     const apiDataChanged = newProps.apiData !== oldProps.apiData;
-    return (keyParamsHaveChanged(bindingKey) || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey))));
+    return (keyParamsHaveChanged(bindingKey)
+        || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)) && shouldAutoTrigger(newProps, bindings[bindingKey]) === true)) 
+        || (apiDataChanged && shouldAutoTrigger(oldProps, bindings[bindingKey]) === false && shouldAutoTrigger(newProps, bindings[bindingKey]) === true);
+};
+
+export const shouldAutoTrigger = (props: WithApiDataProps, endpointKey: string) => {
+    const endpointConfig = props.apiData.endpointConfig[endpointKey];
+    const { autoTrigger } = {
+        autoTrigger: endpointConfig && endpointConfig.method === 'GET',
+        ...props.apiData.globalConfig,
+        ...endpointConfig
+    };
+    return autoTrigger;
 };
 
 /**
@@ -57,7 +70,9 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
  */
 
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
-    return (WrappedComponent: React.ComponentType<TChildProps>): React.ComponentClass<TChildProps> => {
+    // note: return type ComponentType<TChildProps> and ComponentClass<TChildProps> have been replaced with <any> because
+    // these generics don't support the new feature of params array with array of ApiDataBinding as a result
+    return (WrappedComponent: React.ComponentType<any>): React.ComponentClass<any> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
@@ -89,14 +104,16 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 Object.keys(bindings).forEach((propName: TPropNames) => {
                     const endpointKey = bindings[propName];
 
-                    // performApiRequest will check if fetch is needed
-                    if (Array.isArray(params[propName])) {
-                        const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
-                        paramsArray.forEach(propNameParams => {
-                            dispatch(performApiRequest(endpointKey, propNameParams));
-                        });
-                    } else {
-                        dispatch(performApiRequest(endpointKey, params[propName] as EndpointParams));
+                    if (shouldAutoTrigger(this.props, endpointKey)) {
+                        // performApiRequest will check if fetch is needed
+                        if (Array.isArray(params[propName])) {
+                            const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
+                            paramsArray.forEach(propNameParams => {
+                                dispatch(performApiRequest(endpointKey, propNameParams));
+                            });
+                        } else {
+                            dispatch(performApiRequest(endpointKey, params[propName] as EndpointParams));
+                        }
                     }
                 });
             }
@@ -110,9 +127,9 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     const endpointKey: string = bindings[propName];
                     if (Array.isArray(params[propName])) {
                         const paramsArray: EndpointParams[] = (params[propName] as EndpointParams[]);
-                        addProps[propName] = paramsArray.map(propNameParams => getApiDataBinding(apiData, endpointKey, propNameParams));
+                        addProps[propName] = paramsArray.map(propNameParams => getApiDataBinding(apiData, endpointKey, propNameParams, dispatch));
                     } else {
-                        addProps[propName] = getApiDataBinding(apiData, endpointKey, params[propName] as EndpointParams);
+                        addProps[propName] = getApiDataBinding(apiData, endpointKey, params[propName] as EndpointParams, dispatch);
                     }
                 });
 
@@ -127,16 +144,4 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
             apiData: state.apiData
         }))(WithApiData);
     };
-}
-
-function getApiDataBinding(apiData: ApiDataState, endpointKey: string, params: EndpointParams) {
-    return ({
-        data: getResultData(apiData, endpointKey, params),
-        request: getApiDataRequest(apiData, endpointKey, params) || {
-            networkStatus: 'ready',
-            lastCall: 0,
-            duration: 0,
-            endpointKey,
-        }
-    });
 }
