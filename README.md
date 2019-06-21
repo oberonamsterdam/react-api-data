@@ -56,7 +56,7 @@ const endpointConfig = {
     saveArticle: {
         url: 'http://www.mocky.io/v2/5a0c203e320000772de9664c?:articleId',
         method: 'POST',
-        afterSuccess: (request, dispatch) => {
+        afterSuccess: ({ dispatch }) => {
             dispatch(invalidateApiDataRequest('getArticle')); // triggers reload of getArticle
         }
     }

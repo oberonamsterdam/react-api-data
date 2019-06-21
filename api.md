@@ -56,12 +56,12 @@ Global configuration for all endpoints.
 
 **Properties**
 
--   `handleErrorResponse` **function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, endpointKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?** 
 -   `setHeaders` **function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `setRequestProperties` **function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
--   `beforeSuccess` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?**
--   `beforeError` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?** 
--   `afterSuccess` **function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?** 
+-   `beforeSuccess` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?**
+-   `beforeError` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?** 
+-   `afterSuccess` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): void?** 
+-   `afterError` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): void?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 -   `autoTrigger` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
 
@@ -78,15 +78,38 @@ Specification and configuration of an endpoint.
 -   `cacheDuration` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 -   `responseSchema` **([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>)?** 
 -   `transformResponseBody` **function (responseBody: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): NormalizedData?** 
--   `handleErrorResponse` **function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?** 
--   `beforeSuccess` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?** 
--   `afterSuccess` **function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?** 
+-   `beforeSuccess` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?**
+    Callback function that allows you to alter a response before it gets processed and stored. Can also be used to validate a response and turn it into a failed request by setting the `ok` property of the response to false.
+-   `beforeError` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?**
+    Callback function that allows you to alter a response before it gets processed and stored. Can also be used to turn it into a successful request by setting the `ok` property of the response to true. 
+-   `afterSuccess` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?**
+    Callback for executing side-effects when a call to this endpoint results in a "success" networkStatus. Called directly after the state is updated. If set, afterSuccess in globalConfig gets called after this, unless `false` is returned. 
+-   `afterError` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?**
+    Callback for executing side-effects when a call to this endpoint results in a "failed" networkStatus. Called directly after the state is updated. If set, afterError in globalConfig gets called after this, unless `false` is returned.
 -   `setHeaders` **function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `setRequestProperties` **function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 -   `autoTrigger` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+    defaults to `true` for GET requests and `false` for all other requests.
 
-`autoTrigger` defaults to `true` for GET requests and `false` for all other requests.
+## ApiDataConfigBeforeProps
+
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**
+-   `request` **[ApiDataRequest](#ApiDataRequest)**
+-   `requestBody` **any?** 
+
+## ApiDataConfigAfterProps
+
+**Properties**
+
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**
+-   `request` **[ApiDataRequest](#ApiDataRequest)**
+-   `requestBody` **any?**
+-   `resultData` **any**
+-   `dispatch` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** 
+    Redux' dispatch function. Useful for state related side effects.
+-   `getState` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)**
+    Get access to your redux state.
 
 ## ApiDataBinding
 
