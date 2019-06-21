@@ -173,7 +173,7 @@ describe('performApiDataRequest', () => {
 
     });
 
-    test('should call beforeError from endpointConfig and globalConfig', async () => {
+    test('should call beforeFailed from endpointConfig and globalConfig', async () => {
         const postBody = { data: 'json' };
         const beforePropsMatch = {
             endpointKey: 'getData',
@@ -181,7 +181,7 @@ describe('performApiDataRequest', () => {
             requestBody: postBody,
         };
 
-        const endpointBeforeError = ({ response, body }: HandledResponse, beforeProps: ApiDataConfigBeforeProps) => {
+        const endpointbeforeFailed = ({ response, body }: HandledResponse, beforeProps: ApiDataConfigBeforeProps) => {
             expect(beforeProps).toEqual(beforePropsMatch);
             return {
                 response,
@@ -191,7 +191,7 @@ describe('performApiDataRequest', () => {
                 }
             };
         };
-        const globalBeforeError = ({ response, body }: HandledResponse, beforeProps: ApiDataConfigBeforeProps) => {
+        const globalbeforeFailed = ({ response, body }: HandledResponse, beforeProps: ApiDataConfigBeforeProps) => {
             expect(beforeProps).toEqual(beforePropsMatch);
             return {
                 response,
@@ -203,7 +203,7 @@ describe('performApiDataRequest', () => {
         };
 
         // @ts-ignore (no Response mock)
-        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeError: endpointBeforeError }, { beforeError: globalBeforeError }) };
+        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeFailed: endpointbeforeFailed }, { beforeFailed: globalbeforeFailed }) };
         mockResponse(response2);
         await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
         return expect(dispatch)
@@ -217,12 +217,12 @@ describe('performApiDataRequest', () => {
             );
     });
 
-    test('beforeError should be able to turn fail into success', async () => {
-        const beforeError = (resp: HandledResponse) => ({
+    test('beforeFailed should be able to turn fail into success', async () => {
+        const beforeFailed = (resp: HandledResponse) => ({
             response: {...resp.response, ok: true},
             body: resp.body
         });
-        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeError }) };
+        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeFailed }) };
         mockResponse(response2);
         await performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
         expect(dispatch)
@@ -290,22 +290,22 @@ describe('performApiDataRequest', () => {
         });
     });
 
-    test('The function resolves with a beforeError argument and triggers apiDataFail with the beforeError response', async () => {
-        const beforeError = () => {
+    test('The function resolves with a beforeFailed argument and triggers apiDataFail with the beforeFailed response', async () => {
+        const beforeFailed = () => {
             return response2;
         };
         // @ts-ignore (no Response mock)
-        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeError }) };
+        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeFailed }) };
         mockResponse(response2);
         await (performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state));
         // @ts-ignore
         return expect(dispatch).toHaveBeenCalledWith(apiDataFail(getRequestKey('getData'), response2.body, response2.response));
     });
 
-    test('should call afterError if set in config', async () => {
-        const afterError = jest.fn();
+    test('should call afterFailed if set in config', async () => {
+        const afterFailed = jest.fn();
         const postBody =  { data: 'json' };
-        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, afterError }) };
+        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, afterFailed }) };
         const getStateFn = () => state;
         mockResponse(response2);
         await (performApiRequest('getData', {}, postBody)(dispatch, getStateFn));
@@ -317,7 +317,7 @@ describe('performApiDataRequest', () => {
             dispatch,
             getState: getStateFn,
         };
-        return expect(afterError).toHaveBeenCalledWith(afterProps);
+        return expect(afterFailed).toHaveBeenCalledWith(afterProps);
     });
 
 });

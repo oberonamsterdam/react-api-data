@@ -166,8 +166,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             function handleFail (responseBody: any, response?: Response, skipBefore = false) {
                 if (!skipBefore) {
                     // before error cb, allows turning this into success by altering ok value
-                    const beforeError = composeConfigPipeFn(config.beforeError, globalConfig.beforeError);
-                    const alteredResp = beforeError({ response, body: responseBody }, beforeProps());
+                    const beforeFailed = composeConfigPipeFn(config.beforeFailed, globalConfig.beforeFailed);
+                    const alteredResp = beforeFailed({ response, body: responseBody }, beforeProps());
                     response = alteredResp.response;
                     responseBody = alteredResp.body;
 
@@ -181,9 +181,9 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 dispatch(apiDataFail(requestKey, responseBody, response));
 
                 // after error cb
-                if (config.afterError || globalConfig.afterError) {
-                    const afterError = composeConfigOverrideFn(config.afterError, globalConfig.afterError);
-                    afterError(afterProps());
+                if (config.afterFailed || globalConfig.afterFailed) {
+                    const afterFailed = composeConfigOverrideFn(config.afterFailed, globalConfig.afterFailed);
+                    afterFailed(afterProps());
                 }
 
                 resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
