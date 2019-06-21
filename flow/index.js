@@ -71,70 +71,72 @@ export interface ApiDataRequest {
 }
 
 export interface ApiDataGlobalConfig {
-    handleErrorResponse?: (
-        responseBody: any,
-        endpointKey: string,
-        params: EndpointParams,
-        requestBody: any,
-        dispatch: (action: Action) => void,
-        getState: () => {
-            apiData: ApiDataState
-        },
-        response?: Response
-    ) => void;
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
-    beforeSuccess?: (handledResponse: {
-        response: Response,
-        body: any
-    }) => {
-        response: Response,
-        body: any
-    };
-    afterSuccess?: (
-        request: ApiDataRequest,
-        dispatch: (action: Action) => void,
-        getState: () => any
-    ) => void;
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => void;
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterFailed?: (afterProps: ApiDataConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
 }
 
-/**
- * Specification and configuration of an endpoint.
- */
 export interface ApiDataEndpointConfig {
-    url: string;
+    url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     cacheDuration?: number;
-    responseSchema?: any | any[];
-    transformResponseBody?: (responseBody: any) => NormalizedData;
-    handleErrorResponse?: (
-        responseBody: any,
-        params: EndpointParams,
-        requestBody: any,
-        dispatch: ActionCreator<any>,
-        getState: () => {
-            apiData: ApiDataState
-        },
-        response?: Response
-    ) => boolean | void;
-    beforeSuccess?: (handledResponse: {
-        response: Response,
-        body: any
-    }) => {
-        response: Response,
-        body: any
-    };
-    afterSuccess?: (
-        request: ApiDataRequest,
-        dispatch: (action: Action) => void,
-        getState: () => any
-    ) => boolean | void;
+    responseSchema?: any;
+    /*
+    * @deprecated Use beforeSuccess instead
+    */
+    transformResponseBody?: (responseBody: any) => NormalizedData; // todo: this should transform before normalize or without normalize if no schema (so return any)
+    /*
+    * @deprecated Use beforeFailed instead
+    */
+    handleErrorResponse?: (responseBody: any, params: EndpointParams, requestBody: any, dispatch: ActionCreator<any>, getState: () => { apiData: ApiDataState }, response?: Response) => boolean | void;
+    /*
+    * Edit the response before it gets handled by react-api-data.
+    */
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    /*
+    * return false to not trigger global function
+    */
+    afterFailed?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
+    /*
+    * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
+    */
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    /*
+    * return false to not trigger global function
+    */
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
+    /*
+    * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
+    */
     setHeaders?: (defaultHeaders: any, state: any) => any;
+    /*
+    * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
+    */
     setRequestProperties?: (defaultProperties: any, state: any) => any;
+
     timeout?: number;
     autoTrigger?: boolean;
+}
+
+export interface ApiDataConfigBeforeProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+}
+
+export interface ApiDataConfigAfterProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+    resultData: any;
+    // redux functions
+    dispatch: Function;
+    getState: Function;
 }
 
 /**

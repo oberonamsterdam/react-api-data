@@ -2,10 +2,10 @@ import { ActionCreator } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { ApiDataState, Action } from '../reducer';
 import {
-    ApiDataBinding,
+    ApiDataBinding, ApiDataConfigAfterProps, ApiDataConfigBeforeProps,
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
-    EndpointParams
+    EndpointParams, getResultData
 } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
@@ -121,11 +121,28 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 }
             );
 
+            function beforeProps (): ApiDataConfigBeforeProps {
+                return {
+                    request: getApiDataRequest(state.apiData, endpointKey, params)!, // there should always be a request after dispatching fetch
+                    requestBody: body,
+                    endpointKey
+                };
+            }
+
+            function afterProps (): ApiDataConfigAfterProps {
+                return {
+                    ...beforeProps(),
+                    resultData: getResultData(getState().apiData, endpointKey, params),
+                    getState,
+                    dispatch,
+                };
+            }
+
             function handleSuccess ({ response, body: responseBody }: HandledResponse, skipBefore = false) {
                 if (!skipBefore) {
                     // before success cb, allows turning this into fail by altering ok value
                     const beforeSuccess = composeConfigPipeFn(config.beforeSuccess, globalConfig.beforeSuccess);
-                    const alteredResp = beforeSuccess({ response, body: responseBody });
+                    const alteredResp = beforeSuccess({ response, body: responseBody }, beforeProps());
                     response = alteredResp.response;
                     responseBody = alteredResp.body;
 
@@ -136,11 +153,12 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
                 // dispatch success
                 dispatch(apiDataSuccess(requestKey, config, response, responseBody));
-                const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
 
                 // after success cb
-                const afterSuccess = composeConfigOverrideFn(config.afterSuccess, globalConfig.afterSuccess);
-                afterSuccess(updatedRequest, dispatch, getState);
+                if (config.afterSuccess || globalConfig.afterSuccess) {
+                    const afterSuccess = composeConfigOverrideFn(config.afterSuccess, globalConfig.afterSuccess);
+                    afterSuccess(afterProps());
+                }
 
                 resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
             }
@@ -148,8 +166,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             function handleFail (responseBody: any, response?: Response, skipBefore = false) {
                 if (!skipBefore) {
                     // before error cb, allows turning this into success by altering ok value
-                    const beforeError = composeConfigPipeFn(config.beforeError, globalConfig.beforeError);
-                    const alteredResp = beforeError({ response, body: responseBody });
+                    const beforeFailed = composeConfigPipeFn(config.beforeFailed, globalConfig.beforeFailed);
+                    const alteredResp = beforeFailed({ response, body: responseBody }, beforeProps());
                     response = alteredResp.response;
                     responseBody = alteredResp.body;
 
@@ -161,11 +179,12 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
                 // dispatch fail
                 dispatch(apiDataFail(requestKey, responseBody, response));
-                const updatedRequest = getApiDataRequest(getState().apiData, endpointKey, params);
 
                 // after error cb
-                const afterError = composeConfigOverrideFn(config.afterError, globalConfig.afterError);
-                afterError(updatedRequest, dispatch, getState);
+                if (config.afterFailed || globalConfig.afterFailed) {
+                    const afterFailed = composeConfigOverrideFn(config.afterFailed, globalConfig.afterFailed);
+                    afterFailed(afterProps());
+                }
 
                 resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
             }

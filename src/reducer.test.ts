@@ -16,6 +16,10 @@ import { PurgeApiDataAction } from './actions/purgeApiData';
 import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
 import { schema } from 'normalizr';
 
+// mock current date for lastCall/duration testing
+const MOCK_NOW = 5000;
+global.Date.now = () => MOCK_NOW;
+
 test('recoverNetworkStatuses should return a new requests map with loading states reset to ready', () => {
     const input = {
         a: {
@@ -138,7 +142,7 @@ describe('FETCH_API_DATA', () => {
             requests: {
                 [getRequestKey('getData', params)]: {
                     networkStatus: 'loading',
-                    lastCall: Date.now(),
+                    lastCall: MOCK_NOW,
                     duration: 0,
                     endpointKey: 'getData',
                     params
@@ -182,7 +186,7 @@ describe('API_DATA_SUCCESS', () => {
                 [requestKey]: {
                     networkStatus: 'success',
                     lastCall: 1000,
-                    duration: resultState.requests[requestKey].duration,
+                    duration: MOCK_NOW - 1000,
                     result: { data: 'json', extraData: 'moreJson' },
                     response: {
                         body: { data: 'json', extraData: 'moreJson' },
@@ -196,9 +200,6 @@ describe('API_DATA_SUCCESS', () => {
                 }
             }
         });
-
-        // compare duration in seconds (execution may take time, causing using Date.now() to be too precise in ms).
-        expect(Math.round(resultState.requests[requestKey].duration / 1000)).toBe(Math.round((Date.now() - 1000) / 1000));
     });
 });
 

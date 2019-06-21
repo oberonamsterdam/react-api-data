@@ -60,18 +60,15 @@ export interface ApiDataRequest {
     errorBody?: any;
     endpointKey: string;
     params?: EndpointParams;
-    // todo: add requestBody for retriggering post calls or logging errors etc
 }
 
 export interface ApiDataGlobalConfig {
-    handleErrorResponse?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: (action: Action) => void, getState: () => { apiData: ApiDataState }, response?: Response) => void;
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
-    beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
-    beforeError?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterError?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
-    // todo: add afterFail and deprecate handleErrorResponse
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => void;
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterFailed?: (afterProps: ApiDataConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
 }
@@ -89,25 +86,25 @@ export interface ApiDataEndpointConfig {
     */
     transformResponseBody?: (responseBody: any) => NormalizedData; // todo: this should transform before normalize or without normalize if no schema (so return any)
     /*
-    * @deprecated Use beforeError instead
+    * @deprecated Use beforeFailed instead
     */
     handleErrorResponse?: (responseBody: any, params: EndpointParams, requestBody: any, dispatch: ActionCreator<any>, getState: () => { apiData: ApiDataState }, response?: Response) => boolean | void;
     /*
     * Edit the response before it gets handled by react-api-data.
     */
-    beforeError?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterError?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterFailed?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
     /*
     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
     */
-    beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */
@@ -119,6 +116,22 @@ export interface ApiDataEndpointConfig {
 
     timeout?: number;
     autoTrigger?: boolean;
+}
+
+export interface ApiDataConfigBeforeProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+}
+
+export interface ApiDataConfigAfterProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+    resultData: any;
+    // redux functions
+    dispatch: Function;
+    getState: Function;
 }
 
 /**
