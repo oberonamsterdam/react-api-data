@@ -65,10 +65,10 @@ export interface ApiDataRequest {
 export interface ApiDataGlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
-    beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
-    beforeFailed?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterFailed?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => void;
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterFailed?: (afterProps: ApiDataConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
 }
