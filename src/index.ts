@@ -64,7 +64,7 @@ export interface ApiDataRequest {
 
 export interface ApiDataGlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
-    setRequestProperties?: (defaultProperties: any, state: any) => any;
+    setRequestProperties?: (defaultProperties: object, state: object) => object;
     beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
     afterSuccess?: (afterProps: ApiDataConfigAfterProps) => void;
     beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
@@ -108,11 +108,11 @@ export interface ApiDataEndpointConfig {
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */
-    setHeaders?: (defaultHeaders: any, state: any) => any;
+    setHeaders?: (defaultHeaders: object, state: object) => object;
     /*
     * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
     */
-    setRequestProperties?: (defaultProperties: any, state: any) => any;
+    setRequestProperties?: (defaultProperties: object, state: object) => object;
 
     timeout?: number;
     autoTrigger?: boolean;
