@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/jest": "^22.2.3",
     "@types/node": "^10.9.2",
-    "@types/react-redux": "^6.0.9",
+    "@types/react-redux": "^7.0.1",
     "@types/shallowequal": "^0.2.3",
     "flow-bin": "^0.87.0",
     "flow-copy-source": "^2.0.2",
@@ -45,20 +45,23 @@
     "ts-jest": "^22.4.2",
     "tslint": "^5.10.0",
     "tslint-config-oberon": "^1.0.4",
-    "typescript": "^2.9.2"
+    "typescript": "^3.4.5",
+    "react": "^16.8.3",
+    "react-redux": "7.0.1"
   },
   "dependencies": {
+    "@types/react": "^16.8.17",
     "@types/redux-mock-store": "^1.0.0",
-    "hoist-non-react-statics": "^2.3.1",
+    "hoist-non-react-statics": "^3.3.0",
     "normalizr": "^3.2.4",
-    "react": "^15.0.0 || ^16.0.0",
-    "react-redux": "^5.0.0",
     "redux-mock-store": "^1.5.3",
     "shallowequal": "^1.0.2"
   },
   "PeerDependencies": {
     "normalizr": "^3.0.0",
-    "redux-thunk": "^2.0.0"
+    "redux-thunk": "^2.0.0",
+    "react": "^16.8.3",
+    "react-redux": "7.0.1"
   },
   "jest": {
     "globals": {

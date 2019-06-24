@@ -1,4 +1,4 @@
-import withApiData from './withApiData';
+// import withApiData from './withApiData';
 import { configureApiData } from './actions/configureApiData';
 import { afterRehydrate } from './actions/afterRehydrate';
 import { purgeApiData } from './actions/purgeApiData';
@@ -11,9 +11,10 @@ import { Action } from './reducer';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
+import useApiData from './useApiData';
 
 export {
-    withApiData,
+    // withApiData,
     configureApiData,
     performApiRequest,
     getApiDataRequest,
@@ -25,6 +26,7 @@ export {
     reducer,
     useRequestHandler,
     ApiDataState,
+    useApiData
 };
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';

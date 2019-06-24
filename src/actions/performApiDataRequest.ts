@@ -96,8 +96,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             let abortTimeout: any;
             let aborted = false;
 
-
-
             if (timeout) {
                 abortTimeout = setTimeout(
                     () => {
