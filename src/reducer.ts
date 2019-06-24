@@ -86,7 +86,7 @@ export type Action =
     | ClearApiDataAction
     | ApiDataAfterRehydrateAction
     | PurgeApiDataAction
-;
+    ;
 
 // reducer
 

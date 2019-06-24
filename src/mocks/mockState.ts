@@ -1,5 +1,5 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import { ApiDataEndpointConfig } from '../index';
+import {ApiDataEndpointConfig, ApiDataGlobalConfig} from '../index';
 
 const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
@@ -11,8 +11,8 @@ const setPostHeaders = (headers: any) => ({
     'Content-Type': 'application/json',
 });
 
-export default (binding: string, hasRequest?: boolean, params?: any, networkStatus?: any, config: Partial<ApiDataEndpointConfig> = {}): any => ({
-    globalConfig: {},
+export default (binding: string, hasRequest?: boolean, params?: any, networkStatus?: any, config: Partial<ApiDataEndpointConfig> = {}, globalConfig: Partial<ApiDataGlobalConfig> = {}): any => ({
+    globalConfig,
     endpointConfig: {
         [binding]: {
             url: 'mockAction.get',

@@ -54,22 +54,22 @@ Type: {result: any?, networkStatus: [NetworkStatus](#networkstatus), lastCall: [
 
 Global configuration for all endpoints.
 
-Type: {handleErrorResponse: function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, endpointKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?, setHeaders: function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, setRequestProperties: function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, beforeSuccess: function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?, afterSuccess: function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?, timeout: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?}
-
 **Properties**
 
--   `handleErrorResponse` **function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, endpointKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?** 
 -   `setHeaders` **function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `setRequestProperties` **function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
--   `beforeSuccess` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?** 
--   `afterSuccess` **function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): void?** 
+-   `beforeSuccess` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?**
+-   `beforeFailed` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?** 
+-   `afterSuccess` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): void?** 
+-   `afterFailed` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): void?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+-   `autoTrigger` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+
+`autoTrigger` defaults to `true` for GET requests and `false` for all other requests.
 
 ## ApiDataEndpointConfig
 
 Specification and configuration of an endpoint.
-
-Type: {url: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), method: (`"GET"` \| `"POST"` \| `"PUT"` \| `"PATCH"` \| `"DELETE"`), cacheDuration: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?, responseSchema: ([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>)?, transformResponseBody: function (responseBody: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): NormalizedData?, handleErrorResponse: function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?, beforeSuccess: function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?, afterSuccess: function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?, setHeaders: function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, setRequestProperties: function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?, timeout: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?}
 
 **Properties**
 
@@ -78,23 +78,50 @@ Type: {url: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Ref
 -   `cacheDuration` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 -   `responseSchema` **([Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>)?** 
 -   `transformResponseBody` **function (responseBody: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): NormalizedData?** 
--   `handleErrorResponse` **function (response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any, params: [EndpointParams](#endpointparams), requestBody: any, dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?** 
--   `beforeSuccess` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?** 
--   `afterSuccess` **function (request: [ApiDataRequest](#apidatarequest), dispatch: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function), getState: function (): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?** 
+-   `beforeSuccess` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?**
+    Callback function that allows you to alter a response before it gets processed and stored. Can also be used to validate a response and turn it into a failed request by setting the `ok` property of the response to false.
+-   `beforeFailed` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#ApiDataConfigBeforeProps)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}?**
+    Callback function that allows you to alter a response before it gets processed and stored. Can also be used to turn it into a successful request by setting the `ok` property of the response to true. 
+-   `afterSuccess` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?**
+    Callback for executing side-effects when a call to this endpoint results in a "success" networkStatus. Called directly after the state is updated. If set, afterSuccess in globalConfig gets called after this, unless `false` is returned. 
+-   `afterFailed` **function (afterProps: [ApiDataConfigAfterProps](#ApiDataConfigAfterProps)): ([boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | void)?**
+    Callback for executing side-effects when a call to this endpoint results in a "failed" networkStatus. Called directly after the state is updated. If set, afterFailed in globalConfig gets called after this, unless `false` is returned.
 -   `setHeaders` **function (defaultHeaders: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `setRequestProperties` **function (defaultProperties: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), state: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)): [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 -   `timeout` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+-   `autoTrigger` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+    defaults to `true` for GET requests and `false` for all other requests.
+
+## ApiDataConfigBeforeProps
+
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**
+-   `request` **[ApiDataRequest](#ApiDataRequest)**
+-   `requestBody` **any?** 
+
+## ApiDataConfigAfterProps
+
+**Properties**
+
+-   `endpointKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**
+-   `request` **[ApiDataRequest](#ApiDataRequest)**
+-   `requestBody` **any?**
+-   `resultData` **any**
+-   `dispatch` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** 
+    Redux' dispatch function. Useful for state related side effects.
+-   `getState` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)**
+    Get access to your redux state.
 
 ## ApiDataBinding
 
 The value that withApiData binds to the property of your component.
 
-Type: {data: T?, request: [ApiDataRequest](#apidatarequest)}
-
 **Properties**
 
 -   `data` **T?** 
 -   `request` **[ApiDataRequest](#apidatarequest)** 
+-   `perform` **(params: EndpointParams, body: Object | string | FormData) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;ApiDataBinding>**
+
+The perform property response property resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original ApiDataBinding and the resolved promise contain the result of the performed request.
 
 **Examples**
 
@@ -107,32 +134,45 @@ type Props = {
 ## withApiData
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an ApiDataBinding added to each property key of the bindings param.
+component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param.
 
 **Parameters**
 
--   `bindings` **{}** maps prop names to endpoint keys
--   `getParams` **GetParams** optionally provide the params of the endpoint
+-   `bindings` **{ [propName in TPropNames]: string }** maps prop names to endpoint keys
+-   `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the URL parameters. Providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key.
+
+Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Function to wrap your component
 
 **Examples**
 
 ```javascript
 withApiData({
-   wishList: 'getWishLists',
-   settings: 'getSettings'
- }, (ownProps, state) => ({
-   wishList: {
-     projectSlug: ownProps.match.params.projectSlug,
-     env: ownProps.match.params.env
-   },
-   settings: {
-     projectSlug: ownProps.match.params.projectSlug,
-     env: ownProps.match.params.env
-   }
- }))
-```
+    article: 'getArticle',
+    users: 'getUser',
+    editArticle: 'editArticle' // an endpoint with autoTrigger false
+}, (ownProps, state) => ({
+    article: {
+        id: ownProps.articleId,
+    },
+    // sometimes you need to call one endpoint multiple times (simultaneously) with different parameter values:
+    users: state.users.map(user => ({
+        userId: user.id
+    })),
+    editArticle: {}
+}))
+// props.article will be an ApiDataBinding
+// props.users will be an array of ApiDataBinding
+// props.editArticle will be an ApiDataBinding
 
-Returns **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Function to wrap your component
+// perform can be used to trigger calls with autoTrigger: false
+props.editArticle.perform({
+    id: props.articleId
+}, {
+    title: 'New Title',
+    content: 'New article content'
+});
+
+```
 
 ## configureApiData
 
@@ -157,7 +197,7 @@ to use [withApiData](#withapidata).
 -   `params` **[EndpointParams](#endpointparams)** 
 -   `responseBody` **any** 
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;void>** Always resolves, use request networkStatus to see if call was succeeded or not.
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;ApiDataBinding>** Rejects when endpointKey is unkown. Otherwise resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. 
 
 ## invalidateApiDataRequest
 
