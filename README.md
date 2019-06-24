@@ -124,7 +124,7 @@ class EditArticle extends React.Component {
     }
 };
 
-export default connectApiData(Article);
+export default connectApiData(EditArticle);
 ```
 
 # The gist
