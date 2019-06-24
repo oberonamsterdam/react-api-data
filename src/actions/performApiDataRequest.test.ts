@@ -67,7 +67,7 @@ afterEach(() => {
     dispatch.mockClear();
 });
 
-describe('function retrieves the request object of a given endpoint from the endpointConfig.', () => {
+describe('performApiData action creator', () => {
 
     test('It gets an error message when config is empty', () => {
         const state = defaultState;

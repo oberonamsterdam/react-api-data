@@ -1,9 +1,13 @@
 import { purgeApiData } from './purgeApiData';
 
-test('should set up PurgeApiDataAction object', () => {
-    const action = purgeApiData();
+describe('PurgeApiData action creator', () => {
 
-    expect(action).toEqual({
-        type: 'PURGE_API_DATA'
+    test('should set up PurgeApiDataAction object', () => {
+        const action = purgeApiData();
+
+        expect(action).toEqual({
+            type: 'PURGE_API_DATA'
+        });
     });
+
 });

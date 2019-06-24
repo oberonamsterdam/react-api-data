@@ -2,7 +2,7 @@ import { apiDataSuccess } from './apiDataSuccess';
 
 import { normalize, schema } from 'normalizr';
 
-describe('should handle the ApiDataSuccesAction correctly', () => {
+describe('ApiDataSuccess action creator', () => {
 
     test('should set up the ApiDataSuccessAction action object without transformResponseBody and normalizedData provided', () => {
         // Set up a fake config object for the endpointConfig parameter.

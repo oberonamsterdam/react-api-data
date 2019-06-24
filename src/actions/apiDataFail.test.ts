@@ -1,6 +1,6 @@
 import { apiDataFail } from './apiDataFail';
 
-describe('should handle the ApiDataFailAction correctly', () => {
+describe('ApiDataFail action creator', () => {
     test('should set up the ApiDataFail action object without a response', () => {
         const action = apiDataFail('getData', {data: 'test-data'}, undefined);
 

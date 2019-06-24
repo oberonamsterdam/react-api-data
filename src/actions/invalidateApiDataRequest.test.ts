@@ -2,20 +2,23 @@ import { invalidateApiDataRequest } from './invalidateApiDataRequest';
 import { EndpointParams } from '../index';
 import { getRequestKey } from '../helpers/getRequestKey';
 
-test('should set up invalidateApiDataRequest action object with the correct type and payload', () => {
+describe('invalidateApiDataRequest action creator', () => {
 
-    // Set up fake endpoint key & params.
-    const endpointKey = 'getData';
-    const params: EndpointParams = {
-        myData: 'all'
-    };
+    test('should set up invalidateApiDataRequest action object with the correct type and payload', () => {
 
-    const action = invalidateApiDataRequest(endpointKey, params);
+        // Set up fake endpoint key & params.
+        const endpointKey = 'getData';
+        const params: EndpointParams = {
+            myData: 'all'
+        };
 
-    expect(action).toEqual({
-        type: 'INVALIDATE_API_DATA_REQUEST',
-        payload: {
-            requestKey: getRequestKey(endpointKey, params)
-        }
+        const action = invalidateApiDataRequest(endpointKey, params);
+
+        expect(action).toEqual({
+            type: 'INVALIDATE_API_DATA_REQUEST',
+            payload: {
+                requestKey: getRequestKey(endpointKey, params)
+            }
+        });
     });
 });
