@@ -223,13 +223,13 @@ Type: **String enum**
 - `data` **any** The result data of your request, or undefined if your request has not completed or has no response body.
 - `request` **[ApiDataRequest](#apidatarequest)** 
 - `perform` **(params: [EndpointParams](#endpointparams), body: Object | string | FormData) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>**
- The perform property response property resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original ApiDataBinding and the resolved promise contain the result of the performed request.
+  Manually trigger a call to the endpoint. Returns a promise that resolves with an ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original ApiDataBinding and the resolved promise contain the result of the performed request.
 
 **Examples**
 
  ```javascript
 type Props = {
-  users: ApiDataBinding&lt;Array&lt;User>>
+  users: ApiDataBinding<Array<User>>
 }
 ```
 
