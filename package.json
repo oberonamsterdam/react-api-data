@@ -40,14 +40,14 @@
     "flow-bin": "^0.87.0",
     "flow-copy-source": "^2.0.2",
     "husky": "^1.0.1",
-    "jest": "^23.0.1",
+    "jest": "^24.8.0",
     "normalizr": "^3.2.4",
     "react": "^16.0.0",
     "react-redux": "^5.0.0",
     "redux": "^4.0.1",
     "redux-mock-store": "^1.5.3",
     "redux-thunk": "^2.3.0",
-    "ts-jest": "^22.4.2",
+    "ts-jest": "^24.0.2",
     "tslint": "^5.10.0",
     "tslint-config-oberon": "^1.0.4",
     "typescript": "^2.9.2"
@@ -65,7 +65,7 @@
   "jest": {
     "globals": {
       "ts-jest": {
-        "enableTsDiagnostics": true
+        "diagnostics": true
       }
     },
     "coverageDirectory": "./coverage/",

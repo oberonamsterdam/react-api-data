@@ -116,6 +116,7 @@ class EditArticle extends React.Component {
                         ) : (
                             <button onClick={() => saveArticle.perform({articleId: this.props.articleId}, {body: this.state.body})}>Submit</button>
                         )}
+                        <button onClick={() => getArticle.invalidateCache()}>Refresh data</button>
                     </div>
                 );
             }
@@ -162,6 +163,16 @@ export default {
         // Infinite caching
     },
 }
+```
+
+## Manually clearing cache of bound properties
+
+```js
+const connectApiData = withApiData({
+    getComments: 'getComments',
+});
+
+this.props.getComments.invalidateCache());
 ```
 
 ## Manually clearing cache

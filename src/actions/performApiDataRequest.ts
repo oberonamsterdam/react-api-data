@@ -51,7 +51,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any) => {
+export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, extraParams?: EndpointParams) => {
     return (dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -99,7 +99,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     timeout
                 );
             }
-            requestFunction(formatUrl(config.url, params), requestProperties).then(
+            requestFunction(formatUrl(config.url, { ...params, ...extraParams }), requestProperties).then(
                 (handledResponse: HandledResponse) => {
                     if (aborted) {
                         return;
@@ -175,7 +175,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         handleSuccess({response, body: responseBody}, true);
                     }
                 }
-
 
                 // dispatch fail
                 dispatch(apiDataFail(requestKey, responseBody, response));

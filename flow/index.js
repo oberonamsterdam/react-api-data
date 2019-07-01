@@ -151,10 +151,6 @@ export interface ApiDataBinding<T> {
     perform: (
         params?: EndpointParams | void,
         body?: any
-      ) => (
-        dispatch: ActionCreator<Action>,
-        getState: () => {
-          apiData: ApiDataState
-        }
-      ) => Promise<ApiDataBinding<T>>;
+    ) => Promise<ApiDataBinding<T>>;
+    invalidateCache: () => Promise<void>;
 }
