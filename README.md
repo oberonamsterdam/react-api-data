@@ -165,17 +165,26 @@ export default {
 }
 ```
 
-## Manually clearing cache of bound properties
+## Manually clearing cache from your component
 
 ```js
 const connectApiData = withApiData({
     getComments: 'getComments',
 });
 
-this.props.getComments.invalidateCache());
+const CommentsList = props => (
+    <>
+        {/* ... */}
+        <button onClick={props.getComments.invalidateCache}>Refresh</button>
+    </>
+);
+
+export default connectApiData(CommentsList);
 ```
 
-## Manually clearing cache
+## Manually clearing cache using dispatch
+
+Using the invalidateApiDataRequest action creator you can invalidate any endpoint.
 
 ```js
 dispatch(invalidateApiDataRequest('getComments'));
