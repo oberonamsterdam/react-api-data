@@ -116,6 +116,7 @@ class EditArticle extends React.Component {
                         ) : (
                             <button onClick={() => saveArticle.perform({articleId: this.props.articleId}, {body: this.state.body})}>Submit</button>
                         )}
+                        <button onClick={() => getArticle.invalidateCache()}>Refresh data</button>
                     </div>
                 );
             }
@@ -164,7 +165,26 @@ export default {
 }
 ```
 
-## Manually clearing cache
+## Manually clearing cache from your component
+
+```js
+const connectApiData = withApiData({
+    getComments: 'getComments',
+});
+
+const CommentsList = props => (
+    <>
+        {/* ... */}
+        <button onClick={props.getComments.invalidateCache}>Refresh</button>
+    </>
+);
+
+export default connectApiData(CommentsList);
+```
+
+## Manually clearing cache using dispatch
+
+Using the invalidateApiDataRequest action creator you can invalidate any endpoint.
 
 ```js
 dispatch(invalidateApiDataRequest('getComments'));
