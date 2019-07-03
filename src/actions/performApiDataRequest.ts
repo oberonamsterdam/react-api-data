@@ -123,7 +123,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
             function beforeProps (): ApiDataConfigBeforeProps {
                 return {
-                    request: getApiDataRequest(state.apiData, endpointKey, params)!, // there should always be a request after dispatching fetch
+                    request: getApiDataRequest(getState().apiData, endpointKey, params)!, // there should always be a request after dispatching fetch
                     requestBody: body,
                     endpointKey
                 };
