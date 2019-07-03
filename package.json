@@ -40,7 +40,7 @@
     "flow-bin": "^0.87.0",
     "flow-copy-source": "^2.0.2",
     "husky": "^1.0.1",
-    "jest": "^24.8.0",
+    "jest": "^23.6.0",
     "normalizr": "^3.2.4",
     "react": "^16.0.0",
     "react-redux": "^5.0.0",
