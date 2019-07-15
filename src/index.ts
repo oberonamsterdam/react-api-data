@@ -146,4 +146,5 @@ export interface ApiDataBinding<T> {
     request: ApiDataRequest;
     perform: (params: EndpointParams, body: string | FormData | any) => ThunkAction<{}, { apiData: ApiDataState; }, void, Action>;
     invalidateCache: (params: EndpointParams, body: string | FormData | any) => ThunkAction<{}, { apiData: ApiDataState; }, void, Action>;
+    getInstance: (id: string) => ApiDataBinding<T>;
 }

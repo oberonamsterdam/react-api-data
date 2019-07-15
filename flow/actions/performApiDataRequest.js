@@ -8,7 +8,8 @@ import type { RequestHandler } from '../request';
 declare export var performApiRequest: (
   endpointKey: string,
   params?: EndpointParams | void,
-  body?: any
+  body?: any,
+  instanceId?: string
 ) => (
   dispatch: ActionCreator<Action>,
   getState: () => {

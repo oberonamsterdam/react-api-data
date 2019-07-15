@@ -10,5 +10,6 @@ export interface InvalidateApiDataRequestAction {
 
 declare export var invalidateApiDataRequest: (
   endpointKey: string,
-  params?: EndpointParams | void
+  params?: EndpointParams | void,
+  instanceId?: string
 ) => InvalidateApiDataRequestAction;

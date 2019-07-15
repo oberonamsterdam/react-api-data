@@ -8,12 +8,14 @@ export const getApiDataBinding = (
     endpointKey: string, 
     params: EndpointParams, 
     dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, 
-    request?: ApiDataRequest
+    request?: ApiDataRequest,
+    instanceId: string = ''
 ): ApiDataBinding<any> => {
     return ({
-        data: getResultData(apiData, endpointKey, params),
-        request: request || getApiDataRequest(apiData, endpointKey, params) || createApiDataRequest(endpointKey),
-        perform: (myParams: EndpointParams, body: any) => dispatch(performApiRequest(endpointKey, params, body, myParams)),
-        invalidateCache: () => dispatch(invalidateApiDataRequest(endpointKey, params)),
+        data: getResultData(apiData, endpointKey, params, instanceId),
+        request: request || getApiDataRequest(apiData, endpointKey, params, instanceId) || createApiDataRequest(endpointKey),
+        perform: (myParams: EndpointParams, body: any) => dispatch(performApiRequest(endpointKey, params, body, myParams, instanceId)),
+        invalidateCache: () => dispatch(invalidateApiDataRequest(endpointKey, params, instanceId)),
+        getInstance: (newInstanceId: string) => getApiDataBinding(apiData, endpointKey, params, dispatch, request, newInstanceId),
     });
 };
