@@ -171,6 +171,7 @@ describe('performApiDataRequest', () => {
             // @ts-ignore fake Response
             .toHaveBeenCalledWith(apiDataFail(getRequestKey('getData'), response3.body, { ...response3.response, ok: false }));
 
+        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_SUCCESS' }));
     });
 
     test('should call beforeFailed from endpointConfig and globalConfig', async () => {
@@ -234,6 +235,7 @@ describe('performApiDataRequest', () => {
                 response2.body,
             ));
 
+        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_FAIL' }));
     });
 
     test('should call afterSuccess if set in config', async () => {

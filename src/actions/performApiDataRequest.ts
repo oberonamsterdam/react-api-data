@@ -148,6 +148,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
                     if (!response.ok) {
                         handleFail(responseBody, response, true);
+                        return;
                     }
                 }
 
@@ -173,6 +174,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
                     if (response && response.ok) {
                         handleSuccess({response, body: responseBody}, true);
+                        return;
                     }
                 }
 
