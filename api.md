@@ -294,7 +294,7 @@ Map of parameter names to values.
  
  - `setHeaders?` **function (defaultHeaders: Object, state: Object): Object** 
  - `setRequestProperties` **function (defaultProperties: Object, state: Object): Object** 
- - `beforeSuccess?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}** 
+ - `beforeSuccess?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}** 
  - `beforeFailed?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}** 
  - `afterSuccess?` **function (afterProps: [ApiDataConfigAfterProps](#apidataconfigafterprops)): void** 
  - `afterFailed?` **function (afterProps: [ApiDataConfigAfterProps](#apidataconfigafterprops)): void** 
