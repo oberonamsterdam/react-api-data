@@ -270,7 +270,7 @@ Map of parameter names to values.
 - `cacheDuration?` **number**
 - `responseSchema?` **Object | Array&lt;Object>**
 - `transformResponseBody?` **function (responseBody: Object): NormalizedData** 
-- `beforeSuccess?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
+- `beforeSuccess?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
   Callback function that allows you to alter a response before it gets processed and stored. Can also be used to validate a response and turn it into a failed request by setting the `ok` property of the response to false.
 - `beforeFailed?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
  Callback function that allows you to alter a response before it gets processed and stored. Can also be used to turn it into a successful request by setting the `ok` property of the response to true.
