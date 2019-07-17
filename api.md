@@ -250,6 +250,7 @@ Information about a request made to an endpoint.
 - `errorBody?` **any** 
 - `endpointKey` **string** 
 - `params?` **[EndpointParams](#endpointparams)** 
+- `url` **string** 
 
 ---
 

@@ -74,13 +74,15 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }
 
         const requestKey = getRequestKey(endpointKey, params || {});
+        const url = formatUrl(config.url, { ...params, ...extraParams });
 
         dispatch(({
             type: 'FETCH_API_DATA',
             payload: {
                 requestKey,
                 endpointKey,
-                params
+                params,
+                url
             }
         }));
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
@@ -99,7 +101,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     timeout
                 );
             }
-            requestFunction(formatUrl(config.url, { ...params, ...extraParams }), requestProperties).then(
+            requestFunction(url, requestProperties).then(
                 (handledResponse: HandledResponse) => {
                     if (aborted) {
                         return;

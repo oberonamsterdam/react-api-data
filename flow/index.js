@@ -68,6 +68,7 @@ export interface ApiDataRequest {
     errorBody?: any;
     endpointKey: string;
     params?: EndpointParams;
+    url: string;
 }
 
 export interface ApiDataGlobalConfig {
