@@ -74,6 +74,7 @@ export interface FetchApiDataAction {
         requestKey: string,
         endpointKey: string,
         params?: EndpointParams,
+        url: string,
     };
 }
 
@@ -108,7 +109,8 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
                         lastCall: Date.now(),
                         duration: 0,
                         endpointKey: action.payload.endpointKey,
-                        params: action.payload.params
+                        params: action.payload.params,
+                        url: action.payload.url,
                     }
                 }
             };

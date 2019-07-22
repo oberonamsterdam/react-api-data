@@ -88,6 +88,64 @@ describe('performApiDataRequest', () => {
         });
     });
 
+    test('should dispatch FETCH_API_DATA if call does not have a valid cache', () => {
+        mockResponse(response1);
+
+        // call has already been triggered within cache duration
+        const state = {
+            apiData: getState(
+                'getData',
+                true,
+                {},
+                'success',
+                { method: 'GET', cacheDuration: 1000 },
+            )
+        };
+        performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
+        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({type: 'FETCH_API_DATA'}));
+
+        // call has not been triggered before
+        performApiRequest('getData', {}, { data: 'json' })(
+            dispatch,
+            () => ({ apiData: getState('getData') })
+        );
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey: getRequestKey('getData', {}),
+                endpointKey: 'getData',
+                params: {},
+                url: 'mockAction.get',
+            }
+        });
+
+        // cache has expired
+        const params = { test: 'a' }; // include test for params here
+        performApiRequest('getData', params, { data: 'json' })(
+            dispatch,
+            () => ({
+                apiData: getState(
+                    'getData',
+                    true,
+                    params,
+                    'success',
+                    { cacheDuration: 500 },
+                    {},
+                    Date.now() - 1000
+                )
+            })
+        );
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey: getRequestKey('getData', params),
+                endpointKey: 'getData',
+                params: { test: 'a' },
+                url: 'mockAction.get',
+            }
+        });
+    });
+
     test('The function resolves with custom response and calls apiDataSuccess', async () => {
         const state = { apiData: getState('postData', true, {}, 'ready', { method: 'POST' }) };
         mockResponse(response1);
@@ -171,6 +229,7 @@ describe('performApiDataRequest', () => {
             // @ts-ignore fake Response
             .toHaveBeenCalledWith(apiDataFail(getRequestKey('getData'), response3.body, { ...response3.response, ok: false }));
 
+        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_SUCCESS' }));
     });
 
     test('should call beforeFailed from endpointConfig and globalConfig', async () => {
@@ -234,6 +293,7 @@ describe('performApiDataRequest', () => {
                 response2.body,
             ));
 
+        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_FAIL' }));
     });
 
     test('should call afterSuccess if set in config', async () => {

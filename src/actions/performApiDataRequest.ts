@@ -18,7 +18,7 @@ import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
-    const defaultProperties = { body, headers: {}, method: endpointConfig.method, autoTrigger: endpointConfig.method === 'GET' ? true : false  };
+    const defaultProperties = { body, headers: {}, method: endpointConfig.method };
     const requestProperties = composeConfigPipeFn(endpointConfig.setRequestProperties, globalConfig.setRequestProperties)(defaultProperties, state);
     requestProperties.headers = composeConfigPipeFn(endpointConfig.setHeaders, globalConfig.setHeaders)(defaultProperties.headers, state);
 
@@ -74,13 +74,15 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }
 
         const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
+        const url = formatUrl(config.url, { ...params, ...extraParams });
 
         dispatch(({
             type: 'FETCH_API_DATA',
             payload: {
                 requestKey,
                 endpointKey,
-                params
+                params,
+                url
             }
         }));
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
@@ -99,7 +101,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     timeout
                 );
             }
-            requestFunction(formatUrl(config.url, { ...params, ...extraParams }), requestProperties).then(
+            requestFunction(url, requestProperties).then(
                 (handledResponse: HandledResponse) => {
                     if (aborted) {
                         return;
@@ -107,7 +109,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
 
                     if (handledResponse.response.ok) {
-                        handleSuccess(handledResponse)
+                        handleSuccess(handledResponse);
                     } else {
                         handleFail(handledResponse.body, handledResponse.response);
                     }
@@ -121,7 +123,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 }
             );
 
-            function beforeProps (): ApiDataConfigBeforeProps {
+            function beforeProps(): ApiDataConfigBeforeProps {
                 return {
                     request: getApiDataRequest(getState().apiData, endpointKey, params, instanceId)!, // there should always be a request after dispatching fetch
                     requestBody: body,
@@ -129,7 +131,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 };
             }
 
-            function afterProps (): ApiDataConfigAfterProps {
+            function afterProps(): ApiDataConfigAfterProps {
                 return {
                     ...beforeProps(),
                     resultData: getResultData(getState().apiData, endpointKey, params, instanceId),
@@ -138,7 +140,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 };
             }
 
-            function handleSuccess ({ response, body: responseBody }: HandledResponse, skipBefore = false) {
+            function handleSuccess({ response, body: responseBody }: HandledResponse, skipBefore: boolean = false) {
                 if (!skipBefore) {
                     // before success cb, allows turning this into fail by altering ok value
                     const beforeSuccess = composeConfigPipeFn(config.beforeSuccess, globalConfig.beforeSuccess);
@@ -148,6 +150,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
                     if (!response.ok) {
                         handleFail(responseBody, response, true);
+                        return;
                     }
                 }
 
@@ -163,7 +166,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch, undefined, instanceId));
             }
 
-            function handleFail (responseBody: any, response?: Response, skipBefore = false) {
+            function handleFail(responseBody: any, response?: Response, skipBefore: boolean = false) {
                 if (!skipBefore) {
                     // before error cb, allows turning this into success by altering ok value
                     const beforeFailed = composeConfigPipeFn(config.beforeFailed, globalConfig.beforeFailed);
@@ -172,7 +175,8 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     responseBody = alteredResp.body;
 
                     if (response && response.ok) {
-                        handleSuccess({response, body: responseBody}, true);
+                        handleSuccess({ response, body: responseBody }, true);
+                        return;
                     }
                 }
 

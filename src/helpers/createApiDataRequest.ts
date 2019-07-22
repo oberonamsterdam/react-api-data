@@ -6,4 +6,5 @@ export default (endpointKey: string): ApiDataRequest => ({
     lastCall: 0,
     duration: 0,
     endpointKey,
+    url: '',
 });

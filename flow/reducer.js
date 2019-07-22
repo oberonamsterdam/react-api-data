@@ -36,7 +36,8 @@ export interface FetchApiDataAction {
     payload: {
         requestKey: string,
         endpointKey: string,
-        params?: EndpointParams
+        params?: EndpointParams,
+        url: string,
     };
 }
 
