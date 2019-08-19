@@ -2,10 +2,14 @@ import { ActionCreator } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { ApiDataState, Action } from '../reducer';
 import {
-    ApiDataBinding, ApiDataConfigAfterProps, ApiDataConfigBeforeProps,
+    ApiDataBinding, 
+    ApiDataConfigAfterProps, 
+    ApiDataConfigBeforeProps,
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
-    EndpointParams, getResultData
+    EndpointParams, 
+    getResultData, 
+    ApiDataRequest
 } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
@@ -51,7 +55,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, extraParams?: EndpointParams, instanceId: string = '') => {
+export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', getApiDataBindingCopy?: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => ApiDataBinding<any>) => {
     return (dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -64,17 +68,28 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             return Promise.reject(errorMsg);
         }
 
+        const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
+            if (getApiDataBindingCopy) {
+                return getApiDataBindingCopy(getState().apiData, request, instanceId);
+            } else {
+                let apiDataBinding: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
+                const getApiDataBindingCopy = (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => apiDataBinding(apiData, newApiDataRequest);
+                apiDataBinding = getApiDataBinding(endpointKey, params as EndpointParams, dispatch, getApiDataBindingCopy, instanceId);
+                return apiDataBinding(getState().apiData, request);
+            }
+        }
+
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return Promise.resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch, apiDataRequest, instanceId));
+            return Promise.resolve(getCurrentApiDataBinding(apiDataRequest));
         }
 
         const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
-        const url = formatUrl(config.url, { ...params, ...extraParams });
+        const url = formatUrl(config.url, params);
 
         dispatch(({
             type: 'FETCH_API_DATA',
@@ -163,7 +178,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     afterSuccess(afterProps());
                 }
 
-                resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch, undefined, instanceId));
+                resolve(getCurrentApiDataBinding());
             }
 
             function handleFail(responseBody: any, response?: Response, skipBefore: boolean = false) {
@@ -189,7 +204,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     afterFailed(afterProps());
                 }
 
-                resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch, undefined, instanceId));
+                resolve(getCurrentApiDataBinding());
             }
         });
     };

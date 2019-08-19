@@ -23,7 +23,8 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                 lastCall: Date.now(),
                 duration: 6000,
                 endpointKey: 'getData',
-                result: { mobilePhone: 'Iphone', provider: 'Ben' }
+                result: { mobilePhone: 'Iphone', provider: 'Ben' },
+                url: 'https://myapi.org/myData',
             }
         },
         entities: {
@@ -86,7 +87,8 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     lastCall: Date.now(),
                     duration: 6000,
                     endpointKey: 'getData',
-                    result: 1
+                    result: 1,
+                    url: 'https://myapi.org/myData',
                 }
             },
             entities: {
@@ -140,12 +142,14 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     lastCall: Date.now(),
                     duration: 6000,
                     endpointKey: 'getData',
-                    result: 1
+                    result: 1,
+                    url: 'https://myapi.org/myData',
                 }, [getRequestKey('getData', { id: 'one' })]: {
                     networkStatus: 'success',
                     lastCall: Date.now(),
                     duration: 6000,
-                    endpointKey: 'getData'
+                    endpointKey: 'getData',
+                    url: 'https://myapi.org/myData',
                 }
             },
             entities: {
