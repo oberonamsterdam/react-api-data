@@ -7,7 +7,7 @@ import { Action } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ThunkDispatch } from 'redux-thunk';
-import { getApiDataBinding } from './helpers/getApiDataBinding';
+import { createApiDataBinding } from './helpers/createApiDataBinding';
 
 type GetParams<TPropName extends string> = (ownProps: any, state: any) => { [paramName in TPropName]?: EndpointParams | EndpointParams[] };
 
@@ -26,7 +26,7 @@ export type WithApiDataChildProps<TPropNames extends string> = {
 };
 
 type EndpointApiDataBindingInstances = {
-    [k in string]: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
+    [instanceId in string]: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
 };
 
 type BindingPropNameApiDataBindings<TPropNames extends string> = {
@@ -82,6 +82,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
     return (WrappedComponent: React.ComponentType<any>): React.ComponentClass<any> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+            // keep track of binding instances (each propName can have multiple bindings through getInstance)
             bindingPropNameApiDataBindings: BindingPropNameApiDataBindings<TPropNames> = {} as BindingPropNameApiDataBindings<TPropNames>;
 
             componentDidMount() {
@@ -113,17 +114,19 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 propName: keyof BindingPropNameApiDataBindings<TPropNames>, 
                 instanceId: string = ''
             ): ((apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>) {
+                // check if we already have an instance of this binding
                 let propNameInstances: EndpointApiDataBindingInstances = this.bindingPropNameApiDataBindings[propName];
                 if (propNameInstances === undefined) {
                     propNameInstances = {} as EndpointApiDataBindingInstances;
                     this.bindingPropNameApiDataBindings[propName] = propNameInstances;
                 } 
-                if (Object.keys(propNameInstances).indexOf(instanceId) === -1) {
-                    propNameInstances[instanceId] = getApiDataBinding(
+                if (!propNameInstances[instanceId]) {
+                    propNameInstances[instanceId] = createApiDataBinding(
                         endpointKey, 
                         params, 
                         dispatch, 
-                        (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, getInstanceId: string = instanceId) => this.getApiDataBinding(endpointKey, params, dispatch, propName, getInstanceId)(apiData, newApiDataRequest), 
+                        (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, getInstanceId: string = instanceId) =>
+                            this.getApiDataBinding(endpointKey, params, dispatch, propName, getInstanceId)(apiData, newApiDataRequest),
                         instanceId
                     );
                     this.bindingPropNameApiDataBindings[propName] = propNameInstances;

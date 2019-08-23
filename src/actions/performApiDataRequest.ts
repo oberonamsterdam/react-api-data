@@ -16,7 +16,7 @@ import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
-import { getApiDataBinding } from '../helpers/getApiDataBinding';
+import { createApiDataBinding } from '../helpers/createApiDataBinding';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
@@ -74,7 +74,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             } else {
                 let apiDataBinding: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
                 const getApiDataBindingCopy = (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => apiDataBinding(apiData, newApiDataRequest);
-                apiDataBinding = getApiDataBinding(endpointKey, params as EndpointParams, dispatch, getApiDataBindingCopy, instanceId);
+                apiDataBinding = createApiDataBinding(endpointKey, params as EndpointParams, dispatch, getApiDataBindingCopy, instanceId);
                 return apiDataBinding(getState().apiData, request);
             }
         }
