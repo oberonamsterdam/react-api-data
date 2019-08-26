@@ -16,7 +16,7 @@ import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
-import { createApiDataBinding } from '../helpers/createApiDataBinding';
+import { BindingsStore } from '../helpers/createApiDataBinding';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
@@ -55,7 +55,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', getApiDataBindingCopy?: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => ApiDataBinding<any>) => {
+export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', getApiDataBindingInstance?: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => ApiDataBinding<any>) => {
     return (dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -69,14 +69,10 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }
 
         const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
-            if (getApiDataBindingCopy) {
-                return getApiDataBindingCopy(getState().apiData, request, instanceId);
-            } else {
-                let apiDataBinding: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
-                const getApiDataBindingCopy = (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => apiDataBinding(apiData, newApiDataRequest);
-                apiDataBinding = createApiDataBinding(endpointKey, params as EndpointParams, dispatch, getApiDataBindingCopy, instanceId);
-                return apiDataBinding(getState().apiData, request);
+            if (!getApiDataBindingInstance) {
+                getApiDataBindingInstance = new BindingsStore().getBinding(endpointKey, params, dispatch, instanceId);
             }
+            return getApiDataBindingInstance(getState().apiData, request, instanceId);
         }
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
