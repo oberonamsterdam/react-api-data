@@ -2,17 +2,21 @@ import { ActionCreator } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { ApiDataState, Action } from '../reducer';
 import {
-    ApiDataBinding, ApiDataConfigAfterProps, ApiDataConfigBeforeProps,
+    ApiDataBinding, 
+    ApiDataConfigAfterProps, 
+    ApiDataConfigBeforeProps,
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
-    EndpointParams, getResultData
+    EndpointParams, 
+    getResultData, 
+    ApiDataRequest
 } from '../index';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
-import { getApiDataBinding } from '../helpers/getApiDataBinding';
+import { BindingsStore } from '../helpers/createApiDataBinding';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
@@ -51,7 +55,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, extraParams?: EndpointParams) => {
+export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
     return (dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -64,17 +68,21 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
             return Promise.reject(errorMsg);
         }
 
-        const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params);
+        const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
+            return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, state.apiData, request);
+        }
+
+        const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
             apiDataRequest.networkStatus === 'loading' ||
             (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
         )) {
-            return Promise.resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch, apiDataRequest));
+            return Promise.resolve(getCurrentApiDataBinding(apiDataRequest));
         }
 
-        const requestKey = getRequestKey(endpointKey, params || {});
-        const url = formatUrl(config.url, { ...params, ...extraParams });
+        const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
+        const url = formatUrl(config.url, params);
 
         dispatch(({
             type: 'FETCH_API_DATA',
@@ -109,7 +117,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     clearTimeout(abortTimeout);
 
                     if (handledResponse.response.ok) {
-                        handleSuccess(handledResponse)
+                        handleSuccess(handledResponse);
                     } else {
                         handleFail(handledResponse.body, handledResponse.response);
                     }
@@ -123,24 +131,24 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 }
             );
 
-            function beforeProps (): ApiDataConfigBeforeProps {
+            function beforeProps(): ApiDataConfigBeforeProps {
                 return {
-                    request: getApiDataRequest(getState().apiData, endpointKey, params)!, // there should always be a request after dispatching fetch
+                    request: getApiDataRequest(getState().apiData, endpointKey, params, instanceId)!, // there should always be a request after dispatching fetch
                     requestBody: body,
                     endpointKey
                 };
             }
 
-            function afterProps (): ApiDataConfigAfterProps {
+            function afterProps(): ApiDataConfigAfterProps {
                 return {
                     ...beforeProps(),
-                    resultData: getResultData(getState().apiData, endpointKey, params),
+                    resultData: getResultData(getState().apiData, endpointKey, params, instanceId),
                     getState,
                     dispatch,
                 };
             }
 
-            function handleSuccess ({ response, body: responseBody }: HandledResponse, skipBefore = false) {
+            function handleSuccess({ response, body: responseBody }: HandledResponse, skipBefore: boolean = false) {
                 if (!skipBefore) {
                     // before success cb, allows turning this into fail by altering ok value
                     const beforeSuccess = composeConfigPipeFn(config.beforeSuccess, globalConfig.beforeSuccess);
@@ -163,10 +171,10 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     afterSuccess(afterProps());
                 }
 
-                resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
+                resolve(getCurrentApiDataBinding());
             }
 
-            function handleFail (responseBody: any, response?: Response, skipBefore = false) {
+            function handleFail(responseBody: any, response?: Response, skipBefore: boolean = false) {
                 if (!skipBefore) {
                     // before error cb, allows turning this into success by altering ok value
                     const beforeFailed = composeConfigPipeFn(config.beforeFailed, globalConfig.beforeFailed);
@@ -175,7 +183,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     responseBody = alteredResp.body;
 
                     if (response && response.ok) {
-                        handleSuccess({response, body: responseBody}, true);
+                        handleSuccess({ response, body: responseBody }, true);
                         return;
                     }
                 }
@@ -189,7 +197,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     afterFailed(afterProps());
                 }
 
-                resolve(getApiDataBinding(getState().apiData, endpointKey, params as EndpointParams, dispatch));
+                resolve(getCurrentApiDataBinding());
             }
         });
     };

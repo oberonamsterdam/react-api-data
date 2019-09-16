@@ -7,11 +7,9 @@ import { getResultData } from './selectors/getResultData';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
 import { performApiRequest, useRequestHandler } from './actions/performApiDataRequest';
 import { getEntity } from './selectors/getEntity';
-import { Action } from './reducer';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
-import { ThunkAction } from 'redux-thunk';
 
 export {
     withApiData,
@@ -145,6 +143,7 @@ export interface ApiDataConfigAfterProps {
 export interface ApiDataBinding<T> {
     data?: T;
     request: ApiDataRequest;
-    perform: (params: EndpointParams, body: string | FormData | any) => ThunkAction<{}, { apiData: ApiDataState; }, void, Action>;
-    invalidateCache: (params: EndpointParams, body: string | FormData | any) => ThunkAction<{}, { apiData: ApiDataState; }, void, Action>;
+    perform: (params?: EndpointParams, body?: any) => Promise<ApiDataBinding<T>>;
+    invalidateCache: () => void;
+    getInstance: (instanceId: string) => ApiDataBinding<T>;
 }

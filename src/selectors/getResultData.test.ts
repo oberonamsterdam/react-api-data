@@ -23,7 +23,16 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                 lastCall: Date.now(),
                 duration: 6000,
                 endpointKey: 'getData',
-                result: { mobilePhone: 'Iphone', provider: 'Ben' }
+                result: { mobilePhone: 'Iphone', provider: 'Ben' },
+                url: 'https://myapi.org/myData',
+            },
+            [getRequestKey('getData', { id: 'two' }, 'primary')]: {
+                networkStatus: 'success',
+                lastCall: Date.now(),
+                duration: 6000,
+                endpointKey: 'getData',
+                result: { mobilePhone: 'Samsung', provider: 'T-Mobile' },
+                url: 'https://myapi.org/myData',
             }
         },
         entities: {
@@ -56,6 +65,21 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
         expect(result).toBeUndefined();
     });
 
+    test('should equal the result object form the apiDataState when empty string is passed as instanceId', () => {
+        const result = getResultData(apiDataState, 'getData', { id: 'one' }, '');
+        expect(result).toEqual({ mobilePhone: 'Iphone', provider: 'Ben' });
+    });
+
+    test('should return undefined when an unknown instanceId is entered', () => {
+        const result = getResultData(apiDataState, 'getData', { id: 'one' }, 'otherInstance');
+        expect(result).toBeUndefined();
+    });
+    
+    test('should equal the result object form the apiDataState when an known instanceId is entered', () => {
+        const result = getResultData(apiDataState, 'getData', { id: 'two' }, 'primary');
+        expect(result).toEqual({ mobilePhone: 'Samsung', provider: 'T-Mobile' });
+    });
+
     test('should call console.warn if there is no config and NODE_ENV is set to development', () => {
 
     // @ts-ignore
@@ -86,7 +110,8 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     lastCall: Date.now(),
                     duration: 6000,
                     endpointKey: 'getData',
-                    result: 1
+                    result: 1,
+                    url: 'https://myapi.org/myData',
                 }
             },
             entities: {
@@ -140,12 +165,14 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     lastCall: Date.now(),
                     duration: 6000,
                     endpointKey: 'getData',
-                    result: 1
+                    result: 1,
+                    url: 'https://myapi.org/myData',
                 }, [getRequestKey('getData', { id: 'one' })]: {
                     networkStatus: 'success',
                     lastCall: Date.now(),
                     duration: 6000,
-                    endpointKey: 'getData'
+                    endpointKey: 'getData',
+                    url: 'https://myapi.org/myData',
                 }
             },
             entities: {

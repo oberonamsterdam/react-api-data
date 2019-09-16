@@ -20,7 +20,8 @@ describe(' getEntity function should return a single entity from normalized data
                 networkStatus: 'success',
                 lastCall: 10,
                 duration: 6000,
-                endpointKey: 'getData'
+                endpointKey: 'getData',
+                url: 'https://myapi.org/myData',
             }
         },
         entities: { users: { abc: '1234' } }

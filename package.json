@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watch",
-    "build": "npm run build:clean && npm run build:lib && npm run build:flow",
+    "build": "npm run test && npm run build:clean && npm run build:lib && npm run build:flow",
     "build:clean": "rimraf lib/",
     "build:lib": "tsc",
     "build:flow": "flow example && flow-copy-source flow lib",

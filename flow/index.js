@@ -154,4 +154,5 @@ export interface ApiDataBinding<T> {
         body?: any
     ) => Promise<ApiDataBinding<T>>;
     invalidateCache: () => Promise<void>;
+    getInstance: (instanceId: string) => ApiDataBinding<T>;
 }

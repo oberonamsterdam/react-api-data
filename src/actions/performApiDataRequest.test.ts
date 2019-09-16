@@ -350,6 +350,16 @@ describe('performApiDataRequest', () => {
         });
     });
 
+    test('The function resolves with a result argument for an instance', () => {
+        const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 50000 }, undefined, Date.now(), 'primary') };
+        const result = { data: getResultData(state.apiData, 'getData', {}, 'primary'), request: getApiDataRequest(state.apiData, 'getData', {}, 'primary'), perform: (myParams: EndpointParams, body: any) => dispatch(performApiRequest('getData', myParams, body)) };
+        return performApiRequest('getData', {}, { data: 'json' }, 'primary')(dispatch, () => state).then(output => {
+            expect(output.data).toEqual(result.data);
+            expect(output.request).toEqual(result.request);
+            expect(typeof output.perform).toEqual('function');
+        });
+    });
+
     test('The function resolves with a beforeFailed argument and triggers apiDataFail with the beforeFailed response', async () => {
         const beforeFailed = () => {
             return response2;

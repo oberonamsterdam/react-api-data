@@ -122,6 +122,7 @@ const updatedState: ApiDataState = {
             lastCall: 1000,
             duration: 0,
             endpointKey: 'postData',
+            url: 'www.postdate.post',
         }
     }
 };
@@ -134,7 +135,8 @@ describe('FETCH_API_DATA', () => {
             payload: {
                 endpointKey: 'getData',
                 requestKey: getRequestKey('getData', params),
-                params
+                params,
+                url: 'www.getdata.get',
             },
         };
         const newState = {
@@ -145,13 +147,15 @@ describe('FETCH_API_DATA', () => {
                     lastCall: MOCK_NOW,
                     duration: 0,
                     endpointKey: 'getData',
-                    params
+                    params,
+                    url: 'www.getdata.get',
                 },
                 [getRequestKey('postData')]: {
                     networkStatus: 'ready',
                     lastCall: 1000,
                     duration: 0,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
         };
@@ -197,6 +201,7 @@ describe('API_DATA_SUCCESS', () => {
                     },
                     errorBody: undefined,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
         });
@@ -242,6 +247,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                     },
                     errorBody: undefined,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             },
             entities: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
@@ -285,6 +291,7 @@ describe('API_DATA_FAIL', () => {
                     errorBody: 'oopsie',
                     result: undefined,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
         };
@@ -300,6 +307,7 @@ const invalidateAbleState: ApiDataState = {
             lastCall: 1000,
             duration: 0,
             endpointKey: 'postData',
+            url: 'www.postdate.post',
         }
     }
 };
@@ -320,7 +328,8 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
                     networkStatus: 'ready',
                     lastCall: 1000,
                     duration: 0,
-                    endpointKey: 'postData'
+                    endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
         };

@@ -13,9 +13,9 @@ export interface InvalidateApiDataRequestAction {
  * a GET list request, which might need to include the newly created entity.
  */
 
-export const invalidateApiDataRequest = (endpointKey: string, params?: EndpointParams): InvalidateApiDataRequestAction => ({
+export const invalidateApiDataRequest = (endpointKey: string, params?: EndpointParams, instanceId: string = ''): InvalidateApiDataRequestAction => ({
     type: 'INVALIDATE_API_DATA_REQUEST',
     payload: {
-        requestKey: getRequestKey(endpointKey, params)
+        requestKey: getRequestKey(endpointKey, params, instanceId)
     }
 });

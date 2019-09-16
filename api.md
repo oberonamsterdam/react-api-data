@@ -96,7 +96,7 @@ Use your own request function that calls the api and reads the responseBody resp
 
 **Parameters**
 
- - `requestHandler` **RequestHandler**
+- `requestHandler` **RequestHandler**
 
 
 ## Actions
@@ -108,12 +108,14 @@ to use [withApiData](#withapidata).
 
 **Parameters**
 
- - `endpointKey` **string** - `params` **[EndpointParams](#endpointparams)** 
- - `body` **any** Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Rejects when endpointKey is unkown. Otherwise resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not.
+- `endpointKey` **string**
+- `params` **[EndpointParams](#endpointparams)**
+- `body` **any**
+- `instanceId?` **string**
 
 **Returns**
 
-**Object** Redux action to dispatch
+**Object** Redux action to dispatch. Dispatching this returns: **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Rejects when endpointKey is unkown. Otherwise resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not.
 
 ---
 
@@ -126,6 +128,7 @@ a GET list request, which might need to include the newly created entity.
 
 - `endpointKey` **string**
 - `params` **[EndpointParams](#endpointparams)**
+- `instanceId?` **string**
 
 **Returns**
 
@@ -156,6 +159,7 @@ button click.
 - `apiDataState` **[ApiDataState](#apidatastate)**
 - `endpointKey` **string**
 - `params` **[EndpointParams](#endpointparams)**
+- `instanceId?` **string**
 
 **Returns**
 
@@ -174,6 +178,7 @@ triggered manually, like a POST after a button click.
 - `apiDataState` **[ApiDataState](#apidatastate)**
 - `endpointKey` **string**
 - `params` **[EndpointParams](#endpointparams)**
+- `instanceId?` **string**
 
 **Returns**
 
@@ -225,6 +230,7 @@ Type: **String enum**
 - `perform` **(params: [EndpointParams](#endpointparams), body: Object | string | FormData) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>**
   Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original ApiDataBinding and the resolved promise contain the result of the performed request.
 - `invalidateCache` **() => Promise&lt;void>** Manually trigger a cache invalidation of the endpoint with the current parameters.
+- `getInstance` **(instanceId: string) => [ApiDataBinding](#apidatabinding)** get an independent instance of this binding. This enables you to make multiple (possibly paralel) calls to the same endpoint while maintaining access to all of them.
 
 **Examples**
 

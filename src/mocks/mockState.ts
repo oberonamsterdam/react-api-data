@@ -18,7 +18,8 @@ export default (
     networkStatus?: any,
     config: Partial<ApiDataEndpointConfig> = {},
     globalConfig: Partial<ApiDataGlobalConfig> = {},
-    lastCall = Date.now()
+    lastCall = Date.now(),
+    instanceId = ''
 ): any => ({
     globalConfig,
     endpointConfig: {
@@ -33,7 +34,7 @@ export default (
         }
     },
     requests: hasRequest ? {
-        [getRequestKey(binding, params[binding])]: {
+        [getRequestKey(binding, params[binding], instanceId)]: {
             networkStatus,
             lastCall,
             duration: 0,

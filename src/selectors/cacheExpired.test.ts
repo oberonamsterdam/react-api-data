@@ -16,7 +16,8 @@ describe('check wether the cacheExpired function works correctly', () => {
             networkStatus: 'failed',
             lastCall: 6000,
             duration: 12000,
-            endpointKey: 'getData'
+            endpointKey: 'getData',
+            url: 'https://myapi.org/myData',
         };
 
         const action = cacheExpired(endpointConfig, request);
@@ -37,7 +38,8 @@ describe('check wether the cacheExpired function works correctly', () => {
             networkStatus: 'failed',
             lastCall: Date.now() + 1,
             duration: 12000,
-            endpointKey: 'getData'
+            endpointKey: 'getData',
+            url: 'https://myapi.org/myData',
         };
 
         const action = cacheExpired(endpointConfig, request);
