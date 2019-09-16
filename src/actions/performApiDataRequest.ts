@@ -55,7 +55,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', getApiDataBindingInstance?: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => ApiDataBinding<any>) => {
+export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
     return (dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -69,10 +69,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }
 
         const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
-            if (!getApiDataBindingInstance) {
-                getApiDataBindingInstance = new BindingsStore().getBinding(endpointKey, params, dispatch, instanceId);
-            }
-            return getApiDataBindingInstance(getState().apiData, request, instanceId);
+            return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, state.apiData, request);
         }
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);

@@ -108,15 +108,16 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 params: EndpointParams, 
                 dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>, 
                 propName: keyof BindingPropNameBindingsStore<TPropNames>, 
-                instanceId: string = ''
-            ): ((apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>) {
+                instanceId: string = '',
+                apiData: ApiDataState
+            ): ApiDataBinding<any> {
                 // check if we already have an instance of this bindingStore
                 let propNameBindingsStore: BindingsStore = this.bindingPropNameBindingsStore[propName];
                 if (propNameBindingsStore === undefined) {
                     propNameBindingsStore = new BindingsStore();
                     this.bindingPropNameBindingsStore[propName] = propNameBindingsStore;
                 } 
-                return propNameBindingsStore.getBinding(endpointKey, params, dispatch, instanceId);
+                return propNameBindingsStore.getBinding(endpointKey, params, dispatch, instanceId, apiData);
             }
 
             fetchDataIfNeeded() {
@@ -130,10 +131,10 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                         if (Array.isArray(params[propName])) {
                             const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
                             paramsArray.forEach((propNameParams, index) => {
-                                dispatch(performApiRequest(endpointKey, propNameParams, undefined, index.toString()));
+                                dispatch(performApiRequest(endpointKey, propNameParams, undefined, index.toString(), this.bindingPropNameBindingsStore[propName]));
                             });
                         } else {
-                            dispatch(performApiRequest(endpointKey, params[propName] as EndpointParams));
+                            dispatch(performApiRequest(endpointKey, params[propName] as EndpointParams, undefined, '', this.bindingPropNameBindingsStore[propName]));
                         }
                     }
                 });
@@ -148,9 +149,9 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     const endpointKey: string = bindings[propName];
                     if (Array.isArray(params[propName])) {
                         const paramsArray: EndpointParams[] = (params[propName] as EndpointParams[]);
-                        addProps[propName] = paramsArray.map((propNameParams, index) => this.getApiDataBinding(endpointKey, propNameParams, dispatch, propName, index.toString())(apiData));
+                        addProps[propName] = paramsArray.map((propNameParams, index) => this.getApiDataBinding(endpointKey, propNameParams, dispatch, propName, index.toString(), apiData));
                     } else {
-                        addProps[propName] = this.getApiDataBinding(endpointKey, params[propName] as EndpointParams, dispatch, propName)(apiData);
+                        addProps[propName] = this.getApiDataBinding(endpointKey, params[propName] as EndpointParams, dispatch, propName, '', apiData);
                     }
                 });
 

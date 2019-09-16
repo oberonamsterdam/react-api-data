@@ -13,18 +13,20 @@ export class BindingsStore {
     getBinding(endpointKey: string, 
         params: EndpointParams = {}, 
         dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>, 
-        instanceId: string = '') {
+        instanceId: string = '',
+        apiData: ApiDataState, 
+        request?: ApiDataRequest
+    ) {
         if (!this.bindingInstances[instanceId]) {
             this.bindingInstances[instanceId] = createApiDataBinding(
                 endpointKey, 
                 params, 
                 dispatch, 
-                (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, getInstanceId: string = instanceId) =>
-                    this.getBinding(endpointKey, params, dispatch, getInstanceId)(apiData, newApiDataRequest),
+                this,
                 instanceId
             );
         }
-        return this.bindingInstances[instanceId];
+        return this.bindingInstances[instanceId](apiData, request);
     }
 }
 
@@ -32,7 +34,7 @@ export const createApiDataBinding = (
     endpointKey: string, 
     bindingParams: EndpointParams = {}, 
     dispatch: ThunkDispatch<{ apiData: ApiDataState; }, void, Action>,
-    getApiDataBindingInstance: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest, instanceId?: string) => ApiDataBinding<any>,
+    bindingsStore: BindingsStore,
     instanceId: string = ''
 ): (apiData: ApiDataState, request?: ApiDataRequest) => ApiDataBinding<any> => {
     let params: EndpointParams = bindingParams;
@@ -42,9 +44,9 @@ export const createApiDataBinding = (
         request: request || getApiDataRequest(apiData, endpointKey, params, instanceId) || createApiDataRequest(endpointKey),
         perform: (performParams: EndpointParams, body: any) => {
             params = { ...bindingParams, ...performParams };
-            return dispatch(performApiRequest(endpointKey, params, body, instanceId, getApiDataBindingInstance));
+            return dispatch(performApiRequest(endpointKey, params, body, instanceId, bindingsStore));
         },
         invalidateCache: () => dispatch(invalidateApiDataRequest(endpointKey, params, instanceId)),
-        getInstance: (newInstanceId: string) => getApiDataBindingInstance(apiData, request, newInstanceId),
+        getInstance: (newInstanceId: string) => bindingsStore.getBinding(endpointKey, params, dispatch, newInstanceId, apiData),
     });
 };
