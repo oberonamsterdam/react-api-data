@@ -36,13 +36,13 @@ export const createApiDataBinding = (
     dispatch: ThunkDispatch<{ apiData: ApiDataState; }, void, Action>,
     bindingsStore: BindingsStore,
     instanceId: string = ''
-): (apiData: ApiDataState, request?: ApiDataRequest) => ApiDataBinding<any> => {
+): ((apiData: ApiDataState, request?: ApiDataRequest) => ApiDataBinding<any>) => {
     let params: EndpointParams = bindingParams;
 
     return (apiData: ApiDataState, request?: ApiDataRequest) => ({
         data: getResultData(apiData, endpointKey, params, instanceId),
         request: request || getApiDataRequest(apiData, endpointKey, params, instanceId) || createApiDataRequest(endpointKey),
-        perform: (performParams: EndpointParams, body: any) => {
+        perform: (performParams?: EndpointParams, body?: any) => {
             params = { ...bindingParams, ...performParams };
             return dispatch(performApiRequest(endpointKey, params, body, instanceId, bindingsStore));
         },

@@ -143,7 +143,7 @@ export interface ApiDataConfigAfterProps {
 export interface ApiDataBinding<T> {
     data?: T;
     request: ApiDataRequest;
-    perform: (params: EndpointParams, body: string | FormData | any) => Promise<ApiDataBinding<any>>;
+    perform: (params?: EndpointParams, body?: any) => Promise<ApiDataBinding<any>>;
     invalidateCache: () => void;
     getInstance: (instanceId: string) => ApiDataBinding<T>;
 }
