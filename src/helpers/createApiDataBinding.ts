@@ -2,9 +2,10 @@ import { ApiDataState, EndpointParams, performApiRequest, getResultData, getApiD
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import createApiDataRequest from './createApiDataRequest';
+import {getRequestKey} from './getRequestKey';
 
 type BindingInstances = {
-    [instanceId in string]: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
+    [requestKey in string]: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
 };
 
 export class BindingsStore {
@@ -17,8 +18,9 @@ export class BindingsStore {
         apiData: ApiDataState, 
         request?: ApiDataRequest
     ) {
-        if (!this.bindingInstances[instanceId]) {
-            this.bindingInstances[instanceId] = createApiDataBinding(
+        const requestKey = getRequestKey(endpointKey, params, instanceId);
+        if (!this.bindingInstances[requestKey]) {
+            this.bindingInstances[requestKey] = createApiDataBinding(
                 endpointKey, 
                 params, 
                 dispatch, 
@@ -26,7 +28,7 @@ export class BindingsStore {
                 instanceId
             );
         }
-        return this.bindingInstances[instanceId](apiData, request);
+        return this.bindingInstances[requestKey](apiData, request);
     }
 }
 
