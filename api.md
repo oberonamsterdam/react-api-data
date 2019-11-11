@@ -1,30 +1,33 @@
 # API
   ## Table of Contents
-- [HOC](#hoc)
-  - [`withApiData()`](#withapidata)
-- [Config](#config)
-  - [`configureApiData()`](#configureapidata)
-  - [`useRequestHandler()`](#userequesthandler)
-- [Actions](#actions)
-  - [`performApiRequest()`](#performapirequest)
-  - [`invalidateApiDataRequest()`](#invalidateapidatarequest)
-  - [`afterRehydrate()`](#afterrehydrate)
-- [Selectors](#selectors)
-  - [`getApiDataRequest()`](#getapidatarequest)
-  - [`getResultData()`](#getresultdata)
-  - [`getEntity()`](#getentity)
-- [Types and interfaces](#types-and-interfaces)
-  - [`NetworkStatus`](#networkstatus)
-  - [`ApiDataBinding`](#apidatabinding)
-  - [`ApiDataRequest`](#apidatarequest)
-  - [`EndpointParams`](#endpointparams)
-  - [`ApiDataEndpointConfig`](#apidataendpointconfig)
-  - [`ApiDataGlobalConfig`](#apidataglobalconfig)
-  - [`ApiDataConfigBeforeProps`](#apidataconfigbeforeprops)
-  - [`ApiDataConfigAfterProps`](#apidataconfigafterprops)
-  - [`ApiDataState`](#apidatastate)
-  - [`RequestHandler`](#requesthandler)
-  - [`HandledResponse`](#handledresponse)
+- [API](#api)
+  - [Table of Contents](#table-of-contents)
+  - [HOC](#hoc)
+    - [`withApiData()`](#withapidata)
+  - [Config](#config)
+    - [`configureApiData()`](#configureapidata)
+    - [`useRequestHandler()`](#userequesthandler)
+  - [Actions](#actions)
+    - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
+    - [`invalidateApiDataRequest()` (Deprecated)](#invalidateapidatarequest-deprecated)
+    - [`afterRehydrate()`](#afterrehydrate)
+  - [Selectors](#selectors)
+    - [getApiDataRequest()](#getapidatarequest)
+    - [getResultData()](#getresultdata)
+    - [getEntity()](#getentity)
+  - [Types and interfaces](#types-and-interfaces)
+    - [`NetworkStatus`](#networkstatus)
+    - [`ApiDataBinding`](#apidatabinding)
+    - [`Actions`](#actions)
+    - [`ApiDataRequest`](#apidatarequest)
+    - [`EndpointParams`](#endpointparams)
+    - [`ApiDataEndpointConfig`](#apidataendpointconfig)
+    - [`ApiDataGlobalConfig`](#apidataglobalconfig)
+    - [`ApiDataConfigBeforeProps`](#apidataconfigbeforeprops)
+    - [`ApiDataConfigAfterProps`](#apidataconfigafterprops)
+    - [`ApiDataState`](#apidatastate)
+    - [`RequestHandler`](#requesthandler)
+    - [`HandledResponse`](#handledresponse)
 
 ## HOC
 
@@ -40,7 +43,7 @@ component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#api
 
 **Returns**
 
-**Function** Function to wrap your component
+**Function** Function to wrap your component, which adds a prop for each binding and an apiDataActions prop with type [Actions](#actions).
 
 **Examples**
  ```javascript
@@ -101,10 +104,14 @@ Use your own request function that calls the api and reads the responseBody resp
 
 ## Actions
 
-### `performApiRequest()`
+### `performApiRequest()` (Deprecated)
 
-Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For get requests it is preferred
+Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred
 to use [withApiData](#withapidata).
+
+**Deprecated**
+
+The performApiRequest Action has been deprecated. It is recommended to use the [ApiDataAction](#apidataaction) perform, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
 
 **Parameters**
 
@@ -115,14 +122,18 @@ to use [withApiData](#withapidata).
 
 **Returns**
 
-**Object** Redux action to dispatch. Dispatching this returns: **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Rejects when endpointKey is unkown. Otherwise resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not.
+**Object** Redux action to dispatch. Dispatching this returns: **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Rejects when endpointKey is unknown. Otherwise resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not.
 
 ---
 
-### `invalidateApiDataRequest()`
+### `invalidateApiDataRequest()` (Deprecated)
 
 Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
 a GET list request, which might need to include the newly created entity.
+
+**Deprecated**
+
+The invalidateApiDataRequest Action has been deprecated. It is recommended to use the [ApiDataAction](#apidataaction) invalidateCache, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
 
 **Parameters**
 
@@ -242,6 +253,18 @@ type Props = {
 
 ---
 
+### `Actions`
+
+Actions. These do not need to be dispatched.
+
+**Properties**
+
+- `perform` **(`endpointKey` string, `params` [EndpointParams](#endpointparams), `body` any, `instanceId?` string) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred to use [withApiData](#withapidata).
+- `invalidateCache` **(`endpointKey` string, `params` [EndpointParams](#endpointparams), `instanceId?` string) => void** Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
+a GET list request, which might need to include the newly created entity.
+
+---
+
 ### `ApiDataRequest`
 
 Information about a request made to an endpoint.
@@ -329,6 +352,7 @@ Map of parameter names to values.
  Redux' dispatch function. Useful for state related side effects.
 - `getState` **Function**
  Get access to your redux state.
+- `actions` **[Actions](#actions)**
 
 ---
 

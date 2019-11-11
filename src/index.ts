@@ -10,6 +10,7 @@ import { getEntity } from './selectors/getEntity';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
+import { Actions } from './helpers/getActions';
 
 export {
     withApiData,
@@ -131,6 +132,7 @@ export interface ApiDataConfigAfterProps {
     // redux functions
     dispatch: Function;
     getState: Function;
+    actions: Actions;
 }
 
 /**
