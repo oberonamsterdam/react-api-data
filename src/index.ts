@@ -129,10 +129,10 @@ export interface ApiDataConfigAfterProps {
     request: ApiDataRequest;
     requestBody?: any;
     resultData: any;
+    actions: Actions;
     // redux functions
     dispatch: Function;
     getState: Function;
-    actions: Actions;
 }
 
 /**
