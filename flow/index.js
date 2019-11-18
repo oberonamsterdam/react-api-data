@@ -1,10 +1,7 @@
 // @flow
 
 import withApiData from './withApiData';
-import reducer, {
-    type Action,
-    type ApiDataState,
-} from './reducer';
+import reducer, { type ApiDataState } from './reducer';
 import { configureApiData } from './actions/configureApiData';
 import { performApiRequest } from './actions/performApiDataRequest';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
@@ -14,7 +11,8 @@ import { useRequestHandler } from './actions/performApiDataRequest';
 import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { getResultData } from './selectors/getResultData';
 import { getEntity } from './selectors/getEntity';
-import type { ActionCreator } from 'redux';
+import { type ActionCreator } from 'redux';
+import { type Actions } from './helpers/getActions';
 
 export {
     withApiData,
@@ -138,6 +136,7 @@ export interface ApiDataConfigAfterProps {
     // redux functions
     dispatch: Function;
     getState: Function;
+    actions: Actions;
 }
 
 /**
