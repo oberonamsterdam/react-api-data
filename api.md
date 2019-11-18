@@ -1,40 +1,39 @@
 # API
   ## Table of Contents
-- [API](#api)
-  - [Table of Contents](#table-of-contents)
-  - [HOC](#hoc)
-    - [`withApiData()`](#withapidata)
-  - [Config](#config)
-    - [`configureApiData()`](#configureapidata)
-    - [`useRequestHandler()`](#userequesthandler)
-  - [Redux Actions](#redux-actions)
-    - [`afterRehydrate()`](#afterrehydrate)
-    - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
-    - [`invalidateApiDataRequest()` (Deprecated)](#invalidateapidatarequest-deprecated)
-  - [Selectors](#selectors)
-    - [`getEntity()`](#getentity)
-    - [`getApiDataRequest()` (Deprecated)](#getapidatarequest-deprecated)
-    - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
-  - [Types and interfaces](#types-and-interfaces)
-    - [`NetworkStatus`](#networkstatus)
-    - [`ApiDataBinding`](#apidatabinding)
-    - [`Actions`](#actions)
-    - [`ApiDataRequest`](#apidatarequest)
-    - [`EndpointParams`](#endpointparams)
-    - [`ApiDataEndpointConfig`](#apidataendpointconfig)
-    - [`ApiDataGlobalConfig`](#apidataglobalconfig)
-    - [`ApiDataConfigBeforeProps`](#apidataconfigbeforeprops)
-    - [`ApiDataConfigAfterProps`](#apidataconfigafterprops)
-    - [`ApiDataState`](#apidatastate)
-    - [`RequestHandler`](#requesthandler)
-    - [`HandledResponse`](#handledresponse)
+  
+- [HOC](#hoc)
+  - [`withApiData()`](#withapidata)
+- [Config](#config)
+  - [`configureApiData()`](#configureapidata)
+  - [`useRequestHandler()`](#userequesthandler)
+- [Redux Actions](#redux-actions)
+  - [`afterRehydrate()`](#afterrehydrate)
+  - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
+  - [`invalidateApiDataRequest()` (Deprecated)](#invalidateapidatarequest-deprecated)
+- [Selectors](#selectors)
+  - [`getEntity()`](#getentity)
+  - [`getApiDataRequest()` (Deprecated)](#getapidatarequest-deprecated)
+  - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
+- [Types and interfaces](#types-and-interfaces)
+  - [`NetworkStatus`](#networkstatus)
+  - [`ApiDataBinding`](#apidatabinding)
+  - [`Actions`](#actions)
+  - [`ApiDataRequest`](#apidatarequest)
+  - [`EndpointParams`](#endpointparams)
+  - [`ApiDataEndpointConfig`](#apidataendpointconfig)
+  - [`ApiDataGlobalConfig`](#apidataglobalconfig)
+  - [`ApiDataConfigBeforeProps`](#apidataconfigbeforeprops)
+  - [`ApiDataConfigAfterProps`](#apidataconfigafterprops)
+  - [`ApiDataState`](#apidatastate)
+  - [`RequestHandler`](#requesthandler)
+  - [`HandledResponse`](#handledresponse)
 
 ## HOC
 
 ### `withApiData()`
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param.
+component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param and a property `apiDataActions` of type [Action](#action).
 
 **Parameters**
 
@@ -43,7 +42,7 @@ component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#api
 
 **Returns**
 
-**Function** Function to wrap your component, which adds a prop for each binding and an apiDataActions prop with type [Actions](#actions).
+**Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional apiDataActions property with type [Actions](#actions).
 
 **Examples**
  ```javascript
@@ -60,10 +59,11 @@ withApiData({
         userId: user.id
     })),
     editArticle: {}
-}));
+}))(MyComponent);
 // props.article will be an ApiDataBinding
 // props.users will be an array of ApiDataBinding
 // props.editArticle will be an ApiDataBinding
+// props.apiDataActions will be an Actions object
 
 // perform can be used to trigger calls with autoTrigger: false
 props.editArticle.perform({
@@ -72,6 +72,9 @@ props.editArticle.perform({
     title: 'New Title',
     content: 'New article content'
 });
+
+// the apiDataAction property can be used to perform actions on any endpoint in the endpoint config, not only those which are in the current binding.
+props.apiDataActions.invalidateCache('getArticles');
 ```
 
 
@@ -127,8 +130,8 @@ The performApiRequest Action has been deprecated. It is recommended to use the p
 **Parameters**
 
 - `endpointKey` **string**
-- `params` **[EndpointParams](#endpointparams)**
-- `body` **any**
+- `params?` **[EndpointParams](#endpointparams)**
+- `body?` **any**
 - `instanceId?` **string**
 
 **Returns**
@@ -149,7 +152,7 @@ The invalidateApiDataRequest Action has been deprecated. It is recommended to us
 **Parameters**
 
 - `endpointKey` **string**
-- `params` **[EndpointParams](#endpointparams)**
+- `params?` **[EndpointParams](#endpointparams)**
 - `instanceId?` **string**
 
 **Returns**
@@ -266,8 +269,8 @@ Perform actions on any configured endpoint. These actions do not need to be disp
 
 **Properties**
 
-- `perform` **(`endpointKey` string, `params` [EndpointParams](#endpointparams), `body` any, `instanceId?` string) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred to use [withApiData](#withapidata).
-- `invalidateCache` **(`endpointKey` string, `params` [EndpointParams](#endpointparams), `instanceId?` string) => void** Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
+- `perform` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `body?` any, `instanceId?` string) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred to use [withApiData](#withapidata).
+- `invalidateCache` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => void** Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
 a GET list request, which might need to include the newly created entity.
 
 ---
