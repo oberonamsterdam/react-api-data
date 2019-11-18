@@ -111,7 +111,7 @@ to use [withApiData](#withapidata).
 
 **Deprecated**
 
-The performApiRequest Action has been deprecated. It is recommended to use the [ApiDataAction](#apidataaction) perform, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
+The performApiRequest Action has been deprecated. It is recommended to use the perform action in the [ApiDataBinding](#apidatabinding) or the [ApiDataAction](#apidataaction) perform, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
 
 **Parameters**
 
@@ -133,7 +133,7 @@ a GET list request, which might need to include the newly created entity.
 
 **Deprecated**
 
-The invalidateApiDataRequest Action has been deprecated. It is recommended to use the [ApiDataAction](#apidataaction) invalidateCache, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
+The invalidateApiDataRequest Action has been deprecated. It is recommended to use the invalidateCache action in the [ApiDataBinding](#apidatabinding) or the [ApiDataAction](#apidataaction) invalidateCache, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
 
 **Parameters**
 
