@@ -7,12 +7,12 @@
   - [Config](#config)
     - [`configureApiData()`](#configureapidata)
     - [`useRequestHandler()`](#userequesthandler)
-  - [Actions](#actions)
+  - [Redux Actions](#redux-actions)
     - [`afterRehydrate()`](#afterrehydrate)
     - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
     - [`invalidateApiDataRequest()` (Deprecated)](#invalidateapidatarequest-deprecated)
   - [Selectors](#selectors)
-    - [getEntity()](#getentity)
+    - [`getEntity()`](#getentity)
     - [`getApiDataRequest()` (Deprecated)](#getapidatarequest-deprecated)
     - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
   - [Types and interfaces](#types-and-interfaces)
@@ -102,7 +102,7 @@ Use your own request function that calls the api and reads the responseBody resp
 - `requestHandler` **RequestHandler**
 
 
-## Actions
+## Redux Actions
 
 ### `afterRehydrate()`
 
@@ -158,7 +158,7 @@ The invalidateApiDataRequest Action has been deprecated. It is recommended to us
 
 ## Selectors
 
-### getEntity()
+### `getEntity()`
 
 Selector for getting a single entity from normalized data.
 
@@ -262,7 +262,7 @@ type Props = {
 
 ### `Actions`
 
-Actions. These do not need to be dispatched.
+Perform actions on any configured endpoint. These actions do not need to be dispatched.
 
 **Properties**
 
@@ -360,6 +360,7 @@ Map of parameter names to values.
 - `getState` **Function**
  Get access to your redux state.
 - `actions` **[Actions](#actions)**
+ Perform actions on any configured endpoint
 
 ---
 
