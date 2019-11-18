@@ -8,13 +8,13 @@
     - [`configureApiData()`](#configureapidata)
     - [`useRequestHandler()`](#userequesthandler)
   - [Actions](#actions)
+    - [`afterRehydrate()`](#afterrehydrate)
     - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
     - [`invalidateApiDataRequest()` (Deprecated)](#invalidateapidatarequest-deprecated)
-    - [`afterRehydrate()`](#afterrehydrate)
   - [Selectors](#selectors)
-    - [getApiDataRequest()](#getapidatarequest)
-    - [getResultData()](#getresultdata)
     - [getEntity()](#getentity)
+    - [`getApiDataRequest()` (Deprecated)](#getapidatarequest-deprecated)
+    - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
   - [Types and interfaces](#types-and-interfaces)
     - [`NetworkStatus`](#networkstatus)
     - [`ApiDataBinding`](#apidatabinding)
@@ -104,6 +104,17 @@ Use your own request function that calls the api and reads the responseBody resp
 
 ## Actions
 
+### `afterRehydrate()`
+
+Call this after you've re-hydrated the store when using redux-persist or any other method of persisting and restoring
+the entire apiData state. This is needed to reset loading statuses.
+
+**Returns**
+
+**Object** Redux action to dispatch
+
+---
+
 ### `performApiRequest()` (Deprecated)
 
 Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred
@@ -145,57 +156,7 @@ The invalidateApiDataRequest Action has been deprecated. It is recommended to us
 
 **Object** Redux action to dispatch
 
----
-
-### `afterRehydrate()`
-
-Call this after you've re-hydrated the store when using redux-persist or any other method of persisting and restoring
-the entire apiData state. This is needed to reset loading statuses.
-
-**Returns**
-
-**Object** Redux action to dispatch
-
-
 ## Selectors
-
-### getApiDataRequest()
-
-Selector to manually get a [ApiDataRequest](#apidatarequest). This value is automatically bind when using [withApiData](#withapidata).
-This selector can be useful for tracking request status when a request is triggered manually, like a POST after a
-button click.
-
-**Parameters**
-
-- `apiDataState` **[ApiDataState](#apidatastate)**
-- `endpointKey` **string**
-- `params` **[EndpointParams](#endpointparams)**
-- `instanceId?` **string**
-
-**Returns**
-
-**[ApiDataRequest](#apidatarequest) | void**
-
----
-
-### getResultData()
-
-Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
-bound when using [withApiData](#withapidata). This selector can be useful for getting response responseBody values when a request is
-triggered manually, like a POST after a button click.
-
-**Parameters**
-
-- `apiDataState` **[ApiDataState](#apidatastate)**
-- `endpointKey` **string**
-- `params` **[EndpointParams](#endpointparams)**
-- `instanceId?` **string**
-
-**Returns**
-
-**any**
-
----
 
 ### getEntity()
 
@@ -210,6 +171,52 @@ Selector for getting a single entity from normalized data.
 **Returns**
 
 **Object | void**
+
+---
+
+### `getApiDataRequest()` (Deprecated)
+
+Selector to manually get a [ApiDataRequest](#apidatarequest). This value is automatically bind when using [withApiData](#withapidata).
+This selector can be useful for tracking request status when a request is triggered manually, like a POST after a
+button click.
+
+**Deprecated**
+
+The getApiDataRequest selector has been deprecated. It is recommended to use the request property returned by the [ApiDataBinding](#apidatabinding), which is returned by the [HOC](#withapidata).
+
+**Parameters**
+
+- `apiDataState` **[ApiDataState](#apidatastate)**
+- `endpointKey` **string**
+- `params` **[EndpointParams](#endpointparams)**
+- `instanceId?` **string**
+
+**Returns**
+
+**[ApiDataRequest](#apidatarequest) | void**
+
+---
+
+### `getResultData()` (Deprecated)
+
+Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
+bound when using [withApiData](#withapidata). This selector can be useful for getting response responseBody values when a request is
+triggered manually, like a POST after a button click.
+
+**Deprecated**
+
+The getResultData selector has been deprecated. It is recommended to use the request property returned by the [ApiDataBinding](#apidatabinding), which is returned by the [HOC](#withapidata).
+
+**Parameters**
+
+- `apiDataState` **[ApiDataState](#apidatastate)**
+- `endpointKey` **string**
+- `params` **[EndpointParams](#endpointparams)**
+- `instanceId?` **string**
+
+**Returns**
+
+**any**
 
 
 ## Types and interfaces
