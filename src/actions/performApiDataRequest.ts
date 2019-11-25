@@ -20,6 +20,7 @@ import { BindingsStore } from '../helpers/createApiDataBinding';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
+import { getActions } from '../helpers/getActions';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
@@ -145,6 +146,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                     resultData: getResultData(getState().apiData, endpointKey, params, instanceId),
                     getState,
                     dispatch,
+                    actions: getActions(dispatch),
                 };
             }
 

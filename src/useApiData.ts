@@ -18,7 +18,7 @@ export const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: Endp
     const networkStatus = request && request.networkStatus;
     useEffect(() => {
         if (autoTrigger && networkStatus === 'ready') {
-            binding.perform(params, null);
+            binding.perform(params);
         }
     },
               [endpointKey, params, autoTrigger, networkStatus ]

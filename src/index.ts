@@ -11,6 +11,8 @@ import { ActionCreator } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
 import { useApiData } from './useApiData';
+import { Actions } from './helpers/getActions';
+import { useActions } from './useActions';
 
 export {
     withApiData,
@@ -25,7 +27,8 @@ export {
     reducer,
     useRequestHandler,
     ApiDataState,
-    useApiData
+    useApiData,
+    useActions
 };
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
@@ -132,11 +135,9 @@ export interface ApiDataConfigAfterProps {
     request: ApiDataRequest;
     requestBody?: any;
     resultData: any;
-    // redux functions
-    // tslint:disable-next-line:ban-types
-    dispatch: Function;
-    // tslint:disable-next-line:ban-types
-    getState: Function;
+    actions: Actions;
+    dispatch: () => void;
+    getState: () => void;
 }
 
 /**

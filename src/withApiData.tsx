@@ -8,6 +8,7 @@ import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ThunkDispatch } from 'redux-thunk';
 import { BindingsStore } from './helpers/createApiDataBinding';
+import { getActions, Actions } from './helpers/getActions';
 
 type GetParams<TPropName extends string> = (ownProps: any, state: any) => { [paramName in TPropName]?: EndpointParams | EndpointParams[] };
 
@@ -154,8 +155,9 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                         addProps[propName] = this.getApiDataBinding(endpointKey, params[propName] as EndpointParams, dispatch, propName, '', apiData);
                     }
                 });
+                const apiDataActions: Actions = getActions(dispatch);
 
-                return <WrappedComponent {...componentProps} {...addProps} />;
+                return <WrappedComponent {...componentProps} {...addProps} apiDataActions={apiDataActions}/>;
             }
         }
         // @ts-ignore

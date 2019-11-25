@@ -311,6 +311,7 @@ describe('performApiDataRequest', () => {
             resultData: undefined,
             dispatch,
             getState: getStateFn,
+            actions: expect.any(Object),
         };
         expect(endpointAfterSuccess).toHaveBeenCalledWith(afterProps);
         expect(globalAfterSuccess).toHaveBeenCalledWith(afterProps);
@@ -386,6 +387,7 @@ describe('performApiDataRequest', () => {
             resultData: undefined, // result data is not generated in our mock getState function
             dispatch,
             getState: getStateFn,
+            actions: expect.any(Object),
         };
         return expect(afterFailed).toHaveBeenCalledWith(afterProps);
     });
