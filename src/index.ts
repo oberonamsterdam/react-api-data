@@ -1,4 +1,4 @@
-// import withApiData from './withApiData';
+import withApiData from './withApiData';
 import { configureApiData } from './actions/configureApiData';
 import { afterRehydrate } from './actions/afterRehydrate';
 import { purgeApiData } from './actions/purgeApiData';
@@ -7,14 +7,13 @@ import { getResultData } from './selectors/getResultData';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
 import { performApiRequest, useRequestHandler } from './actions/performApiDataRequest';
 import { getEntity } from './selectors/getEntity';
-import { Action } from './reducer';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
-import useApiData from './useApiData';
+import { useApiData } from './useApiData';
 
 export {
-    // withApiData,
+    withApiData,
     configureApiData,
     performApiRequest,
     getApiDataRequest,
@@ -61,25 +60,28 @@ export interface ApiDataRequest {
     errorBody?: any;
     endpointKey: string;
     params?: EndpointParams;
-    // todo: add requestBody for retriggering post calls or logging errors etc
+    url: string;
 }
 
 export interface ApiDataGlobalConfig {
-    handleErrorResponse?: (responseBody: any, endpointKey: string, params: EndpointParams, requestBody: any, dispatch: (action: Action) => void, getState: () => { apiData: ApiDataState }, response?: Response) => void;
     setHeaders?: (defaultHeaders: any, state: any) => any;
-    setRequestProperties?: (defaultProperties: any, state: any) => any;
-    beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
-    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => void;
-    // todo: add afterFail and deprecate handleErrorResponse
+    setRequestProperties?: (defaultProperties: object, state: object) => object;
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => void;
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    afterFailed?: (afterProps: ApiDataConfigAfterProps) => void;
     timeout?: number;
+    autoTrigger?: boolean;
 }
 
 /**
  * Specification and configuration of an endpoint.
  */
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
 export interface ApiDataEndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method: Method;
     cacheDuration?: number;
     responseSchema?: any | any[];
     /*
@@ -87,27 +89,54 @@ export interface ApiDataEndpointConfig {
     */
     transformResponseBody?: (responseBody: any) => NormalizedData; // todo: this should transform before normalize or without normalize if no schema (so return any)
     /*
-    * return false to not trigger global function
+    * @deprecated Use beforeFailed instead
     */
     handleErrorResponse?: (responseBody: any, params: EndpointParams, requestBody: any, dispatch: ActionCreator<any>, getState: () => { apiData: ApiDataState }, response?: Response) => boolean | void;
     /*
-    * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
+    * Edit the response before it gets handled by react-api-data.
     */
-    beforeSuccess?: (handledResponse: { response: Response, body: any }) => { response: Response, body: any };
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterSuccess?: (request: ApiDataRequest | undefined, dispatch: (action: Action) => void, getState: () => any) => boolean | void;
+    afterFailed?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
+    /*
+    * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
+    */
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    /*
+    * return false to not trigger global function
+    */
+    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */
-    setHeaders?: (defaultHeaders: any, state: any) => any;
+    setHeaders?: (defaultHeaders: object, state: object) => object;
     /*
     * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
     */
-    setRequestProperties?: (defaultProperties: any, state: any) => any;
+    setRequestProperties?: (defaultProperties: object, state: object) => object;
 
     timeout?: number;
+    autoTrigger?: boolean;
+}
+
+export interface ApiDataConfigBeforeProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+}
+
+export interface ApiDataConfigAfterProps {
+    endpointKey: string;
+    request: ApiDataRequest;
+    requestBody?: any;
+    resultData: any;
+    // redux functions
+    // tslint:disable-next-line:ban-types
+    dispatch: Function;
+    // tslint:disable-next-line:ban-types
+    getState: Function;
 }
 
 /**
@@ -120,4 +149,7 @@ export interface ApiDataEndpointConfig {
 export interface ApiDataBinding<T> {
     data?: T;
     request: ApiDataRequest;
+    perform: (params?: EndpointParams, body?: any) => Promise<ApiDataBinding<T>>;
+    invalidateCache: () => void;
+    getInstance: (instanceId: string) => ApiDataBinding<T>;
 }

@@ -11,7 +11,16 @@ const setPostHeaders = (headers: any) => ({
     'Content-Type': 'application/json',
 });
 
-export default (binding: string, hasRequest?: boolean, params?: any, networkStatus?: any, config: Partial<ApiDataEndpointConfig> = {}, globalConfig: Partial<ApiDataGlobalConfig> = {}): any => ({
+export default (
+    binding: string,
+    hasRequest?: boolean,
+    params?: any,
+    networkStatus?: any,
+    config: Partial<ApiDataEndpointConfig> = {},
+    globalConfig: Partial<ApiDataGlobalConfig> = {},
+    lastCall = Date.now(),
+    instanceId = ''
+): any => ({
     globalConfig,
     endpointConfig: {
         [binding]: {
@@ -25,9 +34,9 @@ export default (binding: string, hasRequest?: boolean, params?: any, networkStat
         }
     },
     requests: hasRequest ? {
-        [getRequestKey(binding, params[binding])]: {
+        [getRequestKey(binding, params[binding], instanceId)]: {
             networkStatus,
-            lastCall: Date.now(),
+            lastCall,
             duration: 0,
         }
     } : {},

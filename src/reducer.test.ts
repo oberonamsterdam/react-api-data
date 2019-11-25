@@ -16,6 +16,10 @@ import { PurgeApiDataAction } from './actions/purgeApiData';
 import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
 import { schema } from 'normalizr';
 
+// mock current date for lastCall/duration testing
+const MOCK_NOW = 5000;
+global.Date.now = () => MOCK_NOW;
+
 test('recoverNetworkStatuses should return a new requests map with loading states reset to ready', () => {
     const input = {
         a: {
@@ -118,6 +122,7 @@ const updatedState: ApiDataState = {
             lastCall: 1000,
             duration: 0,
             endpointKey: 'postData',
+            url: 'www.postdate.post',
         }
     }
 };
@@ -130,7 +135,8 @@ describe('FETCH_API_DATA', () => {
             payload: {
                 endpointKey: 'getData',
                 requestKey: getRequestKey('getData', params),
-                params
+                params,
+                url: 'www.getdata.get',
             },
         };
         const newState = {
@@ -138,16 +144,18 @@ describe('FETCH_API_DATA', () => {
             requests: {
                 [getRequestKey('getData', params)]: {
                     networkStatus: 'loading',
-                    lastCall: Date.now(),
+                    lastCall: MOCK_NOW,
                     duration: 0,
                     endpointKey: 'getData',
-                    params
+                    params,
+                    url: 'www.getdata.get',
                 },
                 [getRequestKey('postData')]: {
                     networkStatus: 'ready',
                     lastCall: 1000,
                     duration: 0,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
         };
@@ -157,12 +165,14 @@ describe('FETCH_API_DATA', () => {
 
 describe('API_DATA_SUCCESS', () => {
     test('new state is correct', () => {
+        const requestKey = getRequestKey('postData');
         // @ts-ignore
         const action: ApiDataSuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
-                requestKey: getRequestKey('postData'),
+                requestKey,
                 response: {
+                    // @ts-ignore
                     body: { data: 'json', extraData: 'moreJson' },
                     ok: true,
                     redirected: false,
@@ -173,13 +183,15 @@ describe('API_DATA_SUCCESS', () => {
             },
         };
 
-        const newState = {
+        const resultState = reducer(updatedState, action);
+
+        expect(resultState).toEqual({
             ...updatedState,
             requests: {
-                [getRequestKey('postData')]: {
+                [requestKey]: {
                     networkStatus: 'success',
                     lastCall: 1000,
-                    duration: Date.now() - 1000,
+                    duration: MOCK_NOW - 1000,
                     result: { data: 'json', extraData: 'moreJson' },
                     response: {
                         body: { data: 'json', extraData: 'moreJson' },
@@ -190,10 +202,10 @@ describe('API_DATA_SUCCESS', () => {
                     },
                     errorBody: undefined,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
-        };
-        expect(reducer(updatedState, action)).toEqual(newState);
+        });
     });
 });
 
@@ -205,6 +217,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
             payload: {
                 requestKey: getRequestKey('postData'),
                 response: {
+                    // @ts-ignore
                     body: { id: 1, data: 'json' },
                     ok: true,
                     redirected: false,
@@ -214,6 +227,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                 responseBody: { id: 1, data: 'json' },
                 normalizedData: {
                     entities: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
+                    // @ts-ignore
                     result: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
                 },
             },
@@ -236,6 +250,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                     },
                     errorBody: undefined,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             },
             entities: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
@@ -246,11 +261,11 @@ describe('API_DATA_SUCCESS with payload entity', () => {
 
 describe('API_DATA_FAIL', () => {
     test('new state is correct', () => {
-        // @ts-ignore
         const action: ApiDataFailAction = {
             type: 'API_DATA_FAIL',
             payload: {
                 requestKey: getRequestKey('postData'),
+                // @ts-ignore
                 response: {
                     body: { data: 'json', extraData: 'moreJson' },
                     ok: true,
@@ -279,6 +294,7 @@ describe('API_DATA_FAIL', () => {
                     errorBody: 'oopsie',
                     result: undefined,
                     endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
         };
@@ -294,6 +310,7 @@ const invalidateAbleState: ApiDataState = {
             lastCall: 1000,
             duration: 0,
             endpointKey: 'postData',
+            url: 'www.postdate.post',
         }
     }
 };
@@ -314,7 +331,8 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
                     networkStatus: 'ready',
                     lastCall: 1000,
                     duration: 0,
-                    endpointKey: 'postData'
+                    endpointKey: 'postData',
+                    url: 'www.postdate.post',
                 }
             }
         };

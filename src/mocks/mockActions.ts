@@ -30,12 +30,11 @@ export const getState: any = (binding: string, hasRequest?: boolean, params?: an
     requests: hasRequest ? {
         [getRequestKey(binding, params[binding])]: {
             networkStatus,
-            lastCall: Date.now(),
+            lastCall: 10,
             duration: 0,
         }
     } : {},
     entities: {
-
     }
 }
 );
