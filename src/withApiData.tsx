@@ -22,9 +22,15 @@ export interface WithApiDataProps {
     dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>;
 }
 
-export type WithApiDataChildProps<TPropNames extends string> = {
+export type WithApiDataBindingProps<TPropNames extends string> = {
     [k in TPropNames]: ApiDataBinding<any> | Array<ApiDataBinding<any>>;
 };
+
+export interface ActionProp {
+    apiDataActions: Actions;
+}
+
+export type WithApiDataChildProps<TPropNames extends string> = WithApiDataBindingProps<TPropNames> & ActionProp;
 
 type BindingPropNameBindingsStore<TPropNames extends string> = {
     [k in TPropNames]: BindingsStore;
@@ -144,7 +150,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
             render() {
                 const { apiData, params, dispatch, ...componentProps } = this.props;
 
-                const addProps: WithApiDataChildProps<string> = {};
+                const addProps: WithApiDataBindingProps<string> = {};
 
                 Object.keys(bindings).forEach((propName: TPropNames) => {
                     const endpointKey: string = bindings[propName];
