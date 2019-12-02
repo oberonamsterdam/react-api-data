@@ -7,7 +7,7 @@ import { getResultData } from './selectors/getResultData';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
 import { performApiRequest, useRequestHandler } from './actions/performApiDataRequest';
 import { getEntity } from './selectors/getEntity';
-import { ActionCreator } from 'redux';
+import { ActionCreator, Dispatch } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
 import { Actions } from './helpers/getActions';
@@ -131,8 +131,8 @@ export interface ApiDataConfigAfterProps {
     resultData: any;
     actions: Actions;
     // redux functions
-    dispatch: Function;
-    getState: Function;
+    dispatch: Dispatch;
+    getState: () => void;
 }
 
 /**

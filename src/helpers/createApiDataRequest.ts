@@ -1,4 +1,4 @@
-import {ApiDataRequest} from '../index';
+import { ApiDataRequest } from '../index';
 
 // factory function for creating an initial or fallback request
 export default (endpointKey: string): ApiDataRequest => ({

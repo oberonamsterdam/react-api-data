@@ -31,14 +31,14 @@ describe('shouldPerformApiRequest', () => {
     });
     test('The request status or params has been changed, or bindings are set correctly and status is not changed (should be false)', () => {
         const testTwo = shouldPerformApiRequest(
-            getProps(endpoint, true, {}, 'success'),
-            getProps(endpoint, true, {}, 'success'), bindings, 'getData');
+            getProps(endpoint, true, {}, 'success', { method: 'GET' }),
+            getProps(endpoint, true, {}, 'success', { method: 'GET' }), bindings, 'getData');
         expect(testTwo).toBe(false);
     });
     test('The request status or params has been changed, when new params are changed (should perform)', () => {
         const testTree = shouldPerformApiRequest(
-            getProps(endpoint, true, { getData: { one: 'one' } }, 'success'),
-            getProps(endpoint, true, { getData: { two: 'two' } }, 'success'), bindings, 'getData');
+            getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { method: 'GET' }),
+            getProps(endpoint, true, { getData: { two: 'two' } }, 'success'), bindings, 'getData', );
         expect(testTree).toBe(true);
     });
     test('The request status or params has been changed, when params are set and status has changed', () => {
@@ -49,13 +49,13 @@ describe('shouldPerformApiRequest', () => {
     });
     test('The request status or params has been changed, when params are set but status hasn\'t changed', () => {
         const testFive = shouldPerformApiRequest(
-            getProps(endpoint, true, { getData: { one: 'one' } }, 'success'),
-            getProps(endpoint, true, { getData: { one: 'one' } }, 'success'), bindings, 'getData');
+            getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { method: 'GET' }),
+            getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { method: 'GET' }), bindings, 'getData');
         expect(testFive).toBe(false);
     });
     test('The request status or params has been changed, when status is undefined', () => {
         const testSix = shouldPerformApiRequest(
-            getProps(endpoint, true, { getData: { one: 'one' } }, 'ready'),
+            getProps(endpoint, true, { getData: { one: 'one' } }, 'ready', { method: 'GET' }),
             getProps(endpoint, true, {}), bindings, 'getData');
         expect(testSix).toBe(true);
     });
@@ -63,13 +63,13 @@ describe('shouldPerformApiRequest', () => {
         const testSeven = shouldPerformApiRequest(
             getProps(endpoint, true, { getData: { one: 'one' } }),
             getProps(endpoint, false, {}, 'ready'), bindings, 'getData');
-        expect(testSeven).toBe(true);
+        expect(testSeven).toBe(false);
     });
     test('The request status or params has been changed, when config is undefined and new config is created', () => {
         const testEight = shouldPerformApiRequest(
             getProps(endpoint, false, {}),
-            getProps(endpoint, true, { getData: {} }), bindings, 'getData');
-        expect(testEight).toBe(true);
+            getProps(endpoint, true, { getData: {} }, 'ready', { method: 'GET' }), bindings, 'getData');
+        expect(testEight).toBe(false);
     });
 });
 

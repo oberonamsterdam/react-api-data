@@ -71,7 +71,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 
         const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
             return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
-        }
+        };
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
