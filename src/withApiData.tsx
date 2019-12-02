@@ -1,6 +1,6 @@
 import React from 'react';
 import { ApiDataBinding, ApiDataRequest, EndpointParams } from './index';
-import { connect } from 'react-redux';
+import { connect, ConnectedComponent } from 'react-redux';
 import { ApiDataState } from './reducer';
 import { getApiDataRequest, performApiRequest } from './index';
 import { Action } from './reducer';
@@ -82,7 +82,7 @@ export const shouldAutoTrigger = (apiData: ApiDataState, endpointKey: string) =>
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
     // note: return type ComponentType<TChildProps> and ComponentClass<TChildProps> have been replaced with <any> because
     // these generics don't support the new feature of params array with array of ApiDataBinding as a result
-    return (WrappedComponent: React.ComponentType<any>): React.ComponentClass<any> => {
+    return (WrappedComponent: React.ComponentType<any>): ConnectedComponent<React.ComponentClass<any>, WithApiDataChildProps<TPropNames>> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
             // keep track of binding instances (each propName can have multiple bindings through getInstance)
@@ -166,9 +166,8 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 return <WrappedComponent {...componentProps} {...addProps} apiDataActions={apiDataActions}/>;
             }
         }
-        // @ts-ignore
-        hoistNonReactStatic<any, WithApiDataChildProps<TPropNames>>(WithApiData, WrappedComponent); // move static methods to wrapper
-        // @ts-ignore
+        hoistNonReactStatic<any, React.ComponentType<WithApiDataChildProps<TPropNames>>>(WithApiData, WrappedComponent); // move static methods to wrapper
+
         return connect((state: { apiData: ApiDataState }, ownProps: TChildProps) => ({
             params: typeof getParams === 'function' ? getParams(ownProps, state) as Required<GetParams<TPropNames>> : {},
             apiData: state.apiData

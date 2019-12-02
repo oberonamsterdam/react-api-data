@@ -8,7 +8,7 @@ import { shouldAutoTrigger } from './withApiData';
 
 type UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => ApiDataBinding<T>;
 
-export const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
+const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
     const apiData: ApiDataState = useSelector((state: { apiData: ApiDataState }) => state.apiData);
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
@@ -25,3 +25,5 @@ export const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: Endp
     );
     return binding;
 };
+
+export default useApiData;

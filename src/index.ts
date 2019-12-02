@@ -10,9 +10,9 @@ import { getEntity } from './selectors/getEntity';
 import { ActionCreator } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
-import { useApiData } from './useApiData';
 import { Actions } from './helpers/getActions';
-import { useActions } from './useActions';
+import useApiData from './useApiData';
+import useActions from './useActions';
 
 export {
     withApiData,
