@@ -49,12 +49,9 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
 
 export const shouldAutoTrigger = (apiData: ApiDataState, endpointKey: string) => {
     const endpointConfig = apiData.endpointConfig[endpointKey];
-    const { autoTrigger } = {
-        autoTrigger: endpointConfig && endpointConfig.method === 'GET',
-        ...apiData.globalConfig,
-        ...endpointConfig
-    };
-    return autoTrigger;
+    return endpointConfig.autoTrigger ??
+        apiData.globalConfig.autoTrigger ??
+        (endpointConfig && endpointConfig.method === 'GET');
 };
 
 /**
