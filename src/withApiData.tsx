@@ -42,7 +42,7 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
     const hasBeenInvalidated = (oldRequest?: ApiDataRequest, newRequest?: ApiDataRequest) =>
         !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
     const apiDataChanged = newProps.apiData !== oldProps.apiData;
-    return (keyParamsHaveChanged(bindingKey)
+    return ((keyParamsHaveChanged(bindingKey) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true)
         || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true))
         || (apiDataChanged && shouldAutoTrigger(oldProps.apiData, bindings[bindingKey]) === false && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true);
 };

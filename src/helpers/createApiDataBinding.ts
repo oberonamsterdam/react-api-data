@@ -11,13 +11,12 @@ type BindingInstances = {
 export class BindingsStore {
     bindingInstances: BindingInstances = {} as BindingInstances;
 
-    getBinding(
-        endpointKey: string,
-        params: EndpointParams = {}, 
-        dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>, 
-        instanceId: string = '',
-        apiData: ApiDataState, 
-        request?: ApiDataRequest
+    getBinding(endpointKey: string, 
+               params: EndpointParams = {}, 
+               dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>, 
+               instanceId: string = '',
+               apiData: ApiDataState, 
+               request?: ApiDataRequest
     ) {
         const requestKey = getRequestKey(endpointKey, params, instanceId);
         if (!this.bindingInstances[requestKey]) {
