@@ -141,7 +141,7 @@ describe('performApiDataRequest', () => {
                 requestKey: getRequestKey('getData', params),
                 endpointKey: 'getData',
                 params: { test: 'a' },
-                url: 'mockAction.get',
+                url: 'mockAction.get?test=a',
             }
         });
     });
