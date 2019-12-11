@@ -132,7 +132,7 @@ export interface ApiDataConfigAfterProps {
     actions: Actions;
     // redux functions
     dispatch: Dispatch;
-    getState: () => void;
+    getState: () => any;
 }
 
 /**

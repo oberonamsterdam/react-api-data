@@ -1,6 +1,4 @@
-import { ActionCreator } from 'redux';
-import { ThunkAction } from 'redux-thunk';
-import { ApiDataState, Action } from '../reducer';
+import { ApiDataState } from '../reducer';
 import {
     ApiDataBinding, 
     ApiDataConfigAfterProps, 
@@ -21,6 +19,7 @@ import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
 import { getActions } from '../helpers/getActions';
+import { Dispatch } from 'redux';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
@@ -57,7 +56,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * This is an action creator, so make sure to dispatch the return value.
  */
 export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
-    return (dispatch: ActionCreator<ThunkAction<{}, { apiData: ApiDataState; }, void, Action>>, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
+    return (dispatch: Dispatch, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
