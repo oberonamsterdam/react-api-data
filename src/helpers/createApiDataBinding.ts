@@ -24,8 +24,8 @@ export class BindingsStore {
                 endpointKey, 
                 params, 
                 dispatch,
-                instanceId,
                 this,
+                instanceId,
             );
         }
         return this.bindingInstances[requestKey](apiData, request);
@@ -36,8 +36,8 @@ export const createApiDataBinding = (
     endpointKey: string, 
     bindingParams: EndpointParams = {}, 
     dispatch: ThunkDispatch<{ apiData: ApiDataState; }, void, Action>,
-    instanceId: string = '',
     bindingsStore: BindingsStore,
+    instanceId: string = '',
 ): ((apiData: ApiDataState, request?: ApiDataRequest) => ApiDataBinding<any>) => {
     let params: EndpointParams = bindingParams;
 

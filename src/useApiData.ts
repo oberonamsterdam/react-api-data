@@ -13,7 +13,7 @@ const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointPar
     const apiData: ApiDataState = useSelector((state: { apiData: ApiDataState }) => state.apiData);
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
-    const binding: ApiDataBinding<T> = createApiDataBinding(endpointKey, params, dispatch, instanceId, bindingsStore.current)(apiData);
+    const binding: ApiDataBinding<T> = createApiDataBinding(endpointKey, params, dispatch, bindingsStore.current, instanceId)(apiData);
     const request = binding.request;
     const networkStatus = request && request.networkStatus;
     useEffect(() => {
