@@ -11,6 +11,8 @@ import { ActionCreator, Dispatch } from 'redux';
 import reducer from './reducer';
 import { ApiDataState } from './reducer';
 import { Actions } from './helpers/getActions';
+import useApiData from './useApiData';
+import useActions from './useActions';
 
 export {
     withApiData,
@@ -25,6 +27,8 @@ export {
     reducer,
     useRequestHandler,
     ApiDataState,
+    useApiData,
+    useActions
 };
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
@@ -76,9 +80,11 @@ export interface ApiDataGlobalConfig {
 /**
  * Specification and configuration of an endpoint.
  */
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
 export interface ApiDataEndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method: Method;
     cacheDuration?: number;
     responseSchema?: any | any[];
     /*

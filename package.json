@@ -33,8 +33,8 @@
   "homepage": "https://github.com/oberonamsterdam/react-api-data#readme",
   "devDependencies": {
     "@types/jest": "^22.2.3",
-    "@types/node": "^10.9.2",
-    "@types/react-redux": "^6.0.9",
+    "@types/node": "^12.11.7",
+    "@types/react-redux": "^7.1.5",
     "@types/redux-mock-store": "^1.0.0",
     "@types/shallowequal": "^0.2.3",
     "flow-bin": "^0.87.0",
@@ -42,25 +42,30 @@
     "husky": "^1.0.1",
     "jest": "^23.6.0",
     "normalizr": "^3.2.4",
-    "react": "^16.0.0",
-    "react-redux": "^5.0.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "7.1.3",
     "redux": "^4.0.1",
     "redux-mock-store": "^1.5.3",
     "redux-thunk": "^2.3.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.10.0",
     "tslint-config-oberon": "^1.0.4",
-    "typescript": "^2.9.2"
+    "typescript": "^3.4.5"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^2.3.1",
+    "@types/react": "^16.8.17",
+    "@types/redux-mock-store": "^1.0.0",
+    "hoist-non-react-statics": "^3.3.1",
+    "normalizr": "^3.2.4",
+    "redux-mock-store": "^1.5.3",
     "shallowequal": "^1.0.2"
   },
   "PeerDependencies": {
-    "normalizr": ">= 3.0.0",
-    "react": "^15.0.0 || ^16.0.0",
-    "react-redux": ">= 5.0.0",
-    "redux-thunk": ">= 2.0.0"
+    "normalizr": "^3.0.0",
+    "redux-thunk": "^2.0.0",
+    "react": "^16.9.0",
+    "react-redux": "7.1.3"
   },
   "jest": {
     "globals": {

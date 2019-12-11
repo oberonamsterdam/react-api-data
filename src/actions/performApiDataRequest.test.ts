@@ -1,10 +1,10 @@
 import getState from '../mocks/mockState';
 import { performApiRequest } from './performApiDataRequest';
-import request, {HandledResponse} from '../request';
+import request, { HandledResponse } from '../request';
 import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { apiDataFail } from './apiDataFail';
-import {getApiDataRequest, getResultData, EndpointParams, ApiDataConfigBeforeProps} from '..';
+import { getApiDataRequest, getResultData, EndpointParams, ApiDataConfigBeforeProps } from '..';
 
 const defaultState = {
     apiData: {
@@ -102,7 +102,7 @@ describe('performApiDataRequest', () => {
             )
         };
         performApiRequest('getData', {}, { data: 'json' })(dispatch, () => state);
-        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({type: 'FETCH_API_DATA'}));
+        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'FETCH_API_DATA' }));
 
         // call has not been triggered before
         performApiRequest('getData', {}, { data: 'json' })(
@@ -219,7 +219,7 @@ describe('performApiDataRequest', () => {
 
     test('beforeSuccess should be able to turn success into fail', async () => {
         const beforeSuccess = (resp: HandledResponse) => ({
-            response: {...resp.response, ok: false},
+            response: { ...resp.response, ok: false },
             body: resp.body
         });
         const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeSuccess }) };
@@ -278,7 +278,7 @@ describe('performApiDataRequest', () => {
 
     test('beforeFailed should be able to turn fail into success', async () => {
         const beforeFailed = (resp: HandledResponse) => ({
-            response: {...resp.response, ok: true},
+            response: { ...resp.response, ok: true },
             body: resp.body
         });
         const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeFailed }) };

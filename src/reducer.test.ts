@@ -172,6 +172,7 @@ describe('API_DATA_SUCCESS', () => {
             payload: {
                 requestKey,
                 response: {
+                    // @ts-ignore
                     body: { data: 'json', extraData: 'moreJson' },
                     ok: true,
                     redirected: false,
@@ -216,6 +217,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
             payload: {
                 requestKey: getRequestKey('postData'),
                 response: {
+                    // @ts-ignore
                     body: { id: 1, data: 'json' },
                     ok: true,
                     redirected: false,
@@ -225,6 +227,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                 responseBody: { id: 1, data: 'json' },
                 normalizedData: {
                     entities: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
+                    // @ts-ignore
                     result: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
                 },
             },
@@ -258,11 +261,11 @@ describe('API_DATA_SUCCESS with payload entity', () => {
 
 describe('API_DATA_FAIL', () => {
     test('new state is correct', () => {
-        // @ts-ignore
         const action: ApiDataFailAction = {
             type: 'API_DATA_FAIL',
             payload: {
                 requestKey: getRequestKey('postData'),
+                // @ts-ignore
                 response: {
                     body: { data: 'json', extraData: 'moreJson' },
                     ok: true,

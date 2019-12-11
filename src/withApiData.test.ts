@@ -1,5 +1,6 @@
 import { shouldPerformApiRequest, shouldAutoTrigger } from './withApiData';
 import getState from './mocks/mockState';
+import { Method } from './index';
 
 export const getProps: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any, config?: any, globalConfig?: any) => ({
     apiData: getState(binding, hasRequest, params, networkStatus, config, globalConfig),
@@ -76,75 +77,75 @@ describe('shouldPerformApiRequest', () => {
 describe('shouldAutoTrigger', () => {
     test('GET triggered', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'GET' }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'GET' }), 'getData');
         expect(testAutoTrigger).toBe(true);
     });
     test('POST/PUT/DELETE/PATCH does not trigger', () => {
-        const methods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+        const methods: Method[] = ['POST', 'PUT', 'DELETE', 'PATCH'];
         methods.forEach(method => {
             const testAutoTrigger = shouldAutoTrigger(
-                getProps(endpoint, true, emptyParams, 'ready', { method }), 'getData');
+                getState(endpoint, true, emptyParams, 'ready', { method }), 'getData');
             expect(testAutoTrigger).toBe(false);
         });
     });
     test('GET with endpointConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: false }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: false }), 'getData');
         expect(testAutoTrigger).toBe(false);
     });
     test('POST with endpointConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: true }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: true }), 'getData');
         expect(testAutoTrigger).toBe(true);
     });
     test('GET with globalConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'GET' }, { autoTrigger: false }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'GET' }, { autoTrigger: false }), 'getData');
         expect(testAutoTrigger).toBe(false);
     });
     test('POST with globalConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'POST' }, { autoTrigger: false }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'POST' }, { autoTrigger: false }), 'getData');
         expect(testAutoTrigger).toBe(false);
     });
     test('GET with globalConfig autoTrigger true and endpointConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: false }, { autoTrigger: true }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: false }, { autoTrigger: true }), 'getData');
         expect(testAutoTrigger).toBe(false);
     });
     test('POST with globalConfig autoTrigger true and endpointConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: false }, { autoTrigger: true }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: false }, { autoTrigger: true }), 'getData');
         expect(testAutoTrigger).toBe(false);
     });
     test('GET with globalConfig autoTrigger false and endpointConfig autoTrigger true', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: true }, { autoTrigger: false }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: true }, { autoTrigger: false }), 'getData');
         expect(testAutoTrigger).toBe(true);
     });
     test('POST with globalConfig autoTrigger false and endpointConfig autoTrigger true', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: true }, { autoTrigger: false }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: true }, { autoTrigger: false }), 'getData');
         expect(testAutoTrigger).toBe(true);
     });
     test('GET with globalConfig autoTrigger true and endpointConfig autoTrigger true', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: true }, { autoTrigger: true }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: true }, { autoTrigger: true }), 'getData');
         expect(testAutoTrigger).toBe(true);
     });
     test('POST with globalConfig autoTrigger true and endpointConfig autoTrigger true', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: true }, { autoTrigger: true }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: true }, { autoTrigger: true }), 'getData');
         expect(testAutoTrigger).toBe(true);
     });
     test('GET with globalConfig autoTrigger false and endpointConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: false }, { autoTrigger: false }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'GET', autoTrigger: false }, { autoTrigger: false }), 'getData');
         expect(testAutoTrigger).toBe(false);
     });
     test('POST with globalConfig autoTrigger false and endpointConfig autoTrigger false', () => {
         const testAutoTrigger = shouldAutoTrigger(
-            getProps(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: false }, { autoTrigger: false }), 'getData');
+            getState(endpoint, true, emptyParams, 'ready', { method: 'POST', autoTrigger: false }, { autoTrigger: false }), 'getData');
         expect(testAutoTrigger).toBe(false);
     });
 });
