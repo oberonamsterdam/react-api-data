@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { createApiDataBinding } from './helpers/createApiDataBinding';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,13 +16,11 @@ const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointPar
     const binding: ApiDataBinding<T> = createApiDataBinding(endpointKey, params, dispatch, bindingsStore.current, instanceId)(apiData);
     const request = binding.request;
     const networkStatus = request && request.networkStatus;
-    useEffect(() => {
-        if (autoTrigger && networkStatus === 'ready') {
-            binding.perform(params);
-        }
-    },
-              [endpointKey, params, autoTrigger, networkStatus ]
-    );
+
+    if (autoTrigger && networkStatus === 'ready') {
+        binding.perform(params);
+    }
+
     return binding;
 };
 
