@@ -75,10 +75,10 @@ store.dispatch(configureApiData({}, endpointConfig));
 import { useApiData } from 'react-api-data';
 
 const Article = (props) => {
-    const article = useApiData('getArticle', { id: props.match.params.id ? +props.match.params.id : 0 });
+    const article = useApiData('getArticle', { id: props.articleId });
         return (
         <Fragment>
-            {article.request.networkStatus === 'success' && article.data &&
+            {article.request.networkStatus === 'success' && 
                 <div>
                     <h1>{article.data.title}</h1>
                     <p>{article.data.body}</p>
@@ -88,7 +88,6 @@ const Article = (props) => {
     )
 }
 
-export default Article;
 ```
 
 ### Post data from you component
@@ -194,7 +193,6 @@ const Articles = props => {
     );
 }
 
-export default CommentsList;
 ```
 
 ## Manually clearing cache using useActions
@@ -211,6 +209,8 @@ const Articles = props => {
         </>
     );
 }
+
+export default Articles;
 ```
 
 ## Removing api data from the store
