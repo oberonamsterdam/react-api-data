@@ -200,28 +200,31 @@ const Articles = props => {
 Using the useActions api to invalidate the cache of a specific endpoint.
 
 ```js
+import { useActions} from 'react-api-data';
+
 const Articles = props => {
     const actions = useActions();
     return (
         <>
             {/* ... */}
-            <button onClick={actions.invalidateCache('getArticle', {id: '1234'})}>Refresh</button>
+            <button onClick={() => actions.invalidateCache('getArticle', {id: '1234'})}>Refresh</button>
         </>
     );
 }
 
-export default Articles;
 ```
 
 ## Removing api data from the store
 
 ```js
+import { useActions} from 'react-api-data';
+
 const LogoutComponent = props => {
     const actions = useActions();
     return (
         <>
             {/* ... */}
-            <button onClick={actions.purgeAll()}>Logout</button>
+            <button onClick={() => actions.purgeAll()}>Logout</button>
         </>
     );
 }
