@@ -72,60 +72,74 @@ store.dispatch(configureApiData({}, endpointConfig));
 ### Bind API data to your component
 
 ```js
-import React from 'react';
-import { withApiData } from 'react-api-data';
+import { useApiData } from 'react-api-data';
 
-// bind api data to a component
-
-const connectApiData = withApiData({
-    // specify property name and endpoint
-    getArticle: 'getArticle',
-    saveArticle: 'saveArticle'
-}, (ownProps, state) => ({
-    // provide URL parameters, can be omitted for autoTrigger: false endpoints or for endpoints without parameters
-    getArticle: {articleId: ownProps.articleId, userId: state.userId || ''}
-}));
-
-
-class EditArticle extends React.Component {
-    state = {
-        body: ''
-    }
-
-    render() {
-        const getArticle = this.props.getArticle;
-        const article = getArticle.data;
-        const saveArticle = this.props.saveArticle;
-
-        switch(getArticle.request.networkStatus) {
-            case 'loading': return 'Loading...';
-            case 'failed': return 'Something went wrong :(';
-            case 'success': {
-                return (
-                    <div>
-                        <h1>{article.title}</h1>
-                        <em>{article.author.name}</em><br />
-                        <textarea onChange={event => this.setState({body: event.target.value})}>{article.body}</textarea>
-
-                        {saveArticle.request.networkStatus === 'failed' && (
-                            <p>Error while saving article, please try again.</p>
-                        )}
-
-                        {saveArticle.request.networkStatus === 'loading' ? (
-                            <p>Saving...</p>
-                        ) : (
-                            <button onClick={() => saveArticle.perform({articleId: this.props.articleId}, {body: this.state.body})}>Submit</button>
-                        )}
-                        <button onClick={() => getArticle.invalidateCache()}>Refresh data</button>
-                    </div>
-                );
+const Article = (props) => {
+    const article = useApiData('getArticle', { id: props.match.params.id ? +props.match.params.id : 0 });
+        return (
+        <Fragment>
+            {article.request.networkStatus === 'success' && article.data &&
+                <div>
+                    <h1>{article.data.title}</h1>
+                    <p>{article.data.body}</p>
+                </div>
             }
-            default: return null;
-        }
-    }
-};
+        </Fragment>
+    )
+}
 
-export default connectApiData(EditArticle);
+export default Article;
+```
+
+### Post data from you component
+
+```js
+import { useApiData } from 'react-api-data';
+
+const PostComment = (props) => {
+    const [comment, setComment] = useState('');
+    const postComment = useApiData('postComment', {});
+    const status = postComment.request.networkStatus;
+    return (
+        <Fragment>
+            {status === 'ready' &&
+                <SubmitArticleBody>
+                    <TextBox
+                        onChange={event => setComment(event.target.value)}
+                        placeholder={'Add a comment...'}
+                    />
+                    <Button
+                        onClick={() => postComment.perform(
+                            { id: props.articleId }, { body: comment, articleId: props.articleId })
+                        }
+                    >
+                        Submit
+                    </Button>
+                </SubmitArticleBody>
+            }
+            {status === 'loading' &&
+                <div>Submitting...</div>
+            }
+            {status === 'failed' &&
+                <SubmitArticleBody>
+                    Something went wrong.
+                    <Button
+                        onClick={() =>
+                            postComment.perform(
+                                { id: props.articleId },
+                                { body: comment, articleId: props.articleId }
+                            )}
+                    >
+                        Try again
+                    </Button>
+                </SubmitArticleBody>
+            }
+            {status === 'success' &&
+                <div>Submitted!</div>
+            }
+        </Fragment>
+    );
+};
 ```
 
 # The gist
@@ -168,42 +182,55 @@ export default {
 ## Manually clearing cache from your component
 
 ```js
-const connectApiData = withApiData({
-    getComments: 'getComments',
-});
+import { useApiData } from 'react-api-data';
 
-const CommentsList = props => (
-    <>
-        {/* ... */}
-        <button onClick={props.getComments.invalidateCache}>Refresh</button>
-    </>
-);
+const Articles = props => {
+    const getArticles = useApiData('getArticles');
+    return (
+        <>
+            {/* ... */}
+            <button onClick={getArticles.invalidateCache}>Refresh</button>
+        </>
+    );
+}
 
-export default connectApiData(CommentsList);
+export default CommentsList;
 ```
 
-## Manually clearing cache using dispatch
+## Manually clearing cache using useActions
 
-Using the invalidateApiDataRequest action creator you can invalidate any endpoint.
+Using the useActions api to invalidate the cache of a specific endpoint.
 
 ```js
-dispatch(invalidateApiDataRequest('getComments'));
+const Articles = props => {
+    const actions = useActions();
+    return (
+        <>
+            {/* ... */}
+            <button onClick={actions.invalidateCache('getArticle', {id: '1234'})}>Refresh</button>
+        </>
+    );
+}
 ```
 
 ## Removing api data from the store
 
 ```js
-import { performApiRequest, purgeApiData } from 'react-api-data';
-
-export const logout = () => (dispatch) => {
-    dispatch(purgeApiData());
-};
+const LogoutComponent = props => {
+    const actions = useActions();
+    return (
+        <>
+            {/* ... */}
+            <button onClick={actions.purgeAll()}>Logout</button>
+        </>
+    );
+}
 ```
 
 ## Including Cookies in your Request
 
 ```js
-export const globalConfig: ApiDataGlobalConfig = {
+export const globalConfig = {
     setRequestProperties: (defaultProperties) => ({
         ...defaultProperties,
         credentials: 'include',
