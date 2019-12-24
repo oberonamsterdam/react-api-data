@@ -5,12 +5,13 @@ import { purgeApiData } from '../actions/purgeApiData';
 import { BindingsStore } from './createApiDataBinding';
 import { ApiDataState } from '../reducer';
 
-type PerformApiDataRequestType = (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) => 
+type PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) => 
     (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any>>;
 
-type getActionsWithPerform = (performApiRequest: PerformApiDataRequestType) => (dispatch: ActionCreator<any>) => Actions;
+type getActionsWithPerform = (performApiRequest: PerformApiRequest) => (dispatch: ActionCreator<any>) => Actions;
 
-export const getActionsWithPerform: getActionsWithPerform = (performApiRequest: PerformApiDataRequestType) => (dispatch) => {
+// getActions is defined in performApiDataRequest, where performApiRequest is also inserted. This setup prevents a require loop between the two files.
+export const getActionsWithPerform: getActionsWithPerform = (performApiRequest: PerformApiRequest) => (dispatch) => {
     return {
         invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId: string = '') => 
             dispatch(invalidateApiDataRequest(endpointKey, params, instanceId)),

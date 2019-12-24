@@ -11,19 +11,19 @@ import reducer from './reducer';
 import { ApiDataState } from './reducer';
 import useApiData from './useApiData';
 import useActions from './useActions';
-import { 
-    NetworkStatus, 
-    NormalizeResult, 
-    NormalizedData, 
-    EndpointParams, 
+import {
+    NetworkStatus,
+    NormalizeResult,
+    NormalizedData,
+    EndpointParams,
     ApiDataRequest,
-    ApiDataGlobalConfig, 
-    Method, 
-    ApiDataEndpointConfig, 
-    ApiDataConfigBeforeProps, 
-    ApiDataConfigAfterProps, 
+    ApiDataGlobalConfig,
+    Method,
+    ApiDataEndpointConfig,
+    ApiDataConfigBeforeProps,
+    ApiDataConfigAfterProps,
     ApiDataBinding,
-    Actions
+    Actions,
 } from './types';
 
 export {
@@ -52,5 +52,5 @@ export {
     ApiDataConfigBeforeProps,
     ApiDataConfigAfterProps,
     ApiDataBinding,
-    Actions
+    Actions,
 };

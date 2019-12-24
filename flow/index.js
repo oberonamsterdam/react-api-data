@@ -11,18 +11,18 @@ import { useRequestHandler } from './actions/performApiDataRequest';
 import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { getResultData } from './selectors/getResultData';
 import { getEntity } from './selectors/getEntity';
-export type { 
-    NetworkStatus, 
-    NormalizeResult, 
-    NormalizedData, 
-    EndpointParams, 
+export type {
+    NetworkStatus,
+    NormalizeResult,
+    NormalizedData,
+    EndpointParams,
     ApiDataRequest,
-    ApiDataGlobalConfig, 
-    Method, 
-    ApiDataEndpointConfig, 
-    ApiDataConfigBeforeProps, 
-    ApiDataConfigAfterProps, 
-    ApiDataBinding 
+    ApiDataGlobalConfig,
+    Method,
+    ApiDataEndpointConfig,
+    ApiDataConfigBeforeProps,
+    ApiDataConfigAfterProps,
+    ApiDataBinding,
 } from './types';
 
 export {
@@ -36,5 +36,5 @@ export {
     getResultData,
     getEntity,
     reducer,
-    purgeApiData
+    purgeApiData,
 };
