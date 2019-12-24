@@ -1,4 +1,4 @@
-import { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../index';
+import { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../types';
 
 export interface ConfigureApiDataAction {
     type: 'CONFIGURE_API_DATA';

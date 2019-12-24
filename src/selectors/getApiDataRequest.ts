@@ -1,6 +1,6 @@
 import { ApiDataState } from '../reducer';
 import { getRequestKey } from '../helpers/getRequestKey';
-import { EndpointParams, ApiDataRequest } from '../index';
+import { EndpointParams, ApiDataRequest } from '../types';
 
 /**
  * Selector to manually get a {@link ApiDataRequest}. This value is automatically bind when using {@link withApiData}.

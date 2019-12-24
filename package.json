@@ -51,7 +51,7 @@
     "ts-jest": "^24.0.2",
     "tslint": "^5.10.0",
     "tslint-config-oberon": "^1.0.4",
-    "typescript": "^3.4.5"
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "@types/react": "^16.8.17",

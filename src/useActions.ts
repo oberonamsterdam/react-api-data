@@ -1,5 +1,6 @@
-import { Actions, getActions } from './helpers/getActions';
+import { getActions } from './actions/performApiDataRequest';
 import { useDispatch } from 'react-redux';
+import { Actions } from './types';
 
 const useActions = (): Actions => {
     const dispatch = useDispatch();

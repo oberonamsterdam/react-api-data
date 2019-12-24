@@ -4,7 +4,9 @@ import request, { HandledResponse } from '../request';
 import { apiDataSuccess } from './apiDataSuccess';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { apiDataFail } from './apiDataFail';
-import { getApiDataRequest, getResultData, EndpointParams, ApiDataConfigBeforeProps } from '..';
+import { EndpointParams, ApiDataConfigBeforeProps } from '../types';
+import { getResultData } from '../selectors/getResultData';
+import { getApiDataRequest } from '../selectors/getApiDataRequest';
 
 const defaultState = {
     apiData: {
@@ -348,6 +350,7 @@ describe('performApiDataRequest', () => {
             expect(output.data).toEqual(result.data);
             expect(output.request).toEqual(result.request);
             expect(typeof output.perform).toEqual('function');
+            expect(typeof output.invalidateCache).toEqual('function');
         });
     });
 
@@ -358,6 +361,7 @@ describe('performApiDataRequest', () => {
             expect(output.data).toEqual(result.data);
             expect(output.request).toEqual(result.request);
             expect(typeof output.perform).toEqual('function');
+            expect(typeof output.invalidateCache).toEqual('function');
         });
     });
 

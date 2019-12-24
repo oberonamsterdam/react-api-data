@@ -6,9 +6,8 @@ import {
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
     EndpointParams, 
-    getResultData, 
     ApiDataRequest
-} from '../index';
+} from '../types';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -18,8 +17,9 @@ import { BindingsStore } from '../helpers/createApiDataBinding';
 import Request, { HandledResponse } from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
-import { getActions } from '../helpers/getActions';
+import { getActionsWithPerform } from '../helpers/getActions';
 import { Dispatch } from 'redux';
+import { getResultData } from '../selectors/getResultData';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
@@ -55,7 +55,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
+export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore?: BindingsStore) => {
     return (dispatch: Dispatch, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -69,7 +69,10 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
         }
 
         const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
-            return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
+            if (!bindingsStore) {
+                bindingsStore = new BindingsStore(getActions(dispatch));
+            }
+            return bindingsStore.getBinding(endpointKey, params, instanceId, getState().apiData, request);
         };
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
@@ -212,3 +215,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
 export const useRequestHandler = (requestHandler: RequestHandler) => {
     requestFunction = requestHandler;
 };
+
+// getActions is defined here to prevent the require loop between perform and getActions
+export const getActions = getActionsWithPerform(performApiRequest);
