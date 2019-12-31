@@ -1,6 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { createApiDataBinding } from './helpers/createApiDataBinding';
-
+import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ApiDataBinding, ApiDataState, EndpointParams } from './index';
 import { BindingsStore } from './helpers/createApiDataBinding';
@@ -13,16 +11,14 @@ const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointPar
     const apiData: ApiDataState = useSelector((state: { apiData: ApiDataState }) => state.apiData);
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
-    const binding: ApiDataBinding<T> = createApiDataBinding(endpointKey, params, dispatch, bindingsStore.current, instanceId)(apiData);
+    const binding: ApiDataBinding<T> = bindingsStore.current.getBinding(endpointKey, params, dispatch, instanceId, apiData);
     const request = binding.request;
     const networkStatus = request && request.networkStatus;
-    useEffect(() => {
-        if (autoTrigger && networkStatus === 'ready') {
-            binding.perform(params);
-        }
-    },
-              [endpointKey, params, autoTrigger, networkStatus ]
-    );
+
+    if (autoTrigger && networkStatus === 'ready') {
+        binding.perform(params);
+    }
+
     return binding;
 };
 

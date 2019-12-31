@@ -32,7 +32,7 @@ export class BindingsStore {
     }
 }
 
-export const createApiDataBinding = (
+const createApiDataBinding = (
     endpointKey: string, 
     bindingParams: EndpointParams = {}, 
     dispatch: ThunkDispatch<{ apiData: ApiDataState; }, void, Action>,

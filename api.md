@@ -1,8 +1,9 @@
 # API
   ## Table of Contents
   
-- [HOC](#hoc)
-  - [`withApiData()`](#withapidata)
+- [Hooks](#hooks)
+  - [`useApiData()`](#useapidata)
+  - [`useActions()`](#useactions)
 - [Config](#config)
   - [`configureApiData()`](#configureapidata)
   - [`useRequestHandler()`](#userequesthandler)
@@ -14,6 +15,8 @@
   - [`getEntity()`](#getentity)
   - [`getApiDataRequest()` (Deprecated)](#getapidatarequest-deprecated)
   - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
+- [HOC](#hoc)
+    - [`withApiData()`](#withapidata)
 - [Types and interfaces](#types-and-interfaces)
   - [`NetworkStatus`](#networkstatus)
   - [`ApiDataBinding`](#apidatabinding)
@@ -27,56 +30,69 @@
   - [`ApiDataState`](#apidatastate)
   - [`RequestHandler`](#requesthandler)
   - [`HandledResponse`](#handledresponse)
+  
+## Hooks
 
-## HOC
+### `useApiData()`  
 
-### `withApiData()`
-
-Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param and a property `apiDataActions` of type [Action](#action).
+Get an [ApiDataBinding](#apidatabinding) for the given endpoint. It will make sure data gets (re-)loaded if needed. This behavior is
+based on the `autoTrigger` and `cacheDuration` settings in [EndpointConfig](#apidataendpointconfig) and will, by default, trigger 
+the call when the endpoint's method is `GET` and the call has not yet been triggered before. This makes it possible to use
+this hook for the same call in multiple components, without needing to worry about which components needs to trigger the call
+and how to share the data between the components. Just "use" the API data in multiple components and the fetching of data will be handled.
+In any case it will return an `ApiDataBinding` that reflects the current state of the *API call*, identified by the combination
+of the *endpointKey* and the *params*.
 
 **Parameters**
 
-- `bindings` **{ [propName in TPropNames]: string }** maps prop names to endpoint keys
-- `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the URL parameters. Providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key.
+- `endpointKey` **string**
+- `params?` **[EndpointParams](#endpointparams)**
 
 **Returns**
 
-**Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional apiDataActions property with type [Actions](#actions).
+- `ApiDataBinding` **[ApiDataBinding](#apidatabinding)**
+
+**Examples**
+
+ ```javascript
+import React from 'react';
+import { useApiData } from 'react-api-data';
+
+const Article = (props) => {
+    const article = useApiData('getArticle', { id: props.articleId });
+    return (
+        <>
+            {article.request.networkStatus === 'success' && 
+                <div>
+                    <h1>{article.data.title}</h1>
+                    <p>{article.data.body}</p>
+                </div>
+            }
+        </>
+    );
+}
+```
+
+### `useActions()`  
+
+**Parameters**
+
+*none*
+
+**Returns**
+- `Actions` **[Actions](#actions)**
 
 **Examples**
  ```javascript
-withApiData({
-    article: 'getArticle',
-    users: 'getUser',
-    editArticle: 'editArticle' // an endpoint with autoTrigger false
-}, (ownProps, state) => ({
-    article: {
-        id: ownProps.articleId,
-    },
-    // sometimes you need to call one endpoint multiple times (simultaneously) with different parameter values:
-    users: state.users.map(user => ({
-        userId: user.id
-    })),
-    editArticle: {}
-}))(MyComponent);
-// props.article will be an ApiDataBinding
-// props.users will be an array of ApiDataBinding
-// props.editArticle will be an ApiDataBinding
-// props.apiDataActions will be an Actions object
-
-// perform can be used to trigger calls with autoTrigger: false
-props.editArticle.perform({
-    id: props.articleId
-}, {
-    title: 'New Title',
-    content: 'New article content'
-});
-
-// the apiDataAction property can be used to perform actions on any endpoint in the endpoint config, not only those which are in the current binding.
-props.apiDataActions.invalidateCache('getArticles');
+    const actions = useActions()
+    // Do a perform on any endpoint configured.
+    actions.perform('postArticle', {id: article.id}, {body: 'The body of my article'})
+    // Invalidate the cache on any endpoint configured.
+    actions.invalidateCache('getArticles');
+    // purge the whole apiData store (invalidate all)
+    actions.purgeAll()
+            
 ```
-
 
 ## Config
 
@@ -221,6 +237,55 @@ The getResultData selector has been deprecated. It is recommended to use the req
 
 **any**
 
+## HOC
+
+### `withApiData()`
+
+**Examples**
+ ```javascript
+withApiData({
+    article: 'getArticle',
+    users: 'getUser',
+    editArticle: 'editArticle' // an endpoint with autoTrigger false
+}, (ownProps, state) => ({
+    article: {
+        id: ownProps.articleId,
+    },
+    // sometimes you need to call one endpoint multiple times (simultaneously) with different parameter values:
+    users: state.users.map(user => ({
+        userId: user.id
+    })),
+    editArticle: {}
+}))(MyComponent);
+// props.article will be an ApiDataBinding
+// props.users will be an array of ApiDataBinding
+// props.editArticle will be an ApiDataBinding
+// props.apiDataActions will be an Actions object
+
+// perform can be used to trigger calls with autoTrigger: false
+props.editArticle.perform({
+    id: props.articleId
+}, {
+    title: 'New Title',
+    content: 'New article content'
+});
+
+// the apiDataAction property can be used to perform actions on any endpoint in the endpoint config, not only those which are in the current binding.
+props.apiDataActions.invalidateCache('getArticles');
+```
+
+Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
+component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param and a property `apiDataActions` of type [Action](#action).
+
+**Parameters**
+
+- `bindings` **{ [propName in TPropNames]: string }** maps prop names to endpoint keys
+- `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the URL parameters. Providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key.
+
+**Returns**
+
+**Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional apiDataActions property with type [Actions](#actions).
+
 
 ## Types and interfaces
 
@@ -242,7 +307,7 @@ Type: **String enum**
 
 ### `ApiDataBinding`
 
- The value that withApiData binds to the property of your component.
+ Represents an endpoint *call*. 
 
 **Properties**
 
@@ -271,6 +336,7 @@ Perform actions on any configured endpoint. These actions do not need to be disp
 
 - `perform` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `body?` any, `instanceId?` string) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred to use [withApiData](#withapidata).
 - `invalidateCache` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => void** Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
+- `purgeAll()` **() => void** Clears the whole apiData redux store. Might be useful fore logout functions.
 a GET list request, which might need to include the newly created entity.
 
 ---
