@@ -307,7 +307,7 @@ Type: **String enum**
 
 ### `ApiDataBinding`
 
- The value that withApiData binds to the property of your component.
+ Represents an endpoint *call*. 
 
 **Properties**
 
