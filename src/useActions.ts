@@ -1,4 +1,4 @@
-import { getActions } from './actions/performApiDataRequest';
+import { getActions } from './helpers/getActions';
 import { useDispatch } from 'react-redux';
 import { Actions } from './types';
 

@@ -73,59 +73,59 @@ store.dispatch(configureApiData({}, endpointConfig));
 
 ```js
 import React from 'react';
-import { withApiData } from 'react-api-data';
+import { useApiData } from 'react-api-data';
 
-// bind api data to a component
-
-const connectApiData = withApiData({
-    // specify property name and endpoint
-    getArticle: 'getArticle',
-    saveArticle: 'saveArticle'
-}, (ownProps, state) => ({
-    // provide URL parameters, can be omitted for autoTrigger: false endpoints or for endpoints without parameters
-    getArticle: {articleId: ownProps.articleId, userId: state.userId || ''}
-}));
-
-
-class EditArticle extends React.Component {
-    state = {
-        body: ''
-    }
-
-    render() {
-        const getArticle = this.props.getArticle;
-        const article = getArticle.data;
-        const saveArticle = this.props.saveArticle;
-
-        switch(getArticle.request.networkStatus) {
-            case 'loading': return 'Loading...';
-            case 'failed': return 'Something went wrong :(';
-            case 'success': {
-                return (
-                    <div>
-                        <h1>{article.title}</h1>
-                        <em>{article.author.name}</em><br />
-                        <textarea onChange={event => this.setState({body: event.target.value})}>{article.body}</textarea>
-
-                        {saveArticle.request.networkStatus === 'failed' && (
-                            <p>Error while saving article, please try again.</p>
-                        )}
-
-                        {saveArticle.request.networkStatus === 'loading' ? (
-                            <p>Saving...</p>
-                        ) : (
-                            <button onClick={() => saveArticle.perform({articleId: this.props.articleId}, {body: this.state.body})}>Submit</button>
-                        )}
-                        <button onClick={() => getArticle.invalidateCache()}>Refresh data</button>
-                    </div>
-                );
+const Article = (props) => {
+    const article = useApiData('getArticle', { id: props.articleId });
+    return (
+        <>
+            {article.request.networkStatus === 'success' && 
+                <div>
+                    <h1>{article.data.title}</h1>
+                    <p>{article.data.body}</p>
+                </div>
             }
-            default: return null;
-        }
-    }
-};
+        </>
+    );
+}
 
-export default connectApiData(EditArticle);
+```
+
+### Post data from you component
+
+```js
+import React, { useState } from 'react';
+import { useApiData } from 'react-api-data';
+
+const PostComment = props => {
+    const [comment, setComment] = useState('');
+    const postComment = useApiData('postComment');
+    const { networkStatus } = postComment.request;
+    const onSubmit = () => {
+        postComment.perform({ id: props.articleId }, { comment });
+    };
+    return (
+        <>
+            {networkStatus === 'ready' && (
+                <div>
+                    <input
+                        onChange={event => setComment(event.target.value)}
+                        placeholder="Add a comment..."
+                    />
+                    <button onClick={onSubmit}>Submit</button>
+                </div>
+            )}
+            {networkStatus === 'loading' && <div>Submitting...</div>}
+            {networkStatus === 'failed' && (
+                <div>
+                    Something went wrong.
+                    <button onClick={onSubmit}>Try again</button>
+                </div>
+            )}
+            {networkStatus === 'success' && <div>Submitted!</div>}
+        </>
+    );
+};
 ```
 
 # The gist
@@ -168,42 +168,59 @@ export default {
 ## Manually clearing cache from your component
 
 ```js
-const connectApiData = withApiData({
-    getComments: 'getComments',
-});
+import { useApiData } from 'react-api-data';
 
-const CommentsList = props => (
-    <>
-        {/* ... */}
-        <button onClick={props.getComments.invalidateCache}>Refresh</button>
-    </>
-);
+const Articles = props => {
+    const getArticles = useApiData('getArticles');
+    return (
+        <>
+            {/* ... */}
+            <button onClick={getArticles.invalidateCache}>Refresh</button>
+        </>
+    );
+}
 
-export default connectApiData(CommentsList);
 ```
 
-## Manually clearing cache using dispatch
+## Manually clearing cache using useActions
 
-Using the invalidateApiDataRequest action creator you can invalidate any endpoint.
+Using the useActions api to invalidate the cache of a specific endpoint.
 
 ```js
-dispatch(invalidateApiDataRequest('getComments'));
+import { useActions} from 'react-api-data';
+
+const Articles = props => {
+    const actions = useActions();
+    return (
+        <>
+            {/* ... */}
+            <button onClick={() => actions.invalidateCache('getArticle', {id: '1234'})}>Refresh</button>
+        </>
+    );
+}
+
 ```
 
 ## Removing api data from the store
 
 ```js
-import { performApiRequest, purgeApiData } from 'react-api-data';
+import { useActions} from 'react-api-data';
 
-export const logout = () => (dispatch) => {
-    dispatch(purgeApiData());
-};
+const LogoutComponent = props => {
+    const actions = useActions();
+    return (
+        <>
+            {/* ... */}
+            <button onClick={() => actions.purgeAll()}>Logout</button>
+        </>
+    );
+}
 ```
 
 ## Including Cookies in your Request
 
 ```js
-export const globalConfig: ApiDataGlobalConfig = {
+export const globalConfig = {
     setRequestProperties: (defaultProperties) => ({
         ...defaultProperties,
         credentials: 'include',

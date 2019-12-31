@@ -7,7 +7,7 @@ import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ThunkDispatch } from 'redux-thunk';
 import { BindingsStore } from './helpers/createApiDataBinding';
-import { getActions } from './actions/performApiDataRequest';
+import { getActions } from './helpers/getActions';
 import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { performApiRequest } from './actions/performApiDataRequest';
 
@@ -119,10 +119,10 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 // check if we already have an instance of this bindingStore
                 let propNameBindingsStore: BindingsStore = this.bindingPropNameBindingsStore[propName];
                 if (propNameBindingsStore === undefined) {
-                    propNameBindingsStore = new BindingsStore(getActions(dispatch));
+                    propNameBindingsStore = new BindingsStore();
                     this.bindingPropNameBindingsStore[propName] = propNameBindingsStore;
                 }
-                return propNameBindingsStore.getBinding(endpointKey, params, instanceId, apiData);
+                return propNameBindingsStore.getBinding(endpointKey, params, dispatch, instanceId, apiData);
             }
 
             fetchDataIfNeeded() {

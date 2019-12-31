@@ -1,33 +1,22 @@
 import React, { Fragment, SFC } from 'react';
-import { ApiDataBinding, withApiData } from '../src';
+import { ApiDataBinding, useApiData } from '../src';
 
 interface OwnProps {
-    article: ApiDataBinding<{
-        title: string;
-        author: { name: string; };
-        body: string;
-    }>;
     articleId: number;
 }
 
-const connectApiData = withApiData(
-    {
-        // specify property name and endpoint
-        article: 'getArticle'
-    },
-    (ownProps: OwnProps, state: any) => ({
-        // provide URL parameters
-        article: { articleId: ownProps.articleId, userId: state.userId || '' }
-    })
-);
-
+interface Article {
+    title: string;
+    author: { name: string; };
+    body: string;
+}
 const Example: SFC<OwnProps> = (props) => {
-    const article = props.article.data;
+    const article: ApiDataBinding<Article> = useApiData('getArticle', { articleId: props.articleId });
     if (!article) {
         return null;
     }
 
-    switch (props.article.request.networkStatus) {
+    switch (article.request.networkStatus) {
         case 'loading':
             return <Fragment>Loading...</Fragment>;
         case 'failed':
@@ -35,9 +24,9 @@ const Example: SFC<OwnProps> = (props) => {
         case 'success': {
             return (
                 <div>
-                    <h1>{article.title}</h1>
-                    <em>{article.author.name}</em><br />
-                    {article.body}
+                    <h1>{article.data?.title}</h1>
+                    <em>{article.data?.author.name}</em><br />
+                    {article.data?.body}
                 </div>
             );
         }
@@ -46,4 +35,4 @@ const Example: SFC<OwnProps> = (props) => {
     }
 };
 
-export default connectApiData(Example);
+export default Example;
