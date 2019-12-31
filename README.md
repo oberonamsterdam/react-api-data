@@ -72,20 +72,21 @@ store.dispatch(configureApiData({}, endpointConfig));
 ### Bind API data to your component
 
 ```js
+import React from 'react';
 import { useApiData } from 'react-api-data';
 
 const Article = (props) => {
     const article = useApiData('getArticle', { id: props.articleId });
-        return (
-        <Fragment>
+    return (
+        <>
             {article.request.networkStatus === 'success' && 
                 <div>
                     <h1>{article.data.title}</h1>
                     <p>{article.data.body}</p>
                 </div>
             }
-        </Fragment>
-    )
+        </>
+    );
 }
 
 ```
@@ -93,50 +94,36 @@ const Article = (props) => {
 ### Post data from you component
 
 ```js
+import React, { useState } from 'react';
 import { useApiData } from 'react-api-data';
 
-const PostComment = (props) => {
+const PostComment = props => {
     const [comment, setComment] = useState('');
-    const postComment = useApiData('postComment', {});
-    const status = postComment.request.networkStatus;
+    const postComment = useApiData('postComment');
+    const { networkStatus } = postComment.request;
+    const onSubmit = () => {
+        postComment.perform({ id: props.articleId }, { comment });
+    };
     return (
-        <Fragment>
-            {status === 'ready' &&
-                <SubmitArticleBody>
-                    <TextBox
+        <>
+            {networkStatus === 'ready' && (
+                <div>
+                    <input
                         onChange={event => setComment(event.target.value)}
-                        placeholder={'Add a comment...'}
+                        placeholder="Add a comment..."
                     />
-                    <Button
-                        onClick={() => postComment.perform(
-                            { id: props.articleId }, { body: comment, articleId: props.articleId })
-                        }
-                    >
-                        Submit
-                    </Button>
-                </SubmitArticleBody>
-            }
-            {status === 'loading' &&
-                <div>Submitting...</div>
-            }
-            {status === 'failed' &&
-                <SubmitArticleBody>
+                    <button onClick={onSubmit}>Submit</button>
+                </div>
+            )}
+            {networkStatus === 'loading' && <div>Submitting...</div>}
+            {networkStatus === 'failed' && (
+                <div>
                     Something went wrong.
-                    <Button
-                        onClick={() =>
-                            postComment.perform(
-                                { id: props.articleId },
-                                { body: comment, articleId: props.articleId }
-                            )}
-                    >
-                        Try again
-                    </Button>
-                </SubmitArticleBody>
-            }
-            {status === 'success' &&
-                <div>Submitted!</div>
-            }
-        </Fragment>
+                    <button onClick={onSubmit}>Try again</button>
+                </div>
+            )}
+            {networkStatus === 'success' && <div>Submitted!</div>}
+        </>
     );
 };
 ```

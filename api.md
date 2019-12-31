@@ -35,28 +35,13 @@
 
 ### `useApiData()`  
 
-**Examples**
- ```javascript
-    const articles = useApiData('getArticles')
-// articles will be an ApiDataBinding
-// articles.data will be your response data
-// articles.request will be your request object
-
-// binding with params.     
-    const article = useApiData('getArticle', {id: props.articleId})
-    const editArticle = useApiData('editArticle')
-// perform can be used to trigger calls with autoTrigger: false
-    editArticle.perform({
-        id: props.articleId
-    }, {
-        title: 'New Title',
-        content: 'New article content'
-    });         
-
-```
-
-Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param and a property `apiDataActions` of type [Action](#action).
+Get an [ApiDataBinding](#apidatabinding) for the given endpoint. It will make sure data gets (re-)loaded if needed. This behavior is
+based on the `autoTrigger` and `cacheDuration` settings in [EndpointConfig](#apidataendpointconfig) and will, by default, trigger 
+the call when the endpoint's method is `GET` and the call has not yet been triggered before. This makes it possible to use
+this hook for the same call in multiple components, without needing to worry about which components needs to trigger the call
+and how to share the data between the components. Just "use" the API data in multiple components and the fetching of data will be handled.
+In any case it will return an `ApiDataBinding` that reflects the current state of the *API call*, identified by the combination
+of the *endpointKey* and the *params*.
 
 **Parameters**
 
@@ -64,25 +49,51 @@ component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#api
 - `params?` **[EndpointParams](#endpointparams)**
 
 **Returns**
+
 - `ApiDataBinding` **[ApiDataBinding](#apidatabinding)**
 
+**Examples**
+
+ ```javascript
+import React from 'react';
+import { useApiData } from 'react-api-data';
+
+const Article = (props) => {
+    const article = useApiData('getArticle', { id: props.articleId });
+    return (
+        <>
+            {article.request.networkStatus === 'success' && 
+                <div>
+                    <h1>{article.data.title}</h1>
+                    <p>{article.data.body}</p>
+                </div>
+            }
+        </>
+    );
+}
+```
+
 ### `useActions()`  
+
+**Parameters**
+
+*none*
+
+**Returns**
+- `Actions` **[Actions](#actions)**
 
 **Examples**
  ```javascript
     const actions = useActions()
     // Do a perform on any endpoint configured.
-    actions.perform('postArticle', {id: article.Id}, {body: 'The body of my article'})
+    actions.perform('postArticle', {id: article.id}, {body: 'The body of my article'})
     // Invalidate the cache on any endpoint configured.
     actions.invalidateCache('getArticles');
     // purge the whole apiData store (invalidate all)
     actions.purgeAll()
             
 ```
-**Parameters**
 
-**Returns**
-- `Actions` **[Actions](#actions)**
 ## Config
 
 ### `configureApiData()`
