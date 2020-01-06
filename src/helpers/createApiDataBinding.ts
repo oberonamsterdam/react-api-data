@@ -3,6 +3,8 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import createApiDataRequest from './createApiDataRequest';
 import { getRequestKey } from './getRequestKey';
+import { getLoadingState } from '../selectors/getLoadingState';
+import { getFailedData } from '../selectors/getFailedData';
 
 type BindingInstances = {
     [requestKey in string]: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
@@ -44,6 +46,8 @@ const createApiDataBinding = (
     return (apiData: ApiDataState, request?: ApiDataRequest) => ({
         data: getResultData(apiData, endpointKey, params, instanceId),
         request: request || getApiDataRequest(apiData, endpointKey, params, instanceId) || createApiDataRequest(endpointKey),
+        loading: getLoadingState(apiData, endpointKey, params, instanceId),
+        dataFailed: getFailedData(apiData, endpointKey, params, instanceId),
         perform: (performParams?: EndpointParams, body?: any) => {
             params = { ...bindingParams, ...performParams };
             return dispatch(performApiRequest(endpointKey, params, body, instanceId, bindingsStore));

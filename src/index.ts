@@ -150,6 +150,8 @@ export interface ApiDataConfigAfterProps {
  */
 export interface ApiDataBinding<T> {
     data?: T;
+    loading: boolean;
+    dataFailed: T;
     request: ApiDataRequest;
     perform: (params?: EndpointParams, body?: any) => Promise<ApiDataBinding<T>>;
     invalidateCache: () => void;

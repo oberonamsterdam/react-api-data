@@ -20,6 +20,7 @@ import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
 import { getActions } from '../helpers/getActions';
 import { Dispatch } from 'redux';
+import { getFailedData } from '../selectors/getFailedData';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
@@ -139,10 +140,12 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 };
             }
 
-            function afterProps(): ApiDataConfigAfterProps {
+            function afterProps(isFailed: boolean): ApiDataConfigAfterProps {
                 return {
                     ...beforeProps(),
-                    resultData: getResultData(getState().apiData, endpointKey, params, instanceId),
+                    resultData: isFailed
+                        ? getFailedData(getState().apiData, endpointKey, params, instanceId)
+                        : getResultData(getState().apiData, endpointKey, params, instanceId),
                     getState,
                     dispatch,
                     actions: getActions(dispatch),
@@ -169,7 +172,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 // after success cb
                 if (config.afterSuccess || globalConfig.afterSuccess) {
                     const afterSuccess = composeConfigOverrideFn(config.afterSuccess, globalConfig.afterSuccess);
-                    afterSuccess(afterProps());
+                    afterSuccess(afterProps(false));
                 }
 
                 resolve(getCurrentApiDataBinding());
@@ -195,7 +198,7 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                 // after error cb
                 if (config.afterFailed || globalConfig.afterFailed) {
                     const afterFailed = composeConfigOverrideFn(config.afterFailed, globalConfig.afterFailed);
-                    afterFailed(afterProps());
+                    afterFailed(afterProps(true));
                 }
 
                 resolve(getCurrentApiDataBinding());
