@@ -69,6 +69,7 @@ const store = createStore(combineReducers({apiData: reducer}), applyMiddleware(t
 store.dispatch(configureApiData({}, endpointConfig));
 ```
 
+
 ### Bind API data to your component
 
 ```js
@@ -249,4 +250,23 @@ const ItemsList = (props) => {
 }
 
 export default connectApiData(ItemsList);
+```
+
+## Configure with Redux-persist: 
+```js
+    
+    // your persistConfig
+    const persistConfig = {
+        key: 'root',
+        storage,
+        stateReconciler: autoMergeLevel2,
+    };
+    const persistedReducer = persistReducer(persistConfig, combineReducers({ apiData: reducer }));
+    const store = createStore(persistedReducer, enhancer);
+    const persistor = persistStore(store);
+    store.dispatch(configureApiData({}, endpointConfig));
+    return {
+        store,
+        persistor,
+    };
 ```
