@@ -95,7 +95,12 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     if (Array.isArray(this.props.params[bindingKey])) {
                         const paramsArray: EndpointParams[] = this.props.params[bindingKey] as EndpointParams[];
                         paramsArray.forEach((params, index) => {
-                            if (shouldPerformApiRequest({ ...newProps, params: { [bindingKey]: newProps.params[bindingKey] } }, { ...this.props as WithApiDataProps, params: { [bindingKey]: params } }, bindings, bindingKey)) {
+                            if (shouldPerformApiRequest(
+                                { ...newProps, params: { [bindingKey]: (newProps.params[bindingKey] as EndpointParams[])[index] } },
+                                { ...this.props as WithApiDataProps, params: { [bindingKey]: params } },
+                                bindings,
+                                bindingKey
+                            )) {
                                 this.props.dispatch(performApiRequest(bindings[bindingKey], params, undefined, index.toString()));
                             }
                         });

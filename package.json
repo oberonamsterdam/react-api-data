@@ -1,6 +1,6 @@
 {
   "name": "react-api-data",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "Fetch and normalize data from api",
   "main": "lib/index.js",
   "scripts": {
