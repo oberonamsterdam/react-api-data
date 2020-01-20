@@ -1,18 +1,18 @@
 // @flow
 
 import {
-    type ApiDataEndpointConfig,
-    type ApiDataGlobalConfig,
-    type ApiDataRequest,
+    type EndpointConfig,
+    type GlobalConfig,
+    type Request,
     type EndpointParams,
     type NetworkStatus
 } from './';
-import type { PurgeApiDataAction } from './actions/purgeApiData';
-import type { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
-import type { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
-import type { ApiDataFailAction } from './actions/apiDataFail';
-import type { ApiDataSuccessAction } from './actions/apiDataSuccess';
-import type { ConfigureApiDataAction } from './actions/configureApiData';
+import type { PurgeAction } from './actions/purge';
+import type { AfterRehydrateAction } from './actions/afterRehydrate';
+import type { InvalidateRequestAction } from './actions/invalidateRequest';
+import type { FailAction } from './actions/fail';
+import type { SuccessAction } from './actions/success';
+import type { ConfigureAction } from './actions/configure';
 
 export type Entities = {
     [type: string]: {
@@ -20,18 +20,18 @@ export type Entities = {
     };
 }
 
-export type ApiDataState = {
-    globalConfig: ApiDataGlobalConfig;
+export type State = {
+    globalConfig: GlobalConfig;
     endpointConfig: {
-        [endpointKey: string]: ApiDataEndpointConfig
+        [endpointKey: string]: EndpointConfig
     };
     requests: {
-        [requestKey: string]: ApiDataRequest
+        [requestKey: string]: Request
     };
     entities: Entities;
 }
 
-export interface FetchApiDataAction {
+export interface FetchAction {
     type: 'FETCH_API_DATA';
     payload: {
         requestKey: string,
@@ -41,27 +41,27 @@ export interface FetchApiDataAction {
     };
 }
 
-export interface ClearApiData {
+export interface Clear {
     type: 'CLEAR_API_DATA';
 }
 
 export type Action =
-    | ConfigureApiDataAction
-    | FetchApiDataAction
-    | ApiDataSuccessAction
-    | ApiDataFailAction
-    | InvalidateApiDataRequestAction
-    | ClearApiData
-    | ApiDataAfterRehydrateAction
-    | PurgeApiDataAction;
+    | ConfigureAction
+    | FetchAction
+    | SuccessAction
+    | FailAction
+    | InvalidateRequestAction
+    | Clear
+    | AfterRehydrateAction
+    | PurgeAction;
 declare export var recoverNetworkStatus: (
     networkStatus: NetworkStatus
 ) => NetworkStatus;
 declare export var recoverNetworkStatuses: (requests: {
-    [requestKey: string]: ApiDataRequest
+    [requestKey: string]: Request
 }) => {
-    [requestKey: string]: ApiDataRequest
+    [requestKey: string]: Request
 };
 
-declare var _default: (state: ?ApiDataState, action: Action) => ApiDataState;
+declare var _default: (state: ?State, action: Action) => State;
 declare export default typeof _default;

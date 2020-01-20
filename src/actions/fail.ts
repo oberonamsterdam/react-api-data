@@ -1,4 +1,4 @@
-export interface ApiDataFailAction {
+export interface FailAction {
     type: 'API_DATA_FAIL';
     payload: {
         requestKey: string,
@@ -7,7 +7,7 @@ export interface ApiDataFailAction {
     };
 }
 
-export const apiDataFail = (requestKey: string, errorBody: any, response?: Response): ApiDataFailAction => ({
+export const fail = (requestKey: string, errorBody: any, response?: Response): FailAction => ({
     type: 'API_DATA_FAIL',
     payload: {
         requestKey,

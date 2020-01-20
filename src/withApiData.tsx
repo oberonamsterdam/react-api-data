@@ -1,15 +1,15 @@
 import React from 'react';
-import { ApiDataBinding, ApiDataRequest, EndpointParams, Actions } from './types';
+import { Binding, Request, EndpointParams, Actions } from './types';
 import { connect, ConnectedComponent } from 'react-redux';
-import { ApiDataState } from './reducer';
+import { State } from './reducer';
 import { Action } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ThunkDispatch } from 'redux-thunk';
-import { BindingsStore } from './helpers/createApiDataBinding';
+import { BindingsStore } from './helpers/createBinding';
 import { getActions } from './helpers/getActions';
-import { getApiDataRequest } from './selectors/getApiDataRequest';
-import { performApiRequest } from './actions/performApiDataRequest';
+import { getRequest } from './selectors/getRequest';
+import { performApiRequest } from './actions/performRequest';
 
 type GetParams<TPropName extends string> = (ownProps: any, state: any) => { [paramName in TPropName]?: EndpointParams | EndpointParams[] };
 
@@ -18,13 +18,13 @@ interface WithApiDataParams {
 }
 
 export interface WithApiDataProps {
-    apiData: ApiDataState;
+    apiData: State;
     params: WithApiDataParams;
-    dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>;
+    dispatch: ThunkDispatch<{ apiData: State }, void, Action>;
 }
 
 export type WithApiDataBindingProps<TPropNames extends string> = {
-    [k in TPropNames]: ApiDataBinding<any> | Array<ApiDataBinding<any>>;
+    [k in TPropNames]: Binding<any> | Array<Binding<any>>;
 };
 
 export interface ActionProp {
@@ -39,8 +39,8 @@ type BindingPropNameBindingsStore<TPropNames extends string> = {
 
 export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: WithApiDataProps, bindings: { [propName in string]: string }, bindingKey: string) => {
     const keyParamsHaveChanged = (key: string) => !shallowEqual(newProps.params[key], oldProps.params[key]);
-    const getRequest = (props: WithApiDataProps, key: string) => getApiDataRequest(props.apiData, bindings[key], props.params[key] as EndpointParams);
-    const hasBeenInvalidated = (oldRequest?: ApiDataRequest, newRequest?: ApiDataRequest) =>
+    const getRequest = (props: WithApiDataProps, key: string) => getRequest(props.apiData, bindings[key], props.params[key] as EndpointParams);
+    const hasBeenInvalidated = (oldRequest?: Request, newRequest?: Request) =>
         !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
     const apiDataChanged = newProps.apiData !== oldProps.apiData;
     return ((keyParamsHaveChanged(bindingKey) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true)
@@ -48,7 +48,7 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
         || (apiDataChanged && shouldAutoTrigger(oldProps.apiData, bindings[bindingKey]) === false && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true);
 };
 
-export const shouldAutoTrigger = (apiData: ApiDataState, endpointKey: string) => {
+export const shouldAutoTrigger = (apiData: State, endpointKey: string) => {
     const endpointConfig = apiData.endpointConfig[endpointKey];
     return endpointConfig.autoTrigger ??
         apiData.globalConfig.autoTrigger ??
@@ -57,7 +57,7 @@ export const shouldAutoTrigger = (apiData: ApiDataState, endpointKey: string) =>
 
 /**
  * Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
- * component will get an ApiDataBinding added to each property key of the bindings param.
+ * component will get an Binding added to each property key of the bindings param.
  * @param bindings - maps prop names to endpoint keys
  * @param [getParams] - optionally provide the params of the endpoint
  * @returns {Function} - Function to wrap your component
@@ -79,7 +79,7 @@ export const shouldAutoTrigger = (apiData: ApiDataState, endpointKey: string) =>
 
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(bindings: { [propName in TPropNames]: string }, getParams?: GetParams<TPropNames>) {
     // note: return type ComponentType<TChildProps> and ComponentClass<TChildProps> have been replaced with <any> because
-    // these generics don't support the new feature of params array with array of ApiDataBinding as a result
+    // these generics don't support the new feature of params array with array of Binding as a result
     return (WrappedComponent: React.ComponentType<any>): ConnectedComponent<React.ComponentClass<any>, WithApiDataChildProps<TPropNames>> => {
         class WithApiData extends React.Component<WithApiDataProps> {
             static displayName = `WithApiData(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
@@ -113,14 +113,14 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 });
             }
 
-            getApiDataBinding(
+            getBinding(
                 endpointKey: string,
                 params: EndpointParams,
-                dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>,
+                dispatch: ThunkDispatch<{ apiData: State }, void, Action>,
                 propName: keyof BindingPropNameBindingsStore<TPropNames>,
                 instanceId: string = '',
-                apiData: ApiDataState
-            ): ApiDataBinding<any> {
+                apiData: State
+            ): Binding<any> {
                 // check if we already have an instance of this bindingStore
                 let propNameBindingsStore: BindingsStore = this.bindingPropNameBindingsStore[propName];
                 if (propNameBindingsStore === undefined) {
@@ -159,9 +159,9 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     const endpointKey: string = bindings[propName];
                     if (Array.isArray(params[propName])) {
                         const paramsArray: EndpointParams[] = (params[propName] as EndpointParams[]);
-                        addProps[propName] = paramsArray.map((propNameParams, index) => this.getApiDataBinding(endpointKey, propNameParams, dispatch, propName, index.toString(), apiData));
+                        addProps[propName] = paramsArray.map((propNameParams, index) => this.getBinding(endpointKey, propNameParams, dispatch, propName, index.toString(), apiData));
                     } else {
-                        addProps[propName] = this.getApiDataBinding(endpointKey, params[propName] as EndpointParams, dispatch, propName, '', apiData);
+                        addProps[propName] = this.getBinding(endpointKey, params[propName] as EndpointParams, dispatch, propName, '', apiData);
                     }
                 });
                 const apiDataActions: Actions = getActions(dispatch);
@@ -171,7 +171,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
         }
         hoistNonReactStatic<any, React.ComponentType<WithApiDataChildProps<TPropNames>>>(WithApiData, WrappedComponent); // move static methods to wrapper
 
-        return connect((state: { apiData: ApiDataState }, ownProps: TChildProps) => ({
+        return connect((state: { apiData: State }, ownProps: TChildProps) => ({
             params: typeof getParams === 'function' ? getParams(ownProps, state) as Required<GetParams<TPropNames>> : {},
             apiData: state.apiData
         }))(WithApiData);

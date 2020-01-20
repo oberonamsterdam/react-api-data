@@ -1,7 +1,7 @@
-import { ApiDataEndpointConfig, NormalizedData } from '../types';
+import { EndpointConfig, NormalizedData } from '../types';
 import { normalize } from 'normalizr';
 
-export interface ApiDataSuccessAction {
+export interface SuccessAction {
     type: 'API_DATA_SUCCESS';
     payload: {
         requestKey: string,
@@ -11,7 +11,7 @@ export interface ApiDataSuccessAction {
     };
 }
 
-export const apiDataSuccess = (requestKey: string, endpointConfig: ApiDataEndpointConfig, response: Response, body: any): ApiDataSuccessAction => ({
+export const success = (requestKey: string, endpointConfig: EndpointConfig, response: Response, body: any): SuccessAction => ({
     type: 'API_DATA_SUCCESS',
     payload: {
         requestKey,

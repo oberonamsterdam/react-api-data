@@ -1,14 +1,14 @@
 import withApiData from './withApiData';
-import { configureApiData } from './actions/configureApiData';
+import { configure } from './actions/configure';
 import { afterRehydrate } from './actions/afterRehydrate';
-import { purgeApiData } from './actions/purgeApiData';
-import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { purge } from './actions/purge';
+import { getRequest } from './selectors/getRequest';
 import { getResultData } from './selectors/getResultData';
-import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
-import { performApiRequest, useRequestHandler } from './actions/performApiDataRequest';
+import { invalidateRequest } from './actions/invalidateRequest';
+import { performApiRequest, useRequestHandler } from './actions/performRequest';
 import { getEntity } from './selectors/getEntity';
 import reducer from './reducer';
-import { ApiDataState } from './reducer';
+import { State } from './reducer';
 import useApiData from './useApiData';
 import useActions from './useActions';
 import {
@@ -16,41 +16,41 @@ import {
     NormalizeResult,
     NormalizedData,
     EndpointParams,
-    ApiDataRequest,
-    ApiDataGlobalConfig,
+    Request,
+    GlobalConfig,
     Method,
-    ApiDataEndpointConfig,
-    ApiDataConfigBeforeProps,
-    ApiDataConfigAfterProps,
-    ApiDataBinding,
+    EndpointConfig,
+    ConfigBeforeProps,
+    ConfigAfterProps,
+    Binding,
     Actions,
 } from './types';
 
 export {
     withApiData,
-    configureApiData,
+    configure,
     performApiRequest,
-    getApiDataRequest,
+    getRequest,
     getResultData,
     getEntity,
-    invalidateApiDataRequest,
+    invalidateRequest,
     afterRehydrate,
-    purgeApiData,
+    purge,
     reducer,
     useRequestHandler,
-    ApiDataState,
+    State,
     useApiData,
     useActions,
     NetworkStatus,
     NormalizeResult,
     NormalizedData,
     EndpointParams,
-    ApiDataRequest,
-    ApiDataGlobalConfig,
+    Request,
+    GlobalConfig,
     Method,
-    ApiDataEndpointConfig,
-    ApiDataConfigBeforeProps,
-    ApiDataConfigAfterProps,
-    ApiDataBinding,
+    EndpointConfig,
+    ConfigBeforeProps,
+    ConfigAfterProps,
+    Binding,
     Actions,
 };

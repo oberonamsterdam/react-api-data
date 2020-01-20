@@ -13,12 +13,12 @@
  * - performApiRequest action creator thunk. Dispatch to manually trigger an endpoint request, i.e. when executing a post or patch
  *
  * Getting specific info from the api data store:
- * - getApiDataRequest - get the Request object to monitor endpoint status
+ * - getRequest - get the Request object to monitor endpoint status
  * - getResultData - get the (de-normalized) result of an endpint
  * - getEntity - get a specific entity from the store
  *
  * Invalidating an endpoint so it will reload:
- * - invalidateApiDataRequest - Use for example to invalidate a get (list) request after a POST or DELETE. withApiData
+ * - invalidateRequest - Use for example to invalidate a get (list) request after a POST or DELETE. withApiData
  * HOC will automatically re-trigger calls to invalidated requests.
  *
  * NOTE: THIS LIB STORES ITS DATA IN state.apiData. NEVER ACCESS THIS PROPERTY FROM ANYWHERE OUTSIDE THIS FILE DIRECTLY.
@@ -26,17 +26,17 @@
  * the HOC and the selectors, use those.
  */
 import {
-    ApiDataEndpointConfig,
-    ApiDataGlobalConfig,
-    ApiDataRequest, EndpointParams,
+    EndpointConfig,
+    GlobalConfig,
+    Request, EndpointParams,
     NetworkStatus,
 } from './types';
-import { ConfigureApiDataAction } from './actions/configureApiData';
-import { ApiDataSuccessAction } from './actions/apiDataSuccess';
-import { ApiDataFailAction } from './actions/apiDataFail';
-import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
-import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
-import { PurgeApiDataAction } from './actions/purgeApiData';
+import { ConfigureAction } from './actions/configure';
+import { SuccessAction } from './actions/success';
+import { FailAction } from './actions/fail';
+import { InvalidateRequestAction } from './actions/invalidateRequest';
+import { AfterRehydrateAction } from './actions/afterRehydrate';
+import { PurgeAction } from './actions/purge';
 
 // state def
 
@@ -46,13 +46,13 @@ interface Entities {
     };
 }
 
-export interface ApiDataState {
-    globalConfig: ApiDataGlobalConfig;
+export interface State {
+    globalConfig: GlobalConfig;
     endpointConfig: {
-        [endpointKey: string]: ApiDataEndpointConfig
+        [endpointKey: string]: EndpointConfig
     };
     requests: {
-        [requestKey: string]: ApiDataRequest
+        [requestKey: string]: Request
     };
     entities: Entities;
 }
@@ -64,11 +64,11 @@ export const defaultState = {
     entities: {}
 };
 
-export interface ClearApiDataAction {
+export interface ClearAction {
     type: 'CLEAR_API_DATA';
 }
 
-export interface FetchApiDataAction {
+export interface FetchAction {
     type: 'FETCH_API_DATA';
     payload: {
         requestKey: string,
@@ -79,19 +79,19 @@ export interface FetchApiDataAction {
 }
 
 export type Action =
-    | ConfigureApiDataAction
-    | FetchApiDataAction
-    | ApiDataSuccessAction
-    | ApiDataFailAction
-    | InvalidateApiDataRequestAction
-    | ClearApiDataAction
-    | ApiDataAfterRehydrateAction
-    | PurgeApiDataAction
+    | ConfigureAction
+    | FetchAction
+    | SuccessAction
+    | FailAction
+    | InvalidateRequestAction
+    | ClearAction
+    | AfterRehydrateAction
+    | PurgeAction
     ;
 
 // reducer
 
-export default (state: ApiDataState = defaultState, action: Action): ApiDataState => {
+export default (state: State = defaultState, action: Action): State => {
     switch (action.type) {
         case 'CONFIGURE_API_DATA':
             return {
@@ -215,7 +215,7 @@ export const addEntities = (entities: Entities, newEntities: Entities): Entities
 export const recoverNetworkStatus = (networkStatus: NetworkStatus): NetworkStatus =>
     networkStatus === 'loading' ? 'ready' : networkStatus;
 
-export const recoverNetworkStatuses = (requests: { [requestKey: string]: ApiDataRequest }): { [requestKey: string]: ApiDataRequest } => ({
+export const recoverNetworkStatuses = (requests: { [requestKey: string]: Request }): { [requestKey: string]: Request } => ({
     ...(Object.keys(requests).reduce(
             (result, key) => ({
                 ...result,

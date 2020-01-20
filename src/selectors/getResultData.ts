@@ -1,13 +1,13 @@
 import { denormalize } from 'normalizr';
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 import { EndpointParams } from '../types';
-import { getApiDataRequest } from './getApiDataRequest';
+import { getRequest } from './getRequest';
 
 /**
  * Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
  * bound when using {@link withApiData}.
  */
-export const getResultData = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams, instanceId: string = ''): any | any[] | void => {
+export const getResultData = (apiDataState: State, endpointKey: string, params?: EndpointParams, instanceId: string = ''): any | any[] | void => {
     const config = apiDataState.endpointConfig[endpointKey];
 
     if (!config) {
@@ -17,7 +17,7 @@ export const getResultData = (apiDataState: ApiDataState, endpointKey: string, p
         return;
     }
 
-    const request = getApiDataRequest(apiDataState, endpointKey, params, instanceId);
+    const request = getRequest(apiDataState, endpointKey, params, instanceId);
 
     if (!request) {
         return;

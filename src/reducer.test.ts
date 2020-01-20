@@ -1,19 +1,19 @@
 import reducer, {
     addEntities,
-    ApiDataState,
-    ClearApiDataAction,
+    State,
+    ClearAction,
     defaultState,
-    FetchApiDataAction,
+    FetchAction,
     recoverNetworkStatuses
 } from './reducer';
 import { setPostHeaders, setPostRequestProperties } from './mocks/mockActions';
-import { ConfigureApiDataAction } from './actions/configureApiData';
+import { ConfigureAction } from './actions/configure';
 import { getRequestKey } from './helpers/getRequestKey';
-import { ApiDataSuccessAction } from './actions/apiDataSuccess';
-import { ApiDataFailAction } from './actions/apiDataFail';
-import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
-import { PurgeApiDataAction } from './actions/purgeApiData';
-import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
+import { SuccessAction } from './actions/success';
+import { FailAction } from './actions/fail';
+import { InvalidateRequestAction } from './actions/invalidateRequest';
+import { PurgeAction } from './actions/purge';
+import { AfterRehydrateAction } from './actions/afterRehydrate';
 import { schema } from 'normalizr';
 
 // mock current date for lastCall/duration testing
@@ -66,7 +66,7 @@ test('recoverNetworkStatuses should return a new requests map with loading state
 
 const postDataSchema = new schema.Entity('postData');
 
-const initialState: ApiDataState = {
+const initialState: State = {
     globalConfig: {
         setHeaders: setPostHeaders,
         setRequestProperties: setPostRequestProperties
@@ -89,7 +89,7 @@ const initialState: ApiDataState = {
 
 describe('CONFIGURE_API_DATA', () => {
     test('initial state gets configured correctly', () => {
-        const action: ConfigureApiDataAction = {
+        const action: ConfigureAction = {
             type: 'CONFIGURE_API_DATA',
             payload: {
                 globalConfig: {
@@ -114,7 +114,7 @@ describe('CONFIGURE_API_DATA', () => {
     });
 });
 
-const updatedState: ApiDataState = {
+const updatedState: State = {
     ...initialState,
     requests: {
         [getRequestKey('postData')]: {
@@ -130,7 +130,7 @@ const updatedState: ApiDataState = {
 describe('FETCH_API_DATA', () => {
     test('new stat is correct', () => {
         const params = { id: 'one' };
-        const action: FetchApiDataAction = {
+        const action: FetchAction = {
             type: 'FETCH_API_DATA',
             payload: {
                 endpointKey: 'getData',
@@ -167,7 +167,7 @@ describe('API_DATA_SUCCESS', () => {
     test('new state is correct', () => {
         const requestKey = getRequestKey('postData');
         // @ts-ignore
-        const action: ApiDataSuccessAction = {
+        const action: SuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
                 requestKey,
@@ -212,7 +212,7 @@ describe('API_DATA_SUCCESS', () => {
 describe('API_DATA_SUCCESS with payload entity', () => {
     test('new state is correct', () => {
         // @ts-ignore
-        const action: ApiDataSuccessAction = {
+        const action: SuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
                 requestKey: getRequestKey('postData'),
@@ -261,7 +261,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
 
 describe('API_DATA_FAIL', () => {
     test('new state is correct', () => {
-        const action: ApiDataFailAction = {
+        const action: FailAction = {
             type: 'API_DATA_FAIL',
             payload: {
                 requestKey: getRequestKey('postData'),
@@ -302,7 +302,7 @@ describe('API_DATA_FAIL', () => {
     });
 });
 
-const invalidateAbleState: ApiDataState = {
+const invalidateAbleState: State = {
     ...initialState,
     requests: {
         [getRequestKey('postData')]: {
@@ -317,7 +317,7 @@ const invalidateAbleState: ApiDataState = {
 
 describe('INVALIDATE_API_DATA_REQUEST', () => {
     test('new state is correct', () => {
-        const action: InvalidateApiDataRequestAction = {
+        const action: InvalidateRequestAction = {
             type: 'INVALIDATE_API_DATA_REQUEST',
             payload: {
                 requestKey: getRequestKey('postData'),
@@ -343,7 +343,7 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
 describe('CLEAR_API_DATA', () => {
     test('new state is correct', () => {
 
-        const action: ClearApiDataAction = {
+        const action: ClearAction = {
             type: 'CLEAR_API_DATA',
         };
 
@@ -353,7 +353,7 @@ describe('CLEAR_API_DATA', () => {
 
 describe('PURGE_API_DATA', () => {
     test('new state is correct', () => {
-        const action: PurgeApiDataAction = {
+        const action: PurgeAction = {
             type: 'PURGE_API_DATA',
         };
 
@@ -367,7 +367,7 @@ describe('PURGE_API_DATA', () => {
 
 describe('API_DATA_AFTER_REHYDRATE', () => {
     test('new state is correct', () => {
-        const action: ApiDataAfterRehydrateAction = {
+        const action: AfterRehydrateAction = {
             type: 'API_DATA_AFTER_REHYDRATE',
         };
 

@@ -1,10 +1,10 @@
 // @flow
-import { type ApiDataState } from '../reducer';
-import { ApiDataRequest, type EndpointParams } from '..';
+import { type State } from '../reducer';
+import { Request, type EndpointParams } from '..';
 
-declare export var getApiDataRequest: (
-  apiDataState: ApiDataState,
+declare export var getRequest: (
+  apiDataState: State,
   endpointKey: string,
   params?: EndpointParams | void,
   instanceId?: string
-) => ApiDataRequest;
+) => Request;

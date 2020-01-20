@@ -1,18 +1,18 @@
 import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ApiDataBinding, EndpointParams } from './types';
-import { BindingsStore } from './helpers/createApiDataBinding';
+import { Binding, EndpointParams } from './types';
+import { BindingsStore } from './helpers/createBinding';
 import { shouldAutoTrigger } from './withApiData';
-import { ApiDataState } from './reducer';
+import { State } from './reducer';
 
-type UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => ApiDataBinding<T>;
+type UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => Binding<T>;
 
-const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
+const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
-    const apiData: ApiDataState = useSelector((state: { apiData: ApiDataState }) => state.apiData);
+    const apiData: State = useSelector((state: { apiData: State }) => state.apiData);
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
-    const binding: ApiDataBinding<T> = bindingsStore.current.getBinding(endpointKey, params, dispatch, instanceId, apiData);
+    const binding: Binding<T> = bindingsStore.current.getBinding(endpointKey, params, dispatch, instanceId, apiData);
     const request = binding.request;
     const networkStatus = request && request.networkStatus;
 

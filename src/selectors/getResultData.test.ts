@@ -1,13 +1,13 @@
 import { schema } from 'normalizr';
 
 import { getResultData } from './getResultData';
-// import { getApiDataRequest } from './getApiDataRequest';
+// import { getRequest } from './getRequest';
 import { getRequestKey } from '../helpers/getRequestKey';
 
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 
 describe('getResultData should return the resultData of a given Endpoint', () => {
-    const apiDataState: ApiDataState = {
+    const apiDataState: State = {
         globalConfig: {
             timeout: 6000
         },
@@ -94,7 +94,7 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
 
     test('should return the result of the request if there is no responseSchema in the config', () => {
 
-        const apiDataState2: ApiDataState = {
+        const apiDataState2: State = {
             globalConfig: {
                 timeout: 6000
             },
@@ -148,7 +148,7 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
             comments: [commentsSchema]
         });
 
-        const apiDataState3: ApiDataState = {
+        const apiDataState3: State = {
             globalConfig: {
                 timeout: 6000
             },

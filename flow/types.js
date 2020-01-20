@@ -34,7 +34,7 @@ export type EndpointParams = {
 /**
  * Information about a request made to an endpoint.
  */
-export interface ApiDataRequest {
+export interface Request {
     result?: any;
     networkStatus: NetworkStatus;
     lastCall: number;
@@ -46,20 +46,20 @@ export interface ApiDataRequest {
     url: string;
 }
 
-export interface ApiDataGlobalConfig {
+export interface GlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: any, state: any) => any;
-    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
-    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => void;
-    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
-    afterFailed?: (afterProps: ApiDataConfigAfterProps) => void;
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
+    afterSuccess?: (afterProps: ConfigAfterProps) => void;
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
+    afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
 }
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-export interface ApiDataEndpointConfig {
+export interface EndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
     method: Method;
     cacheDuration?: number;
@@ -71,23 +71,23 @@ export interface ApiDataEndpointConfig {
     /*
     * @deprecated Use beforeFailed instead
     */
-    handleErrorResponse?: (responseBody: any, params: EndpointParams, requestBody: any, dispatch: ActionCreator<any>, getState: () => { apiData: ApiDataState }, response?: Response) => boolean | void;
+    handleErrorResponse?: (responseBody: any, params: EndpointParams, requestBody: any, dispatch: ActionCreator<any>, getState: () => { apiData: State }, response?: Response) => boolean | void;
     /*
     * Edit the response before it gets handled by react-api-data.
     */
-    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterFailed?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
+    afterFailed?: (afterProps: ConfigAfterProps) => boolean | void;
     /*
     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
     */
-    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ApiDataConfigBeforeProps) => { response: Response, body: any };
+    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
-    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
+    afterSuccess?: (afterProps: ConfigAfterProps) => boolean | void;
     /*
     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
     */
@@ -101,15 +101,15 @@ export interface ApiDataEndpointConfig {
     autoTrigger?: boolean;
 }
 
-export interface ApiDataConfigBeforeProps {
+export interface ConfigBeforeProps {
     endpointKey: string;
-    request: ApiDataRequest;
+    request: Request;
     requestBody?: any;
 }
 
-export interface ApiDataConfigAfterProps {
+export interface ConfigAfterProps {
     endpointKey: string;
-    request: ApiDataRequest;
+    request: Request;
     requestBody?: any;
     resultData: any;
     // redux functions
@@ -121,16 +121,16 @@ export interface ApiDataConfigAfterProps {
 /**
  * The value that withApiData binds to the property of your component.
  * @example  type Props = {
-users: ApiDataBinding<Array<User>>
+users: Binding<Array<User>>
 }
  */
-export interface ApiDataBinding<T> {
+export interface Binding<T> {
     data?: T;
-    request: ApiDataRequest;
+    request: Request;
     perform: (
         params?: EndpointParams | void,
         body?: any
-    ) => Promise<ApiDataBinding<T>>;
+    ) => Promise<Binding<T>>;
     invalidateCache: () => Promise<void>;
-    getInstance: (instanceId: string) => ApiDataBinding<T>;
+    getInstance: (instanceId: string) => Binding<T>;
 }

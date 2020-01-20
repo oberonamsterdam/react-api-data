@@ -35,7 +35,7 @@ or
 ```js
 import { schema } from 'normalizr';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
-import { configureApiData, reducer } from 'react-api-data';
+import { configure, reducer } from 'react-api-data';
 import thunk from 'redux-thunk';
 
 // optionally define normalizr response schemas
@@ -58,7 +58,7 @@ const endpointConfig = {
         method: 'POST',
         afterSuccess: ({ dispatch, request, getState }) => {
             // After successful post, invalidate the cache of the getArticle call, so it gets re-triggered.
-            dispatch(invalidateApiDataRequest('getArticle', {articleId: request.params.articleId, userId: getState().userId})); 
+            dispatch(invalidateRequest('getArticle', {articleId: request.params.articleId, userId: getState().userId})); 
         }
     }
 };
@@ -66,7 +66,7 @@ const endpointConfig = {
 // Configure store and dispatch config before you render components
 
 const store = createStore(combineReducers({apiData: reducer}), applyMiddleware(thunk));
-store.dispatch(configureApiData({}, endpointConfig));
+store.dispatch(configure({}, endpointConfig));
 ```
 
 ### Bind API data to your component

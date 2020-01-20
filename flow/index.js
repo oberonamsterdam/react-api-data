@@ -1,14 +1,14 @@
 // @flow
 
 import withApiData from './withApiData';
-import reducer, { type ApiDataState } from './reducer';
-import { configureApiData } from './actions/configureApiData';
-import { performApiRequest } from './actions/performApiDataRequest';
-import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
+import reducer, { type State } from './reducer';
+import { configure } from './actions/configure';
+import { performApiRequest } from './actions/performRequest';
+import { invalidateRequest } from './actions/invalidateRequest';
 import { afterRehydrate } from './actions/afterRehydrate';
-import { purgeApiData } from './actions/purgeApiData';
-import { useRequestHandler } from './actions/performApiDataRequest';
-import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { purge } from './actions/purge';
+import { useRequestHandler } from './actions/performRequest';
+import { getRequest } from './selectors/getRequest';
 import { getResultData } from './selectors/getResultData';
 import { getEntity } from './selectors/getEntity';
 export type {
@@ -16,25 +16,25 @@ export type {
     NormalizeResult,
     NormalizedData,
     EndpointParams,
-    ApiDataRequest,
-    ApiDataGlobalConfig,
+    Request,
+    GlobalConfig,
     Method,
-    ApiDataEndpointConfig,
-    ApiDataConfigBeforeProps,
-    ApiDataConfigAfterProps,
-    ApiDataBinding,
+    EndpointConfig,
+    ConfigBeforeProps,
+    ConfigAfterProps,
+    Binding,
 } from './types';
 
 export {
     withApiData,
-    configureApiData,
+    configure,
     performApiRequest,
-    invalidateApiDataRequest,
+    invalidateRequest,
     afterRehydrate,
     useRequestHandler,
-    getApiDataRequest,
+    getRequest,
     getResultData,
     getEntity,
     reducer,
-    purgeApiData,
+    purge,
 };

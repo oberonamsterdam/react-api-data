@@ -1,10 +1,10 @@
-import { invalidateApiDataRequest } from './invalidateApiDataRequest';
+import { invalidateRequest } from './invalidateRequest';
 import { EndpointParams } from '../types';
 import { getRequestKey } from '../helpers/getRequestKey';
 
-describe('invalidateApiDataRequest action creator', () => {
+describe('invalidateRequest action creator', () => {
 
-    test('should set up invalidateApiDataRequest action object with the correct type and payload', () => {
+    test('should set up invalidateRequest action object with the correct type and payload', () => {
 
         // Set up fake endpoint key & params.
         const endpointKey = 'getData';
@@ -12,7 +12,7 @@ describe('invalidateApiDataRequest action creator', () => {
             myData: 'all'
         };
 
-        const action = invalidateApiDataRequest(endpointKey, params);
+        const action = invalidateRequest(endpointKey, params);
 
         expect(action).toEqual({
             type: 'INVALIDATE_API_DATA_REQUEST',
@@ -22,7 +22,7 @@ describe('invalidateApiDataRequest action creator', () => {
         });
     });
 
-    test('should set up invalidateApiDataRequest action object with the correct type and payload for an Instance', () => {
+    test('should set up invalidateRequest action object with the correct type and payload for an Instance', () => {
 
         // Set up fake endpoint key & params.
         const endpointKey = 'getData';
@@ -30,7 +30,7 @@ describe('invalidateApiDataRequest action creator', () => {
             myData: 'all'
         };
 
-        const action = invalidateApiDataRequest(endpointKey, params, 'primary');
+        const action = invalidateRequest(endpointKey, params, 'primary');
 
         expect(action).toEqual({
             type: 'INVALIDATE_API_DATA_REQUEST',

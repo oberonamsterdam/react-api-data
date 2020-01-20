@@ -1,22 +1,22 @@
-import { configureApiData } from './configureApiData';
-import { ApiDataEndpointConfig } from '../types';
+import { configure } from './configure';
+import { EndpointConfig } from '../types';
 
-describe('ConfigureApiData action creator', () => {
-    test('ConfigureApiDataAction object with the correct type and payload', () => {
+describe('Configure action creator', () => {
+    test('ConfigureAction object with the correct type and payload', () => {
         // Define a fake config object to use as an argument for the action.
         const globalConfig = {
             timeout: 6000
         };
 
         // Define a fake endpointConfig object to use as an argument for the action.
-        const endpointConfig: { [endpointKey: string]: ApiDataEndpointConfig } = {
+        const endpointConfig: { [endpointKey: string]: EndpointConfig } = {
             getData: {
                 url: 'https://myapi.org/myData',
                 method: 'GET'
             }
         };
 
-        const action = configureApiData(globalConfig, endpointConfig);
+        const action = configure(globalConfig, endpointConfig);
 
         expect(action).toEqual({
             type: 'CONFIGURE_API_DATA',

@@ -1,10 +1,10 @@
 // @flow
 
 import type { EndpointParams } from '../types';
-import { type ApiDataState } from '../reducer';
+import { type State } from '../reducer';
 
 declare export var getResultData: (
-  apiDataState: ApiDataState,
+  apiDataState: State,
   endpointKey: string,
   params?: EndpointParams | void,
   instanceId?: string

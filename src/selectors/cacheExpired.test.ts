@@ -1,18 +1,18 @@
 import { cacheExpired } from './cacheExpired';
-import { ApiDataEndpointConfig, ApiDataRequest } from '../types';
+import { EndpointConfig, Request } from '../types';
 
 describe('check wether the cacheExpired function works correctly', () => {
 
     test('should return true if the current Date - lastCall property is greater than the cacheDuration', () => {
 
         // Set up config and request objects.
-        const endpointConfig: ApiDataEndpointConfig = {
+        const endpointConfig: EndpointConfig = {
             url: 'https://myapi.org/myData',
             method: 'GET',
             cacheDuration: 6000
         };
 
-        const request: ApiDataRequest = {
+        const request: Request = {
             networkStatus: 'failed',
             lastCall: 6000,
             duration: 12000,
@@ -28,13 +28,13 @@ describe('check wether the cacheExpired function works correctly', () => {
     test('should return false if the current Date - lastCall property is smaller than the cacheDuration', () => {
 
         // Set up config and request objects.
-        const endpointConfig: ApiDataEndpointConfig = {
+        const endpointConfig: EndpointConfig = {
             url: 'https://myapi.org/myData',
             method: 'GET',
             cacheDuration: 6000
         };
 
-        const request: ApiDataRequest = {
+        const request: Request = {
             networkStatus: 'failed',
             lastCall: Date.now() + 1,
             duration: 12000,

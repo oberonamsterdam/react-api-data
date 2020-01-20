@@ -1,11 +1,11 @@
 import { denormalize, schema } from 'normalizr';
 
 import { getEntity } from './getEntity';
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 
 describe(' getEntity function should return a single entity from normalized data', () => {
     // Set up apiDataState object.
-    const apiDataState: ApiDataState = {
+    const apiDataState: State = {
         globalConfig: {
             timeout: 6000
         },
