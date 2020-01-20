@@ -1,5 +1,5 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import {ApiDataEndpointConfig, ApiDataGlobalConfig} from '../index';
+import { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../types';
 
 const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,

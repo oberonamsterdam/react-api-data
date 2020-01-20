@@ -1,4 +1,4 @@
-import { EndpointParams } from '../index';
+import { EndpointParams } from '../types';
 
 export const formatUrl = (url: string, params?: EndpointParams): string => {
     if (!params) {
