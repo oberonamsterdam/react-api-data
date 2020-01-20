@@ -1,8 +1,12 @@
-import { ApiDataState, EndpointParams, performApiRequest, getResultData, getApiDataRequest, ApiDataBinding, ApiDataRequest, invalidateApiDataRequest } from '..';
-import { Action } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { EndpointParams, ApiDataBinding, ApiDataRequest } from '../types';
 import createApiDataRequest from './createApiDataRequest';
 import { getRequestKey } from './getRequestKey';
+import { ApiDataState, Action } from '../reducer';
+import { getApiDataRequest } from '../selectors/getApiDataRequest';
+import { getResultData } from '../selectors/getResultData';
+import { ThunkDispatch } from 'redux-thunk';
+import { performApiRequest } from '../actions/performApiDataRequest';
+import { invalidateApiDataRequest } from '../actions/invalidateApiDataRequest';
 
 type BindingInstances = {
     [requestKey in string]: (apiData: ApiDataState, newApiDataRequest?: ApiDataRequest) => ApiDataBinding<any>;
@@ -11,18 +15,18 @@ type BindingInstances = {
 export class BindingsStore {
     bindingInstances: BindingInstances = {} as BindingInstances;
 
-    getBinding(endpointKey: string, 
-               params: EndpointParams = {}, 
+    getBinding(endpointKey: string,
+               params: EndpointParams = {},
                dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>, 
                instanceId: string = '',
-               apiData: ApiDataState, 
+               apiData: ApiDataState,
                request?: ApiDataRequest
     ) {
         const requestKey = getRequestKey(endpointKey, params, instanceId);
         if (!this.bindingInstances[requestKey]) {
             this.bindingInstances[requestKey] = createApiDataBinding(
                 endpointKey, 
-                params, 
+                params,
                 dispatch,
                 this,
                 instanceId,

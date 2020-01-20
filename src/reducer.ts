@@ -30,7 +30,7 @@ import {
     ApiDataGlobalConfig,
     ApiDataRequest, EndpointParams,
     NetworkStatus,
-} from './index';
+} from './types';
 import { ConfigureApiDataAction } from './actions/configureApiData';
 import { ApiDataSuccessAction } from './actions/apiDataSuccess';
 import { ApiDataFailAction } from './actions/apiDataFail';

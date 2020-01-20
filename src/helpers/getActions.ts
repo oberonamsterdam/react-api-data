@@ -1,13 +1,13 @@
-import { ActionCreator } from 'redux';
-import { invalidateApiDataRequest, EndpointParams, performApiRequest, ApiDataBinding, purgeApiData } from '..';
+import { EndpointParams, Actions } from '../types';
+import { invalidateApiDataRequest } from '../actions/invalidateApiDataRequest';
+import { purgeApiData } from '../actions/purgeApiData';
+import { performApiRequest } from '../actions/performApiDataRequest';
+import { ThunkDispatch } from 'redux-thunk';
+import { Action, ApiDataState } from '../reducer';
 
-export interface Actions {
-    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
-    perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string) => Promise<ApiDataBinding<any>>;
-    purgeAll: () => void;
-}
+type GetActions = (dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>) => Actions;
 
-export const getActions: (dispatch: ActionCreator<any>) => Actions = (dispatch) => {
+export const getActions: GetActions = (dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>) => {
     return {
         invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId: string = '') => 
             dispatch(invalidateApiDataRequest(endpointKey, params, instanceId)),

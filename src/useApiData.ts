@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ApiDataBinding, ApiDataState, EndpointParams } from './index';
+import { ApiDataBinding, EndpointParams } from './types';
 import { BindingsStore } from './helpers/createApiDataBinding';
 import { shouldAutoTrigger } from './withApiData';
+import { ApiDataState } from './reducer';
 
 type UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => ApiDataBinding<T>;
 

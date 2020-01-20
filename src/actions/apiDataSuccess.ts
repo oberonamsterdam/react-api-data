@@ -1,4 +1,4 @@
-import { ApiDataEndpointConfig, NormalizedData } from '../index';
+import { ApiDataEndpointConfig, NormalizedData } from '../types';
 import { normalize } from 'normalizr';
 
 export interface ApiDataSuccessAction {
