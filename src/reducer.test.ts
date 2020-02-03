@@ -15,7 +15,26 @@ import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataReque
 import { PurgeAllApiDataAction } from './actions/purgeAllApiData';
 import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
 import { schema } from 'normalizr';
-import { PurgeRequestAction } from './actions/purgeRequest';
+import { purgeRequest } from './actions/purgeRequest';
+import { getApiDataRequest } from './selectors/getApiDataRequest';
+
+const getMockRequest = (requestKey: string) => ({
+    [requestKey]: {
+        networkStatus: 'success',
+        lastCall: 1000,
+        duration: 0,
+        result: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
+        response: {
+            body: { id: 1, data: 'json' },
+            ok: true,
+            redirected: false,
+            status: 200,
+            statusText: 'ok'
+        },
+        endpointKey: 'postData',
+        url: 'www.postdate.post',
+    }
+});
 
 // mock current date for lastCall/duration testing
 const MOCK_NOW = 5000;
@@ -341,43 +360,33 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
     });
 });
 
-const purgeState: ApiDataState = {
-    ...initialState,
-    // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
-    requests: {
-        [getRequestKey('postData')]: {
-            networkStatus: 'success',
-            lastCall: 1000,
-            duration: 0,
-            result: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
-            response: {
-                body: { id: 1, data: 'json' },
-                ok: true,
-                redirected: false,
-                status: 200,
-                statusText: 'ok'
-            },
-            endpointKey: 'postData',
-            url: 'www.postdate.post',
-        }
-    }
-};
-
 describe('PURGE_API_DATA_REQUEST', () => {
     test('new state is correct', () => {
-        const action: PurgeRequestAction = {
-            type: 'PURGE_API_DATA_REQUEST',
-            payload: {
-                requestKey: getRequestKey('postData'),
-            }
-        };
+        const getRequestKeys = [getRequestKey('A'), getRequestKey('B', { paramA: 'a' }), getRequestKey('B') ];
 
-        const newState = {
-            ...purgeState,
+        const purgeState: ApiDataState = {
+            ...initialState,
+            // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
             requests: {
+                [getRequestKeys[0]]: getMockRequest(getRequestKeys[0]),
+                [getRequestKeys[1]]: getMockRequest(getRequestKeys[1]),
+                [getRequestKeys[2]]: getMockRequest(getRequestKeys[2]),
+
             }
         };
-        expect(reducer(purgeState, action)).toEqual(newState);
+        
+        let newState = reducer(purgeState, purgeRequest('A'));
+        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
+        expect(getApiDataRequest(newState, 'B')).toEqual(purgeState.requests[getRequestKeys[2]]);
+        newState = reducer(newState, purgeRequest('B'));
+        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
+        expect(getApiDataRequest(newState, 'B')).toBeUndefined();
+        newState = reducer(newState, purgeRequest('B', { paramA: 'a' }));
+        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B')).toBeUndefined();
     });
 });
 

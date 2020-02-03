@@ -181,13 +181,11 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
             } : state;
         }
         case 'PURGE_API_DATA_REQUEST': {
-            const requests = state.requests;
+            const requests = { ...state.requests };
             delete requests[action.payload.requestKey];
             return requests ? {
                 ...state,
-                requests: {
-                    ...requests
-                }
+                requests
             } : state;
         }
         case 'CLEAR_API_DATA': {
