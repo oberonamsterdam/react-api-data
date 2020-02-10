@@ -10,7 +10,7 @@ export const setPostHeaders = (headers: any) => ({
     'Content-Type': 'application/json',
 });
 
-export const getState: any = (binding: string, hasRequest?: boolean, params?: any, networkStatus?: any, method?: string, cacheDuration?: number, beforeSuccess?: () => void, afterSuccess?: () => void, timeout?: number) => (
+export const getState: any = (binding: string, hasRequest?: boolean, params?: any, networkStatus?: string, method?: string, cacheDuration?: number, beforeSuccess?: () => void, afterSuccess?: () => void, timeout?: number) => (
 {
     globalConfig: {},
     endpointConfig: {[binding]: {
@@ -38,6 +38,35 @@ export const getState: any = (binding: string, hasRequest?: boolean, params?: an
     }
 }
 );
+
+// export const setMultipleEndpoints: any = (bindings: ConfigureBinding[]) => (
+//     {
+//         globalConfig: {},
+//         endpointConfig: {[binding]: {
+//             url: 'mockAction.get',
+//                 method: method ? method : 'GET',
+//                 setHeaders: method && method === 'POST' ? setPostHeaders : null,
+//                 setRequestProperties: method && method === 'POST' ? setPostRequestProperties : null,
+//                 cacheDuration: cacheDuration ? cacheDuration : null,
+//                 beforeSuccess,
+//                 afterSuccess,
+//                 timeout
+//         },
+//             getMoreData: {
+//
+//             }
+//         },
+//         requests: hasRequest ? {
+//             [getRequestKey(binding, params[binding])]: {
+//                 networkStatus,
+//                 lastCall: 10,
+//                 duration: 0,
+//             }
+//         } : {},
+//             entities: {
+//     }
+//     }
+// });
 
 export const getProps: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any) => (
 {

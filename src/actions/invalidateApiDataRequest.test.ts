@@ -1,5 +1,5 @@
 import { invalidateApiDataRequest } from './invalidateApiDataRequest';
-import { EndpointParams } from '../index';
+import { EndpointParams } from '../types';
 import { getRequestKey } from '../helpers/getRequestKey';
 
 describe('invalidateApiDataRequest action creator', () => {
