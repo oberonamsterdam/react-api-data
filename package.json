@@ -69,12 +69,6 @@
   },
   "jest": {
     "automock": false,
-    "setupFiles": [
-      "./jestSetup.js"
-    ],
-    "setupFilesAfterEnv": [
-      "./jest.jestSetupEnv.js"
-    ],
     "globals": {
       "ts-jest": {
         "diagnostics": true
