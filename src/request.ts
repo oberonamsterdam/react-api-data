@@ -57,7 +57,6 @@ const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => 
             if (__DEV__) {
                 console.log(`Request successful (${response.status}): ` + url);
             }
-
             if (response.status === 204 || response.headers.get('content-length') === '0') {
                 // 204: no content
                 resolve({
@@ -93,4 +92,5 @@ const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => 
         fetch(url, requestProperties).then(onRequestSuccess, onRequestError);
     });
 });
+
 export default defaultRequestHandler;

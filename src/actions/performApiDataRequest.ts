@@ -165,7 +165,6 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
                         return;
                     }
                 }
-
                 // dispatch success
                 dispatch(apiDataSuccess(requestKey, config, response, responseBody));
 
