@@ -23,7 +23,7 @@ import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
 jest.mock('./helpers/createApiDataBinding');
 
 const store1: any = configureStore([thunk])({
-    apiData: getState('testEndpoint', true, {}, 'ready', { method: 'GET' })
+    apiData: getState('testEndpoint', true, {}, 'ready')
 });
 
 jest.mock('react-redux', () => ({
