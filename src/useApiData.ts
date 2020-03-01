@@ -24,10 +24,9 @@ const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointPar
     const dispatch = useDispatch();
     const binding: ApiDataBinding<T> = bindingsStore.current.getBinding(endpointKey, params, dispatch, instanceId, apiData);
     const networkStatus = binding.request.networkStatus;
-
     useEffect(() => {
         if (
-            !autoTrigger && (
+            autoTrigger && (
                 prevParams.current !== params ||
                 prevEndpointKey.current !== endpointKey ||
                 networkStatus === 'ready'

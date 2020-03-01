@@ -121,7 +121,6 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
                 // this might be due to a logout between start and end of call
                 return state;
             }
-
             return {
                 ...state,
                 requests: {
