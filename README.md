@@ -69,6 +69,7 @@ const store = createStore(combineReducers({apiData: reducer}), applyMiddleware(t
 store.dispatch(configureApiData({}, endpointConfig));
 ```
 
+
 ### Bind API data to your component
 
 ```js
@@ -249,4 +250,17 @@ const ItemsList = (props) => {
 }
 
 export default connectApiData(ItemsList);
+```
+
+## Configure with Redux-persist: 
+```js
+    
+    // Use the callback of redux-persist to dispatch the afterRehydrate function.
+    // This will make sure all loading states are properly reset.
+    const persistor = persistStore(store, {}, () => store.dispatch(afterRehydrate()));
+    store.dispatch(configureApiData({}, endpointConfig));
+    return {
+        store,
+        persistor,
+    };
 ```
