@@ -256,14 +256,7 @@ export default connectApiData(ItemsList);
 ```js
     
     // your persistConfig
-    const persistConfig = {
-        key: 'root',
-        storage,
-        stateReconciler: autoMergeLevel2,
-    };
-    const persistedReducer = persistReducer(persistConfig, combineReducers({ apiData: reducer }));
-    const store = createStore(persistedReducer, enhancer);
-    const persistor = persistStore(store);
+    const persistor = persistStore(store, {}, () => store.dispatch(afterRehydrate()));
     store.dispatch(configureApiData({}, endpointConfig));
     return {
         store,
