@@ -12,9 +12,29 @@ import { getRequestKey } from './helpers/getRequestKey';
 import { ApiDataSuccessAction } from './actions/apiDataSuccess';
 import { ApiDataFailAction } from './actions/apiDataFail';
 import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
-import { PurgeApiDataAction } from './actions/purgeApiData';
+import { PurgeAllApiDataAction } from './actions/purgeAllApiData';
 import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
 import { schema } from 'normalizr';
+import { purgeRequest } from './actions/purgeRequest';
+import { getApiDataRequest } from './selectors/getApiDataRequest';
+
+const getMockRequest = (requestKey: string) => ({
+    [requestKey]: {
+        networkStatus: 'success',
+        lastCall: 1000,
+        duration: 0,
+        result: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
+        response: {
+            body: { id: 1, data: 'json' },
+            ok: true,
+            redirected: false,
+            status: 200,
+            statusText: 'ok'
+        },
+        endpointKey: 'postData',
+        url: 'www.postdate.post',
+    }
+});
 
 // mock current date for lastCall/duration testing
 const MOCK_NOW = 5000;
@@ -166,7 +186,7 @@ describe('FETCH_API_DATA', () => {
 describe('API_DATA_SUCCESS', () => {
     test('new state is correct', () => {
         const requestKey = getRequestKey('postData');
-        // @ts-ignore
+        // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
         const action: ApiDataSuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
@@ -211,7 +231,7 @@ describe('API_DATA_SUCCESS', () => {
 
 describe('API_DATA_SUCCESS with payload entity', () => {
     test('new state is correct', () => {
-        // @ts-ignore
+        // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
         const action: ApiDataSuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
@@ -340,6 +360,36 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
     });
 });
 
+describe('PURGE_API_DATA_REQUEST', () => {
+    test('new state is correct', () => {
+        const getRequestKeys = [getRequestKey('A'), getRequestKey('B', { paramA: 'a' }), getRequestKey('B') ];
+
+        const purgeState: ApiDataState = {
+            ...initialState,
+            // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
+            requests: {
+                [getRequestKeys[0]]: getMockRequest(getRequestKeys[0]),
+                [getRequestKeys[1]]: getMockRequest(getRequestKeys[1]),
+                [getRequestKeys[2]]: getMockRequest(getRequestKeys[2]),
+
+            }
+        };
+        
+        let newState = reducer(purgeState, purgeRequest('A'));
+        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
+        expect(getApiDataRequest(newState, 'B')).toEqual(purgeState.requests[getRequestKeys[2]]);
+        newState = reducer(newState, purgeRequest('B'));
+        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
+        expect(getApiDataRequest(newState, 'B')).toBeUndefined();
+        newState = reducer(newState, purgeRequest('B', { paramA: 'a' }));
+        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toBeUndefined();
+        expect(getApiDataRequest(newState, 'B')).toBeUndefined();
+    });
+});
+
 describe('CLEAR_API_DATA', () => {
     test('new state is correct', () => {
 
@@ -351,10 +401,10 @@ describe('CLEAR_API_DATA', () => {
     });
 });
 
-describe('PURGE_API_DATA', () => {
+describe('PURGE_ALL_API_DATA', () => {
     test('new state is correct', () => {
-        const action: PurgeApiDataAction = {
-            type: 'PURGE_API_DATA',
+        const action: PurgeAllApiDataAction = {
+            type: 'PURGE_ALL_API_DATA',
         };
 
         const newState = {
