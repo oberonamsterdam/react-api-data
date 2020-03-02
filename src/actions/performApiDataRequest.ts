@@ -6,9 +6,8 @@ import {
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
     EndpointParams, 
-    getResultData, 
     ApiDataRequest
-} from '../index';
+} from '../types';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
 import { apiDataSuccess } from './apiDataSuccess';
@@ -20,6 +19,7 @@ import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
 import { getActions } from '../helpers/getActions';
 import { Dispatch } from 'redux';
+import { getResultData } from '../selectors/getResultData';
 
 export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
@@ -51,11 +51,14 @@ let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
+type PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) => 
+    (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any>>;
+
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
+export const performApiRequest: PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
     return (dispatch: Dispatch, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -162,7 +165,6 @@ export const performApiRequest = (endpointKey: string, params?: EndpointParams, 
                         return;
                     }
                 }
-
                 // dispatch success
                 dispatch(apiDataSuccess(requestKey, config, response, responseBody));
 

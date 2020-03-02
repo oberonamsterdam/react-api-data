@@ -1,6 +1,6 @@
 import { shouldPerformApiRequest, shouldAutoTrigger } from './withApiData';
 import getState from './mocks/mockState';
-import { Method } from './index';
+import { Method } from './types';
 
 export const getProps: any = (binding: string, hasRequest: boolean, params?: any, networkStatus?: any, config?: any, globalConfig?: any) => ({
     apiData: getState(binding, hasRequest, params, networkStatus, config, globalConfig),

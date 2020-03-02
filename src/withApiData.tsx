@@ -1,14 +1,15 @@
 import React from 'react';
-import { ApiDataBinding, ApiDataRequest, EndpointParams } from './index';
+import { ApiDataBinding, ApiDataRequest, EndpointParams, Actions } from './types';
 import { connect, ConnectedComponent } from 'react-redux';
 import { ApiDataState } from './reducer';
-import { getApiDataRequest, performApiRequest } from './index';
 import { Action } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ThunkDispatch } from 'redux-thunk';
 import { BindingsStore } from './helpers/createApiDataBinding';
-import { getActions, Actions } from './helpers/getActions';
+import { getActions } from './helpers/getActions';
+import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { performApiRequest } from './actions/performApiDataRequest';
 
 type GetParams<TPropName extends string> = (ownProps: any, state: any) => { [paramName in TPropName]?: EndpointParams | EndpointParams[] };
 
@@ -95,7 +96,12 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     if (Array.isArray(this.props.params[bindingKey])) {
                         const paramsArray: EndpointParams[] = this.props.params[bindingKey] as EndpointParams[];
                         paramsArray.forEach((params, index) => {
-                            if (shouldPerformApiRequest({ ...newProps, params: { [bindingKey]: newProps.params[bindingKey] } }, { ...this.props as WithApiDataProps, params: { [bindingKey]: params } }, bindings, bindingKey)) {
+                            if (shouldPerformApiRequest(
+                                { ...newProps, params: { [bindingKey]: (newProps.params[bindingKey] as EndpointParams[])[index] } },
+                                { ...this.props as WithApiDataProps, params: { [bindingKey]: params } },
+                                bindings,
+                                bindingKey
+                            )) {
                                 this.props.dispatch(performApiRequest(bindings[bindingKey], params, undefined, index.toString()));
                             }
                         });

@@ -30,13 +30,14 @@ import {
     ApiDataGlobalConfig,
     ApiDataRequest, EndpointParams,
     NetworkStatus,
-} from './index';
+} from './types';
 import { ConfigureApiDataAction } from './actions/configureApiData';
 import { ApiDataSuccessAction } from './actions/apiDataSuccess';
 import { ApiDataFailAction } from './actions/apiDataFail';
 import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
 import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
-import { PurgeApiDataAction } from './actions/purgeApiData';
+import { PurgeAllApiDataAction } from './actions/purgeAllApiData';
+import { PurgeRequestAction } from './actions/purgeRequest';
 
 // state def
 
@@ -86,7 +87,8 @@ export type Action =
     | InvalidateApiDataRequestAction
     | ClearApiDataAction
     | ApiDataAfterRehydrateAction
-    | PurgeApiDataAction
+    | PurgeRequestAction
+    | PurgeAllApiDataAction
     ;
 
 // reducer
@@ -178,10 +180,18 @@ export default (state: ApiDataState = defaultState, action: Action): ApiDataStat
                 }
             } : state;
         }
+        case 'PURGE_API_DATA_REQUEST': {
+            const requests = { ...state.requests };
+            delete requests[action.payload.requestKey];
+            return requests ? {
+                ...state,
+                requests
+            } : state;
+        }
         case 'CLEAR_API_DATA': {
             return defaultState;
         }
-        case 'PURGE_API_DATA': {
+        case 'PURGE_ALL_API_DATA': {
             return {
                 ...defaultState,
                 endpointConfig: state.endpointConfig,

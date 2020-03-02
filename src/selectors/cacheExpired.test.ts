@@ -1,5 +1,5 @@
 import { cacheExpired } from './cacheExpired';
-import { ApiDataEndpointConfig, ApiDataRequest } from '../index';
+import { ApiDataEndpointConfig, ApiDataRequest } from '../types';
 
 describe('check wether the cacheExpired function works correctly', () => {
 

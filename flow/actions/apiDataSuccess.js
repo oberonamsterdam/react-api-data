@@ -1,5 +1,5 @@
 // @flow
-import type { ApiDataEndpointConfig, NormalizedData } from '../index';
+import type { ApiDataEndpointConfig, NormalizedData } from '../types';
 
 export interface ApiDataSuccessAction {
   type: 'API_DATA_SUCCESS';

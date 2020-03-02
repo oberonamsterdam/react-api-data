@@ -1,5 +1,5 @@
 import { configureApiData } from './configureApiData';
-import { ApiDataEndpointConfig } from '../index';
+import { ApiDataEndpointConfig } from '../types';
 
 describe('ConfigureApiData action creator', () => {
     test('ConfigureApiDataAction object with the correct type and payload', () => {
