@@ -255,7 +255,8 @@ export default connectApiData(ItemsList);
 ## Configure with Redux-persist: 
 ```js
     
-    // your persistConfig
+    // Use the callback of redux-persist to dispatch the afterRehydrate function.
+    // This will make sure all loading states are properly reset.
     const persistor = persistStore(store, {}, () => store.dispatch(afterRehydrate()));
     store.dispatch(configureApiData({}, endpointConfig));
     return {
