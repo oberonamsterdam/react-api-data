@@ -71,11 +71,15 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
             return Promise.reject(errorMsg);
         }
 
+        // Merge the defaultParams and URL params. This is where any defaultParams get overwritten.
+        // TODO: Bedenk betere naam voor endParams.
+        const endParams = { ...config.defaultParams, ...params };
+
         const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
-            return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
+            return bindingsStore.getBinding(endpointKey, endParams, dispatch, instanceId, getState().apiData, request);
         };
 
-        const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
+        const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, endParams, instanceId);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (apiDataRequest && (
             apiDataRequest.networkStatus === 'loading' ||
@@ -84,15 +88,15 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
             return Promise.resolve(getCurrentApiDataBinding(apiDataRequest));
         }
 
-        const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
-        const url = formatUrl(config.url, params);
+        const requestKey = getRequestKey(endpointKey, endParams || {}, instanceId);
+        const url = formatUrl(config.url, endParams);
 
         dispatch(({
             type: 'FETCH_API_DATA',
             payload: {
                 requestKey,
                 endpointKey,
-                params,
+                endParams,
                 url
             }
         }));
@@ -136,7 +140,7 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
 
             function beforeProps(): ApiDataConfigBeforeProps {
                 return {
-                    request: getApiDataRequest(getState().apiData, endpointKey, params, instanceId)!, // there should always be a request after dispatching fetch
+                    request: getApiDataRequest(getState().apiData, endpointKey, endParams, instanceId)!, // there should always be a request after dispatching fetch
                     requestBody: body,
                     endpointKey
                 };
@@ -145,7 +149,7 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
             function afterProps(): ApiDataConfigAfterProps {
                 return {
                     ...beforeProps(),
-                    resultData: getResultData(getState().apiData, endpointKey, params, instanceId),
+                    resultData: getResultData(getState().apiData, endpointKey, endParams, instanceId),
                     getState,
                     dispatch,
                     actions: getActions(dispatch),

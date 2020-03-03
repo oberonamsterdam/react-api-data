@@ -10,7 +10,7 @@ export const setPostHeaders = (headers: any) => ({
     'Content-Type': 'application/json',
 });
 
-export const getState: any = (binding: string, hasRequest?: boolean, params?: any, networkStatus?: any, method?: string, cacheDuration?: number, beforeSuccess?: () => void, afterSuccess?: () => void, timeout?: number) => (
+export const getState: any = (binding: string, hasRequest?: boolean, params?: any, networkStatus?: any, method?: string, cacheDuration?: number, beforeSuccess?: () => void, afterSuccess?: () => void, timeout?: number, defaultParams?: any) => (
 {
     globalConfig: {},
     endpointConfig: {[binding]: {
@@ -21,7 +21,10 @@ export const getState: any = (binding: string, hasRequest?: boolean, params?: an
         cacheDuration: cacheDuration ? cacheDuration : null,
         beforeSuccess,
         afterSuccess,
-        timeout
+        timeout,
+        defaultParams: {
+            language: 'nl'
+        }
     },
         getMoreData: {
 

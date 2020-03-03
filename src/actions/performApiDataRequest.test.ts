@@ -116,20 +116,20 @@ describe('performApiDataRequest', () => {
             payload: {
                 requestKey: getRequestKey('getData', {}),
                 endpointKey: 'getData',
-                params: {},
+                endParams: {},
                 url: 'mockAction.get',
             }
         });
 
         // cache has expired
-        const params = { test: 'a' }; // include test for params here
-        performApiRequest('getData', params, { data: 'json' })(
+        const endParams = { test: 'a' }; // include test for params here
+        performApiRequest('getData', endParams, { data: 'json' })(
             dispatch,
             () => ({
                 apiData: getState(
                     'getData',
                     true,
-                    params,
+                    endParams,
                     'success',
                     { cacheDuration: 500 },
                     {},
@@ -140,9 +140,9 @@ describe('performApiDataRequest', () => {
         expect(dispatch).toHaveBeenCalledWith({
             type: 'FETCH_API_DATA',
             payload: {
-                requestKey: getRequestKey('getData', params),
+                requestKey: getRequestKey('getData', endParams),
                 endpointKey: 'getData',
-                params: { test: 'a' },
+                endParams: { test: 'a' },
                 url: 'mockAction.get?test=a',
             }
         });
@@ -379,7 +379,7 @@ describe('performApiDataRequest', () => {
 
     test('should call afterFailed if set in config', async () => {
         const afterFailed = jest.fn();
-        const postBody =  { data: 'json' };
+        const postBody = { data: 'json' };
         const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, afterFailed }) };
         const getStateFn = () => state;
         mockResponse(response2);
@@ -396,4 +396,182 @@ describe('performApiDataRequest', () => {
         return expect(afterFailed).toHaveBeenCalledWith(afterProps);
     });
 
+    test('should use the default param set in the config', () => {
+        const defaultParams = {
+            language: 'nl'
+        };
+
+        performApiRequest('getData', {}, { data: 'json' })(
+            dispatch,
+            () => ({
+                apiData: getState(
+                    'getData',
+                    true,
+                    {},                 
+                    'success',
+                    { defaultParams, cacheDuration: 500 },
+                    {},
+                )
+            })
+        );
+
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey: getRequestKey('getData', defaultParams),
+                endpointKey: 'getData',
+                endParams: defaultParams,
+                url: 'mockAction.get?language=nl',
+            }
+        });
+    });
+
+    test('param set in the URL should overwrite the default param set in the config', () => {
+        const defaultParams = {
+            language: 'nl'
+        };
+
+        const params = {
+            language: 'en'
+        };
+
+        performApiRequest('getData', params, { data: 'json' })(
+            dispatch,
+            () => ({
+                apiData: getState(
+                    'getData',
+                    true,
+                    params,
+                    'success',
+                    {
+                        defaultParams,
+                        cacheDuration: 500
+                    },
+                    {},
+                )
+            })
+        );
+
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey: getRequestKey('getData', params),
+                endpointKey: 'getData',
+                endParams: params,
+                url: 'mockAction.get?language=en',
+            }
+        });
+    });
+
+    test('should use multiple default params set in the config', () => {
+        const defaultParams = {
+            language: 'nl',
+            test: 'b'
+        };
+
+        performApiRequest('getData', {}, { data: 'json' })(
+            dispatch,
+            () => ({
+                apiData: getState(
+                    'getData',
+                    true,
+                    {},                 
+                    'success',
+                    { defaultParams, cacheDuration: 500 },
+                    {},
+                )
+            })
+        );
+
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey: getRequestKey('getData', defaultParams),
+                endpointKey: 'getData',
+                endParams: {
+                    language: 'nl',
+                    test: 'b'
+                },
+                url: 'mockAction.get?language=nl&test=b',
+            }
+        });
+    });
+
+    test('params set in the URL should overwrite the default params set in the config', () => {
+        const defaultParams = {
+            language: 'nl',
+            test: 'b'
+        };
+
+        const params = {
+            language: 'en',
+            test: 'c'
+        };
+
+        performApiRequest('getData', params, { data: 'json' })(
+            dispatch,
+            () => ({
+                apiData: getState(
+                    'getData',
+                    true,
+                    params,
+                    'success',
+                    {
+                        defaultParams,
+                        cacheDuration: 500
+                    },
+                    {},
+                )
+            })
+        );
+
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey: getRequestKey('getData', params),
+                endpointKey: 'getData',
+                endParams: params,
+                url: 'mockAction.get?language=en&test=c',
+            }
+        });
+    });
+
+    test('params set in the URL should only overwrite the matching default params set in the config', () => {
+        const defaultParams = {
+            language: 'nl',
+            test: 'b'
+        };
+
+        const params = {
+            language: 'en',
+            number: 1
+        };
+
+        performApiRequest('getData', params, { data: 'json' })(
+            dispatch,
+            () => ({
+                apiData: getState(
+                    'getData',
+                    true,
+                    params,
+                    'success',
+                    {
+                        defaultParams,
+                        cacheDuration: 500
+                    },
+                    {},
+                )
+            })
+        );
+
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey: getRequestKey('getData', { ...defaultParams, ...params }),
+                endpointKey: 'getData',
+                endParams: { ...defaultParams, ...params },
+                url: 'mockAction.get?language=en&test=b&number=1',
+            }
+        });
+    });
 });
