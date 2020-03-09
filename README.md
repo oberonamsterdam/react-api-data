@@ -140,8 +140,6 @@ fetching the data if needed, and binding the data to your component.
 
 # Examples
 
-- [File Upload](./example.file-upload.md)
-
 ## Caching API responses
 
 Responses from successful API calls will be kept in memory so the same call won't be re-triggered a second time. This is especially useful when using *withApiData* for the same endpoint on multiple components.
@@ -229,6 +227,10 @@ export const globalConfig = {
     })
 };
 ```
+
+## Uploading a file
+
+[See file Upload examples](./example.file-upload.md)
 
 ## Make multiple requests to the same endpoint at once
 
