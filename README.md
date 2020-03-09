@@ -229,6 +229,10 @@ export const globalConfig = {
 };
 ```
 
+## Uploading a file
+
+[See file Upload examples](./example.file-upload.md)
+
 ## Make multiple requests to the same endpoint at once
 
 ```js
