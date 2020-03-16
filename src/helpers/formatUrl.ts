@@ -5,7 +5,7 @@ export const formatUrl = (url: string, params?: EndpointParams, queryStringOpts?
     if (!params) {
         return url;
     }
-    // const {query: existingParams} = parseUrl(url);
+
     const replacedParams = new Set();
     const parsedUrl = url.replace(/:[a-zA-Z]+/g, match => {
         const paramName = match.substr(1);
