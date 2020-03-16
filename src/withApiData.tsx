@@ -89,7 +89,6 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
             }
 
             componentDidUpdate(prevProps: WithApiDataProps, prevState: ApiDataState) {
-                console.log('new version');
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
                 Object.keys(bindings).forEach((bindingKey: TPropNames) => {
                     if (Array.isArray(prevProps.params[bindingKey])) {
