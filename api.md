@@ -16,7 +16,7 @@
   - [`getRequest()` (Deprecated)](#getrequest-deprecated)
   - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
 - [HOC](#hoc)
-    - [`withApiData()`](#withapidata)
+  - [`withApiData()`](#withapidata)
 - [Types and interfaces](#types-and-interfaces)
   - [`NetworkStatus`](#networkstatus)
   - [`Binding`](#binding)

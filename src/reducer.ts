@@ -31,12 +31,14 @@ import {
     Request, EndpointParams,
     NetworkStatus,
 } from './types';
+
 import { ConfigureAction } from './actions/configure';
 import { SuccessAction } from './actions/success';
 import { FailAction } from './actions/fail';
 import { InvalidateRequestAction } from './actions/invalidateRequest';
 import { AfterRehydrateAction } from './actions/afterRehydrate';
-import { PurgeAction } from './actions/purge';
+import { PurgeAllAction } from './actions/purgeAll';
+import { PurgeRequestAction } from './actions/purgeRequest';
 
 // state def
 
@@ -79,6 +81,7 @@ export interface FetchAction {
 }
 
 export type Action =
+
     | ConfigureAction
     | FetchAction
     | SuccessAction
@@ -86,7 +89,8 @@ export type Action =
     | InvalidateRequestAction
     | ClearAction
     | AfterRehydrateAction
-    | PurgeAction
+    | PurgeRequestAction
+    | PurgeAllAction
     ;
 
 // reducer
@@ -121,7 +125,6 @@ export default (state: State = defaultState, action: Action): State => {
                 // this might be due to a logout between start and end of call
                 return state;
             }
-
             return {
                 ...state,
                 requests: {
@@ -178,10 +181,18 @@ export default (state: State = defaultState, action: Action): State => {
                 }
             } : state;
         }
+        case 'PURGE_API_DATA_REQUEST': {
+            const requests = { ...state.requests };
+            delete requests[action.payload.requestKey];
+            return requests ? {
+                ...state,
+                requests
+            } : state;
+        }
         case 'CLEAR_API_DATA': {
             return defaultState;
         }
-        case 'PURGE_API_DATA': {
+        case 'PURGE_ALL_API_DATA': {
             return {
                 ...defaultState,
                 endpointConfig: state.endpointConfig,

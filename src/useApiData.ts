@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Binding, EndpointParams } from './types';
 import { BindingsStore } from './helpers/createBinding';
@@ -7,18 +7,35 @@ import { State } from './reducer';
 
 type UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => Binding<T>;
 
+// the hook should call perform when shouldAutoTrigger and:
+// - the component gets mounted
+// - the params have changed
+// - the endpoint has changed
+// - the call has been invalidated (networkStatus is ready)
+
 const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
+    const prevParams = useRef<EndpointParams>();
+    const prevEndpointKey = useRef<string>();
     const apiData: State = useSelector((state: { apiData: State }) => state.apiData);
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
     const binding: Binding<T> = bindingsStore.current.getBinding(endpointKey, params, dispatch, instanceId, apiData);
-    const request = binding.request;
-    const networkStatus = request && request.networkStatus;
-
-    if (autoTrigger && networkStatus === 'ready') {
-        binding.perform(params);
-    }
+    const networkStatus = binding.request.networkStatus;
+    useEffect(() => {
+        if (
+            autoTrigger && (
+                prevParams.current !== params ||
+                prevEndpointKey.current !== endpointKey ||
+                networkStatus === 'ready'
+            )
+        ) {
+            prevParams.current = params;
+            prevEndpointKey.current = endpointKey;
+            binding.perform(params);
+        }
+    },
+              [autoTrigger, params, endpointKey, networkStatus]);
 
     return binding;
 };
