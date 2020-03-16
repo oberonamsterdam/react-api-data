@@ -43,9 +43,7 @@ export const shouldPerformApiRequest = (newProps: WithApiDataProps, oldProps: Wi
     const hasBeenInvalidated = (oldRequest?: ApiDataRequest, newRequest?: ApiDataRequest) =>
         !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
     const apiDataChanged = newProps.apiData !== oldProps.apiData;
-    return ((keyParamsHaveChanged(bindingKey) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true)
-        || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true))
-        || (apiDataChanged && shouldAutoTrigger(oldProps.apiData, bindings[bindingKey]) === false && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]) === true);
+    return ((keyParamsHaveChanged(bindingKey) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey])) || (apiDataChanged && hasBeenInvalidated(getRequest(oldProps, bindingKey), getRequest(newProps, bindingKey)) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]))) || (apiDataChanged && !shouldAutoTrigger(oldProps.apiData, bindings[bindingKey]) && shouldAutoTrigger(newProps.apiData, bindings[bindingKey]));
 };
 
 export const shouldAutoTrigger = (apiData: ApiDataState, endpointKey: string) => {
@@ -90,15 +88,16 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 this.fetchDataIfNeeded();
             }
 
-            componentWillReceiveProps(newProps: WithApiDataProps) {
+            componentDidUpdate(prevProps: WithApiDataProps, prevState: ApiDataState) {
+                console.log('new version');
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
                 Object.keys(bindings).forEach((bindingKey: TPropNames) => {
-                    if (Array.isArray(this.props.params[bindingKey])) {
-                        const paramsArray: EndpointParams[] = this.props.params[bindingKey] as EndpointParams[];
+                    if (Array.isArray(prevProps.params[bindingKey])) {
+                        const paramsArray: EndpointParams[] = prevProps.params[bindingKey] as EndpointParams[];
                         paramsArray.forEach((params, index) => {
                             if (shouldPerformApiRequest(
-                                { ...newProps, params: { [bindingKey]: (newProps.params[bindingKey] as EndpointParams[])[index] } },
-                                { ...this.props as WithApiDataProps, params: { [bindingKey]: params } },
+                                { ...this.props as WithApiDataProps, params: { [bindingKey]: (this.props.params[bindingKey] as EndpointParams[])[index] } },
+                                { ...prevProps as WithApiDataProps, params: { [bindingKey]: params } },
                                 bindings,
                                 bindingKey
                             )) {
@@ -106,8 +105,8 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                             }
                         });
                     } else {
-                        if (shouldPerformApiRequest(newProps, this.props, bindings, bindingKey)) {
-                            this.props.dispatch(performApiRequest(bindings[bindingKey], newProps.params[bindingKey] as EndpointParams));
+                        if (shouldPerformApiRequest(this.props, prevProps, bindings, bindingKey)) {
+                            this.props.dispatch(performApiRequest(bindings[bindingKey], this.props.params[bindingKey] as EndpointParams));
                         }
                     }
                 });
