@@ -1,5 +1,5 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 
 export const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
@@ -78,7 +78,7 @@ const getRequests = (bindings: ConfigureBinding[]) => bindings.reduce((obj: any,
 },
                                                                       {});
 
-export const setMockedStoreConfig = (bindings: ConfigureBinding[]): ApiDataState => ({
+export const setMockedStoreConfig = (bindings: ConfigureBinding[]): State => ({
     globalConfig: {},
     endpointConfig: getEndpointConfig(bindings),
     requests: getRequests(bindings),
