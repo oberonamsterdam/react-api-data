@@ -1,11 +1,11 @@
 import { ApiDataState } from '../reducer';
 import {
-    ApiDataBinding, 
-    ApiDataConfigAfterProps, 
+    ApiDataBinding,
+    ApiDataConfigAfterProps,
     ApiDataConfigBeforeProps,
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
-    EndpointParams, 
+    EndpointParams,
     ApiDataRequest
 } from '../types';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
@@ -51,7 +51,7 @@ let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
-type PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) => 
+type PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) =>
     (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any>>;
 
 /**
@@ -85,7 +85,7 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
         }
 
         const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
-        const url = formatUrl(config.url, params);
+        const url = formatUrl(config.url, params, config.queryStringOpts);
 
         dispatch(({
             type: 'FETCH_API_DATA',

@@ -1,6 +1,7 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { ApiDataState } from './reducer';
 import { BindingsStore } from './helpers/createApiDataBinding';
+import { StringifyOptions } from 'query-string';
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
 
@@ -19,7 +20,7 @@ export interface NormalizedData {
  * Map parameter names to values.
  */
 export interface EndpointParams {
-    [paramName: string]: string | number;
+    [paramName: string]: string | number | string[] | number[];
 }
 
 /**
@@ -57,7 +58,8 @@ export interface ApiDataEndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
     method: Method;
     cacheDuration?: number;
-    responseSchema?: any | any[];
+    responseSchema?: any;
+    queryStringOpts?: StringifyOptions;
     /*
     * @deprecated Use beforeSuccess instead
     */
