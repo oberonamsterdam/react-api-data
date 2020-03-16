@@ -21,7 +21,7 @@ describe('formatUrl', () => {
     });
 
     it('should handle arrays correctly', () => {
-        expect(formatUrl('https://test.com/', { ids: ['1', '2'] })).toBe('https://test.com/?ids[]=1&ids[]=2');
-        expect(() => formatUrl('https://test.com/:ids', { ids: ['1', '2'] })).toThrow(TypeError);
+        expect(formatUrl('https://test.com/', { ids: [1, 2] })).toBe('https://test.com/?ids[]=1&ids[]=2');
+        expect(() => formatUrl('https://test.com/:ids', { ids: [1, 2] })).toThrow(TypeError);
     });
 });
