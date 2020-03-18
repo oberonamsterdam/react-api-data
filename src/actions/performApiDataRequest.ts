@@ -6,7 +6,7 @@ import {
     ApiDataEndpointConfig,
     ApiDataGlobalConfig,
     EndpointParams,
-    ApiDataRequest
+    ApiDataRequest,
 } from '../types';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
 import { apiDataFail } from './apiDataFail';
@@ -21,10 +21,21 @@ import { getActions } from '../helpers/getActions';
 import { Dispatch } from 'redux';
 import { getResultData } from '../selectors/getResultData';
 
-export const getRequestProperties = (endpointConfig: ApiDataEndpointConfig, globalConfig: ApiDataGlobalConfig, state: any, body?: any) => {
+export const getRequestProperties = (
+    endpointConfig: ApiDataEndpointConfig,
+    globalConfig: ApiDataGlobalConfig,
+    state: any,
+    body?: any
+) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
-    const requestProperties = composeConfigPipeFn(endpointConfig.setRequestProperties, globalConfig.setRequestProperties)(defaultProperties, state);
-    requestProperties.headers = composeConfigPipeFn(endpointConfig.setHeaders, globalConfig.setHeaders)(defaultProperties.headers, state);
+    const requestProperties = composeConfigPipeFn(
+        endpointConfig.setRequestProperties,
+        globalConfig.setRequestProperties
+    )(defaultProperties, state);
+    requestProperties.headers = composeConfigPipeFn(endpointConfig.setHeaders, globalConfig.setHeaders)(
+        defaultProperties.headers,
+        state
+    );
 
     return requestProperties;
 };
@@ -51,14 +62,25 @@ let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
-type PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) =>
-    (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any>>;
+type PerformApiRequest = (
+    endpointKey: string,
+    params?: EndpointParams,
+    body?: any,
+    instanceId?: string,
+    bindingsStore?: BindingsStore
+) => (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any>>;
 
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest: PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
+export const performApiRequest: PerformApiRequest = (
+    endpointKey: string,
+    params?: EndpointParams,
+    body?: any,
+    instanceId: string = '',
+    bindingsStore: BindingsStore = new BindingsStore()
+) => {
     return (dispatch: Dispatch, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -77,25 +99,28 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
-        if (apiDataRequest && (
-            apiDataRequest.networkStatus === 'loading' ||
-            (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
-        )) {
+        if (
+            apiDataRequest &&
+            (apiDataRequest.networkStatus === 'loading' ||
+                (config.method === 'GET' &&
+                    apiDataRequest.networkStatus === 'success' &&
+                    !cacheExpired(config, apiDataRequest)))
+        ) {
             return Promise.resolve(getCurrentApiDataBinding(apiDataRequest));
         }
 
         const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
         const url = formatUrl(config.url, params, config.queryStringOpts);
 
-        dispatch(({
+        dispatch({
             type: 'FETCH_API_DATA',
             payload: {
                 requestKey,
                 endpointKey,
                 params,
-                url
-            }
-        }));
+                url,
+            },
+        });
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
 
         return new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void) => {
@@ -104,13 +129,10 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
             let aborted = false;
 
             if (timeout) {
-                abortTimeout = setTimeout(
-                    () => {
-                        aborted = true;
-                        handleFail(new Error('Timeout'));
-                    },
-                    timeout
-                );
+                abortTimeout = setTimeout(() => {
+                    aborted = true;
+                    handleFail(new Error('Timeout'));
+                }, timeout);
             }
             requestFunction(url, requestProperties).then(
                 (handledResponse: HandledResponse) => {
@@ -138,7 +160,7 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
                 return {
                     request: getApiDataRequest(getState().apiData, endpointKey, params, instanceId)!, // there should always be a request after dispatching fetch
                     requestBody: body,
-                    endpointKey
+                    endpointKey,
                 };
             }
 

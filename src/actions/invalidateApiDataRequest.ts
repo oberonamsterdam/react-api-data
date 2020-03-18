@@ -4,7 +4,7 @@ import { getRequestKey } from '../helpers/getRequestKey';
 export interface InvalidateApiDataRequestAction {
     type: 'INVALIDATE_API_DATA_REQUEST';
     payload: {
-        requestKey: string
+        requestKey: string;
     };
 }
 
@@ -13,9 +13,13 @@ export interface InvalidateApiDataRequestAction {
  * a GET list request, which might need to include the newly created entity.
  */
 
-export const invalidateApiDataRequest = (endpointKey: string, params?: EndpointParams, instanceId: string = ''): InvalidateApiDataRequestAction => ({
+export const invalidateApiDataRequest = (
+    endpointKey: string,
+    params?: EndpointParams,
+    instanceId: string = ''
+): InvalidateApiDataRequestAction => ({
     type: 'INVALIDATE_API_DATA_REQUEST',
     payload: {
-        requestKey: getRequestKey(endpointKey, params, instanceId)
-    }
+        requestKey: getRequestKey(endpointKey, params, instanceId),
+    },
 });
