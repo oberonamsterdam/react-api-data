@@ -114,35 +114,24 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 this.fetchDataIfNeeded();
             }
 
-            componentWillReceiveProps(newProps: WithApiDataProps) {
+            componentDidUpdate(prevProps: WithApiDataProps, prevState: ApiDataState) {
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
                 Object.keys(bindings).forEach((bindingKey: TPropNames) => {
-                    if (Array.isArray(this.props.params[bindingKey])) {
-                        const paramsArray: EndpointParams[] = this.props.params[bindingKey] as EndpointParams[];
+                    if (Array.isArray(prevProps.params[bindingKey])) {
+                        const paramsArray: EndpointParams[] = prevProps.params[bindingKey] as EndpointParams[];
                         paramsArray.forEach((params, index) => {
-                            if (
-                                shouldPerformApiRequest(
-                                    {
-                                        ...newProps,
-                                        params: {
-                                            [bindingKey]: (newProps.params[bindingKey] as EndpointParams[])[index],
-                                        },
-                                    },
-                                    { ...(this.props as WithApiDataProps), params: { [bindingKey]: params } },
-                                    bindings,
-                                    bindingKey
-                                )
-                            ) {
-                                this.props.dispatch(
-                                    performApiRequest(bindings[bindingKey], params, undefined, index.toString())
-                                );
+                            if (shouldPerformApiRequest(
+                                { ...this.props as WithApiDataProps, params: { [bindingKey]: (this.props.params[bindingKey] as EndpointParams[])[index] } },
+                                { ...prevProps as WithApiDataProps, params: { [bindingKey]: params } },
+                                bindings,
+                                bindingKey
+                            )) {
+                                this.props.dispatch(performApiRequest(bindings[bindingKey], params, undefined, index.toString()));
                             }
                         });
                     } else {
-                        if (shouldPerformApiRequest(newProps, this.props, bindings, bindingKey)) {
-                            this.props.dispatch(
-                                performApiRequest(bindings[bindingKey], newProps.params[bindingKey] as EndpointParams)
-                            );
+                        if (shouldPerformApiRequest(this.props, prevProps, bindings, bindingKey)) {
+                            this.props.dispatch(performApiRequest(bindings[bindingKey], this.props.params[bindingKey] as EndpointParams));
                         }
                     }
                 });
