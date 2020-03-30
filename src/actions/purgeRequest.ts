@@ -4,7 +4,7 @@ import { getRequestKey } from '../helpers/getRequestKey';
 export interface PurgeRequestAction {
     type: 'PURGE_API_DATA_REQUEST';
     payload: {
-        requestKey: string
+        requestKey: string;
     };
 }
 
@@ -13,9 +13,13 @@ export interface PurgeRequestAction {
  * a GET list request, which might need to include the newly created entity.
  */
 
-export const purgeRequest = (endpointKey: string, params?: EndpointParams, instanceId: string = ''): PurgeRequestAction => ({
+export const purgeRequest = (
+    endpointKey: string,
+    params?: EndpointParams,
+    instanceId: string = ''
+): PurgeRequestAction => ({
     type: 'PURGE_API_DATA_REQUEST',
     payload: {
-        requestKey: getRequestKey(endpointKey, params, instanceId)
-    }
+        requestKey: getRequestKey(endpointKey, params, instanceId),
+    },
 });

@@ -44,7 +44,7 @@ const getHeaders = (requestProperties: RequestInit): HeadersInit => {
  * connection fails.
  */
 
-const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => {
+const defaultRequestHandler: RequestHandler = (url, requestProperties = {}) => {
     if (__DEV__) {
         console.log('Executing request: ' + url);
     }
@@ -61,25 +61,25 @@ const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => 
                 // 204: no content
                 resolve({
                     response,
-                    body: {}
+                    body: {},
                 });
             } else {
-                response.json()
-                    .then(
-                        (body: any) => resolve({
+                response.json().then(
+                    (body: any) =>
+                        resolve({
                             response,
-                            body
+                            body,
                         }),
-                        (err) => {
-                            if (__DEV__) {
-                                console.warn(`Could not parse JSON response of ${url}`);
-                            }
-                            resolve({
-                                response,
-                                body: err
-                            });
+                    err => {
+                        if (__DEV__) {
+                            console.warn(`Could not parse JSON response of ${url}`);
                         }
-                    );
+                        resolve({
+                            response,
+                            body: err,
+                        });
+                    }
+                );
             }
         };
 
@@ -91,6 +91,6 @@ const defaultRequestHandler: RequestHandler = ((url, requestProperties = {}) => 
         };
         fetch(url, requestProperties).then(onRequestSuccess, onRequestError);
     });
-});
+};
 
 export default defaultRequestHandler;

@@ -8,5 +8,9 @@ import { EndpointParams, ApiDataRequest } from '../types';
  * button click.
  */
 
-export const getApiDataRequest = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams, instanceId: string = ''): ApiDataRequest | undefined =>
-    apiDataState.requests[getRequestKey(endpointKey, params, instanceId)];
+export const getApiDataRequest = (
+    apiDataState: ApiDataState,
+    endpointKey: string,
+    params?: EndpointParams,
+    instanceId: string = ''
+): ApiDataRequest | undefined => apiDataState.requests[getRequestKey(endpointKey, params, instanceId)];

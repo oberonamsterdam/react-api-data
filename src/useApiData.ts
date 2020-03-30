@@ -22,22 +22,24 @@ const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointPar
     });
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
-    const binding: ApiDataBinding<T> = bindingsStore.current.getBinding(endpointKey, params, dispatch, instanceId, apiData);
+    const binding: ApiDataBinding<T> = bindingsStore.current.getBinding(
+        endpointKey,
+        params,
+        dispatch,
+        instanceId,
+        apiData
+    );
     const networkStatus = binding.request.networkStatus;
     useEffect(() => {
         if (
-            autoTrigger && (
-                prevParams.current !== params ||
-                prevEndpointKey.current !== endpointKey ||
-                networkStatus === 'ready'
-            )
+            autoTrigger &&
+            (prevParams.current !== params || prevEndpointKey.current !== endpointKey || networkStatus === 'ready')
         ) {
             prevParams.current = params;
             prevEndpointKey.current = endpointKey;
             binding.perform(params);
         }
-    },
-              [autoTrigger, params, endpointKey, networkStatus]);
+    }, [autoTrigger, params, endpointKey, networkStatus]);
     return binding;
 };
 

@@ -7,5 +7,5 @@ export interface ApiDataAfterRehydrateAction {
  * the entire apiData state. This is needed to reset loading statuses.
  */
 export const afterRehydrate = (): ApiDataAfterRehydrateAction => ({
-    type: 'API_DATA_AFTER_REHYDRATE'
+    type: 'API_DATA_AFTER_REHYDRATE',
 });

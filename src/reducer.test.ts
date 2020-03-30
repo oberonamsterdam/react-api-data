@@ -4,7 +4,7 @@ import reducer, {
     ClearApiDataAction,
     defaultState,
     FetchApiDataAction,
-    recoverNetworkStatuses
+    recoverNetworkStatuses,
 } from './reducer';
 import { setPostHeaders, setPostRequestProperties } from './mocks/mockActions';
 import { ConfigureApiDataAction } from './actions/configureApiData';
@@ -29,11 +29,11 @@ const getMockRequest = (requestKey: string) => ({
             ok: true,
             redirected: false,
             status: 200,
-            statusText: 'ok'
+            statusText: 'ok',
         },
         endpointKey: 'postData',
         url: 'www.postdate.post',
-    }
+    },
 });
 
 // mock current date for lastCall/duration testing
@@ -43,22 +43,21 @@ global.Date.now = () => MOCK_NOW;
 test('recoverNetworkStatuses should return a new requests map with loading states reset to ready', () => {
     const input = {
         a: {
-            networkStatus: 'ready'
+            networkStatus: 'ready',
         },
         b: {
-            networkStatus: 'loading'
+            networkStatus: 'loading',
         },
         c: {
-            networkStatus: 'success'
+            networkStatus: 'success',
         },
         d: {
-            networkStatus: 'failed'
+            networkStatus: 'failed',
         },
         e: {
             networkStatus: 'loading',
-            lastCall: 123
-        }
-
+            lastCall: 123,
+        },
     } as any;
 
     const output = recoverNetworkStatuses(input);
@@ -66,21 +65,21 @@ test('recoverNetworkStatuses should return a new requests map with loading state
     expect(output).not.toBe(input);
     expect(output).toEqual({
         a: {
-            networkStatus: 'ready'
+            networkStatus: 'ready',
         },
         b: {
-            networkStatus: 'ready'
+            networkStatus: 'ready',
         },
         c: {
-            networkStatus: 'success'
+            networkStatus: 'success',
         },
         d: {
-            networkStatus: 'failed'
+            networkStatus: 'failed',
         },
         e: {
             networkStatus: 'ready',
-            lastCall: 123
-        }
+            lastCall: 123,
+        },
     });
 });
 
@@ -89,7 +88,7 @@ const postDataSchema = new schema.Entity('postData');
 const initialState: ApiDataState = {
     globalConfig: {
         setHeaders: setPostHeaders,
-        setRequestProperties: setPostRequestProperties
+        setRequestProperties: setPostRequestProperties,
     },
     endpointConfig: {
         getData: {
@@ -100,11 +99,11 @@ const initialState: ApiDataState = {
         postData: {
             url: 'www.postdate.post',
             method: 'POST',
-            responseSchema: postDataSchema
-        }
+            responseSchema: postDataSchema,
+        },
     },
     requests: {},
-    entities: {}
+    entities: {},
 };
 
 describe('CONFIGURE_API_DATA', () => {
@@ -114,21 +113,21 @@ describe('CONFIGURE_API_DATA', () => {
             payload: {
                 globalConfig: {
                     setHeaders: setPostHeaders,
-                    setRequestProperties: setPostRequestProperties
+                    setRequestProperties: setPostRequestProperties,
                 },
                 endpointConfig: {
                     getData: {
                         url: 'www.getdata.get',
                         method: 'GET',
-                        timeout: 1000
+                        timeout: 1000,
                     },
                     postData: {
                         url: 'www.postdate.post',
                         method: 'POST',
-                        responseSchema: postDataSchema
-                    }
-                }
-            }
+                        responseSchema: postDataSchema,
+                    },
+                },
+            },
         };
         expect(reducer(defaultState, action)).toEqual(initialState);
     });
@@ -143,8 +142,8 @@ const updatedState: ApiDataState = {
             duration: 0,
             endpointKey: 'postData',
             url: 'www.postdate.post',
-        }
-    }
+        },
+    },
 };
 
 describe('FETCH_API_DATA', () => {
@@ -176,8 +175,8 @@ describe('FETCH_API_DATA', () => {
                     duration: 0,
                     endpointKey: 'postData',
                     url: 'www.postdate.post',
-                }
-            }
+                },
+            },
         };
         expect(reducer(updatedState, action)).toEqual(newState);
     });
@@ -197,9 +196,9 @@ describe('API_DATA_SUCCESS', () => {
                     ok: true,
                     redirected: false,
                     status: 200,
-                    statusText: 'ok'
+                    statusText: 'ok',
                 },
-                responseBody: { data: 'json', extraData: 'moreJson' }
+                responseBody: { data: 'json', extraData: 'moreJson' },
             },
         };
 
@@ -218,13 +217,13 @@ describe('API_DATA_SUCCESS', () => {
                         ok: true,
                         redirected: false,
                         status: 200,
-                        statusText: 'ok'
+                        statusText: 'ok',
                     },
                     errorBody: undefined,
                     endpointKey: 'postData',
                     url: 'www.postdate.post',
-                }
-            }
+                },
+            },
         });
     });
 });
@@ -242,7 +241,7 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                     ok: true,
                     redirected: false,
                     status: 200,
-                    statusText: 'ok'
+                    statusText: 'ok',
                 },
                 responseBody: { id: 1, data: 'json' },
                 normalizedData: {
@@ -266,12 +265,12 @@ describe('API_DATA_SUCCESS with payload entity', () => {
                         ok: true,
                         redirected: false,
                         status: 200,
-                        statusText: 'ok'
+                        statusText: 'ok',
                     },
                     errorBody: undefined,
                     endpointKey: 'postData',
                     url: 'www.postdate.post',
-                }
+                },
             },
             entities: { articles: { 1: { id: 1, data: 'json', comments: ['nice'] } } },
         };
@@ -291,7 +290,7 @@ describe('API_DATA_FAIL', () => {
                     ok: true,
                     redirected: false,
                     status: 200,
-                    statusText: 'ok'
+                    statusText: 'ok',
                 },
                 errorBody: 'oopsie',
             },
@@ -309,14 +308,14 @@ describe('API_DATA_FAIL', () => {
                         ok: true,
                         redirected: false,
                         status: 200,
-                        statusText: 'ok'
+                        statusText: 'ok',
                     },
                     errorBody: 'oopsie',
                     result: undefined,
                     endpointKey: 'postData',
                     url: 'www.postdate.post',
-                }
-            }
+                },
+            },
         };
         expect(reducer(updatedState, action)).toEqual(newState);
     });
@@ -331,8 +330,8 @@ const invalidateAbleState: ApiDataState = {
             duration: 0,
             endpointKey: 'postData',
             url: 'www.postdate.post',
-        }
-    }
+        },
+    },
 };
 
 describe('INVALIDATE_API_DATA_REQUEST', () => {
@@ -341,7 +340,7 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
             type: 'INVALIDATE_API_DATA_REQUEST',
             payload: {
                 requestKey: getRequestKey('postData'),
-            }
+            },
         };
 
         const newState = {
@@ -353,8 +352,8 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
                     duration: 0,
                     endpointKey: 'postData',
                     url: 'www.postdate.post',
-                }
-            }
+                },
+            },
         };
         expect(reducer(invalidateAbleState, action)).toEqual(newState);
     });
@@ -362,7 +361,7 @@ describe('INVALIDATE_API_DATA_REQUEST', () => {
 
 describe('PURGE_API_DATA_REQUEST', () => {
     test('new state is correct', () => {
-        const getRequestKeys = [getRequestKey('A'), getRequestKey('B', { paramA: 'a' }), getRequestKey('B') ];
+        const getRequestKeys = [getRequestKey('A'), getRequestKey('B', { paramA: 'a' }), getRequestKey('B')];
 
         const purgeState: ApiDataState = {
             ...initialState,
@@ -371,10 +370,9 @@ describe('PURGE_API_DATA_REQUEST', () => {
                 [getRequestKeys[0]]: getMockRequest(getRequestKeys[0]),
                 [getRequestKeys[1]]: getMockRequest(getRequestKeys[1]),
                 [getRequestKeys[2]]: getMockRequest(getRequestKeys[2]),
-
-            }
+            },
         };
-        
+
         let newState = reducer(purgeState, purgeRequest('A'));
         expect(getApiDataRequest(newState, 'A')).toBeUndefined();
         expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
@@ -392,7 +390,6 @@ describe('PURGE_API_DATA_REQUEST', () => {
 
 describe('CLEAR_API_DATA', () => {
     test('new state is correct', () => {
-
         const action: ClearApiDataAction = {
             type: 'CLEAR_API_DATA',
         };
@@ -409,7 +406,7 @@ describe('PURGE_ALL_API_DATA', () => {
 
         const newState = {
             ...invalidateAbleState,
-            requests: {}
+            requests: {},
         };
         expect(reducer(invalidateAbleState, action)).toEqual(newState);
     });
@@ -431,25 +428,25 @@ describe('API_DATA_AFTER_REHYDRATE', () => {
 const initialStateWithEntities = {
     ...initialState,
     entities: {
-        articles: { 1: { id: 1, data: 'json' } }
-    }
+        articles: { 1: { id: 1, data: 'json' } },
+    },
 };
 describe('addEntities function', () => {
     test('merged entities correctly', () => {
         const newEntities = { users: { 1: { id: 1, name: 'json', age: 12 } } };
         const addedEntities = {
             articles: { 1: { id: 1, data: 'json' } },
-            users: { 1: { id: 1, name: 'json', age: 12 } }
+            users: { 1: { id: 1, name: 'json', age: 12 } },
         };
         expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
     });
     test('merged entities correctly', () => {
-        const newEntities = { articles: { 2:  { id: 2, data: 'moreJson' } } };
+        const newEntities = { articles: { 2: { id: 2, data: 'moreJson' } } };
         const addedEntities = {
             articles: {
                 1: { id: 1, data: 'json' },
-                2: { id: 2, data: 'moreJson' }
-            }
+                2: { id: 2, data: 'moreJson' },
+            },
         };
         expect(addEntities(initialStateWithEntities.entities, newEntities)).toEqual(addedEntities);
     });
