@@ -1,7 +1,7 @@
 import withApiData from './withApiData';
 import { configureApiData } from './actions/configureApiData';
 import { afterRehydrate } from './actions/afterRehydrate';
-import { purgeApiData } from './actions/purgeApiData';
+import { purgeAllApiData } from './actions/purgeAllApiData';
 import { getApiDataRequest } from './selectors/getApiDataRequest';
 import { getResultData } from './selectors/getResultData';
 import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
@@ -35,7 +35,7 @@ export {
     getEntity,
     invalidateApiDataRequest,
     afterRehydrate,
-    purgeApiData,
+    purgeAllApiData,
     reducer,
     useRequestHandler,
     ApiDataState,

@@ -1,9 +1,9 @@
 export interface ApiDataFailAction {
     type: 'API_DATA_FAIL';
     payload: {
-        requestKey: string,
-        response?: Response,
-        errorBody: any,
+        requestKey: string;
+        response?: Response;
+        errorBody: any;
     };
 }
 
@@ -12,6 +12,6 @@ export const apiDataFail = (requestKey: string, errorBody: any, response?: Respo
     payload: {
         requestKey,
         response,
-        errorBody
-    }
+        errorBody,
+    },
 });

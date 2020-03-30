@@ -3,10 +3,10 @@ import { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../types';
 export interface ConfigureApiDataAction {
     type: 'CONFIGURE_API_DATA';
     payload: {
-        globalConfig: ApiDataGlobalConfig,
+        globalConfig: ApiDataGlobalConfig;
         endpointConfig: {
-            [endpointKey: string]: ApiDataEndpointConfig,
-        }
+            [endpointKey: string]: ApiDataEndpointConfig;
+        };
     };
 }
 /**
@@ -14,10 +14,13 @@ export interface ConfigureApiDataAction {
  * withApiData.
  */
 
-export const configureApiData = (globalConfig: ApiDataGlobalConfig, endpointConfig: { [endpointKey: string]: ApiDataEndpointConfig }): ConfigureApiDataAction => ({
+export const configureApiData = (
+    globalConfig: ApiDataGlobalConfig,
+    endpointConfig: { [endpointKey: string]: ApiDataEndpointConfig }
+): ConfigureApiDataAction => ({
     type: 'CONFIGURE_API_DATA',
     payload: {
         globalConfig,
-        endpointConfig
-    }
+        endpointConfig,
+    },
 });

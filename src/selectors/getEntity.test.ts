@@ -7,13 +7,13 @@ describe(' getEntity function should return a single entity from normalized data
     // Set up apiDataState object.
     const apiDataState: ApiDataState = {
         globalConfig: {
-            timeout: 6000
+            timeout: 6000,
         },
         endpointConfig: {
             getData: {
                 url: 'https://myapi.org/myData',
-                method: 'GET'
-            }
+                method: 'GET',
+            },
         },
         requests: {
             getData: {
@@ -22,9 +22,9 @@ describe(' getEntity function should return a single entity from normalized data
                 duration: 6000,
                 endpointKey: 'getData',
                 url: 'https://myapi.org/myData',
-            }
+            },
         },
-        entities: { users: { abc: '1234' } }
+        entities: { users: { abc: '1234' } },
     };
 
     test('returns a denormalized data object from the entities in the endPointConfig', () => {
