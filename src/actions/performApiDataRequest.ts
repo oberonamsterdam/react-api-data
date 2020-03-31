@@ -70,6 +70,8 @@ type PerformApiRequest = (
     bindingsStore?: BindingsStore
 ) => (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any>>;
 
+const loadingPromises: {[requestKey: string]: Promise<ApiDataBinding<any>> } = {};
+
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
@@ -98,18 +100,22 @@ export const performApiRequest: PerformApiRequest = (
         };
 
         const apiDataRequest = getApiDataRequest(state.apiData, endpointKey, params, instanceId);
+        const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
+        
+        if (apiDataRequest && apiDataRequest.networkStatus === 'loading' && loadingPromises[requestKey]) {
+            return loadingPromises[requestKey];
+        }
+
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (
-            apiDataRequest &&
-            (apiDataRequest.networkStatus === 'loading' ||
-                (config.method === 'GET' &&
-                    apiDataRequest.networkStatus === 'success' &&
-                    !cacheExpired(config, apiDataRequest)))
+            apiDataRequest && 
+            (config.method === 'GET' && 
+                apiDataRequest.networkStatus === 'success' && 
+                !cacheExpired(config, apiDataRequest))
         ) {
             return Promise.resolve(getCurrentApiDataBinding(apiDataRequest));
         }
 
-        const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
         const url = formatUrl(config.url, params, config.queryStringOpts);
 
         dispatch({
@@ -122,8 +128,7 @@ export const performApiRequest: PerformApiRequest = (
             },
         });
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
-
-        return new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void) => {
+        const promise = new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
@@ -225,6 +230,9 @@ export const performApiRequest: PerformApiRequest = (
                 resolve(getCurrentApiDataBinding());
             }
         });
+        loadingPromises[requestKey] = promise;
+        promise.finally(() => delete loadingPromises[requestKey]);
+        return promise;
     };
 };
 

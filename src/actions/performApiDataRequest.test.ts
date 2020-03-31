@@ -97,6 +97,16 @@ describe('performApiDataRequest', () => {
         });
     });
 
+    test('The function resolves when request is success with result data', () => {
+        const state = { apiData: getState('postData', true, {}, 'success', { method: 'POST' }) };
+        const result = { data: getResultData(state.apiData, 'postData', {}), request: getApiDataRequest(state.apiData, 'postData', {}) };
+        return performApiRequest('postData', {}, { data: 'json' })(dispatch, () => state).then(output => {
+            expect(output.data).toEqual(result.data);
+            expect(output.request).toEqual(result.request);
+            expect(typeof output.perform).toEqual('function');
+        });
+    });
+
     test('should dispatch FETCH_API_DATA if call does not have a valid cache', () => {
         mockResponse(response1);
 
