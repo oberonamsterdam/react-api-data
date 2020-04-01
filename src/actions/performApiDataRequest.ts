@@ -108,6 +108,7 @@ export const performApiRequest: PerformApiRequest = (
         }
 
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
+        // TODO: unit test this scenario
         if (
             apiDataRequest && 
             (shouldAutoTrigger(state.apiData, endpointKey) &&
