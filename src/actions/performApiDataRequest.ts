@@ -20,6 +20,7 @@ import { RequestHandler } from '../request';
 import { getActions } from '../helpers/getActions';
 import { Dispatch } from 'redux';
 import { getResultData } from '../selectors/getResultData';
+import { shouldAutoTrigger } from '../withApiData';
 
 export const getRequestProperties = (
     endpointConfig: ApiDataEndpointConfig,
@@ -109,7 +110,7 @@ export const performApiRequest: PerformApiRequest = (
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         if (
             apiDataRequest && 
-            (config.method === 'GET' && 
+            (shouldAutoTrigger(state.apiData, endpointKey) &&
                 apiDataRequest.networkStatus === 'success' && 
                 !cacheExpired(config, apiDataRequest))
         ) {
