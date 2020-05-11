@@ -14,7 +14,10 @@ export interface ConfigureAction {
  * withApiData.
  */
 
-export const configure = (globalConfig: GlobalConfig, endpointConfig: { [endpointKey: string]: EndpointConfig }): ConfigureAction => ({
+export const configure = (
+    globalConfig: GlobalConfig,
+    endpointConfig: { [endpointKey: string]: EndpointConfig }
+): ConfigureAction => ({
     type: 'CONFIGURE_API_DATA',
     payload: {
         globalConfig,

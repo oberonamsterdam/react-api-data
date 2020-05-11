@@ -114,7 +114,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 this.fetchDataIfNeeded();
             }
 
-            componentDidUpdate(prevProps: WithApiDataProps, prevState: ApiDataState) {
+            componentDidUpdate(prevProps: WithApiDataProps, prevState: State) {
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
                 Object.keys(bindings).forEach((bindingKey: TPropNames) => {
                     if (Array.isArray(prevProps.params[bindingKey])) {

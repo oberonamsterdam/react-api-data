@@ -1,6 +1,6 @@
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 import { getRequestKey } from '../helpers/getRequestKey';
-import { EndpointParams, ApiDataRequest } from '../types';
+import { EndpointParams, Request } from '../types';
 
 /**
  * Selector to manually get a {@link ApiDataRequest}. This value is automatically bind when using {@link withApiData}.
@@ -9,8 +9,8 @@ import { EndpointParams, ApiDataRequest } from '../types';
  */
 
 export const getApiDataRequest = (
-    apiDataState: ApiDataState,
+    apiDataState: State,
     endpointKey: string,
     params?: EndpointParams,
     instanceId: string = ''
-): ApiDataRequest | undefined => apiDataState.requests[getRequestKey(endpointKey, params, instanceId)];
+): Request | undefined => apiDataState.requests[getRequestKey(endpointKey, params, instanceId)];

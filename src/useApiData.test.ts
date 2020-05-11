@@ -9,7 +9,7 @@ import { getRequest } from './selectors/getRequest';
 import createRequest from './helpers/createRequest';
 import { invalidateRequest } from './actions/invalidateRequest';
 
-jest.mock('./helpers/createApiDataBinding');
+jest.mock('./helpers/createBinding');
 const bindings: ConfigureBinding[] = [
     { name: 'testEndpoint', params: {}, networkStatus: 'ready', method: 'GET' },
     { name: 'newEndpoint', params: {}, networkStatus: 'ready', method: 'GET' },

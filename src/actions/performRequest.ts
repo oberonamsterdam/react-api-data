@@ -6,7 +6,7 @@ import {
     EndpointConfig,
     GlobalConfig,
     EndpointParams, 
-    Request
+    Request as RequestType
 } from '../types';
 import { getRequest } from '../selectors/getRequest';
 import { fail } from './fail';
@@ -96,7 +96,7 @@ export const performApiRequest: PerformApiRequest = (
             return Promise.reject(errorMsg);
         }
 
-        const getCurrentBinding = (request?: Request): Binding<any> => {
+        const getCurrentBinding = (request?: RequestType): Binding<any> => {
             return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
         };
 
@@ -115,7 +115,7 @@ export const performApiRequest: PerformApiRequest = (
                 apiDataRequest.networkStatus === 'success' && 
                 !cacheExpired(config, apiDataRequest))
         ) {
-            return Promise.resolve(getCurrentApiDataBinding(apiDataRequest));
+            return Promise.resolve(getCurrentBinding(apiDataRequest));
         }
 
         const url = formatUrl(config.url, params, config.queryStringOpts);

@@ -2,7 +2,7 @@
 
 import { type ActionCreator } from 'redux';
 import { type Actions } from './helpers/getActions';
-import { type ApiDataState } from './reducer';
+import { type State } from './reducer';
 
 
 export type NetworkStatus =
