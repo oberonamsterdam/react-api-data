@@ -9,13 +9,13 @@ import { ApiDataState } from '../reducer';
 describe('getResultData should return the resultData of a given Endpoint', () => {
     const apiDataState: ApiDataState = {
         globalConfig: {
-            timeout: 6000
+            timeout: 6000,
         },
         endpointConfig: {
             getData: {
                 url: 'https://myapi.org/myData',
                 method: 'GET',
-            }
+            },
         },
         requests: {
             [getRequestKey('getData', { id: 'one' })]: {
@@ -33,16 +33,16 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                 endpointKey: 'getData',
                 result: { mobilePhone: 'Samsung', provider: 'T-Mobile' },
                 url: 'https://myapi.org/myData',
-            }
+            },
         },
         entities: {
             users: {
-                '123abc': 'oberon'
-            }
-        }
+                '123abc': 'oberon',
+            },
+        },
     };
 
-// Set up request.
+    // Set up request.
 
     test('should equal the result object form the apiDataState', () => {
         const result = getResultData(apiDataState, 'getData', { id: 'one' });
@@ -74,15 +74,14 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
         const result = getResultData(apiDataState, 'getData', { id: 'one' }, 'otherInstance');
         expect(result).toBeUndefined();
     });
-    
+
     test('should equal the result object form the apiDataState when an known instanceId is entered', () => {
         const result = getResultData(apiDataState, 'getData', { id: 'two' }, 'primary');
         expect(result).toEqual({ mobilePhone: 'Samsung', provider: 'T-Mobile' });
     });
 
     test('should call console.warn if there is no config and NODE_ENV is set to development', () => {
-
-    // @ts-ignore
+        // @ts-ignore
         process.env.NODE_ENV = 'development';
 
         const consoleSpy = jest.spyOn(global.console, 'warn');
@@ -93,16 +92,15 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
     });
 
     test('should return the result of the request if there is no responseSchema in the config', () => {
-
         const apiDataState2: ApiDataState = {
             globalConfig: {
-                timeout: 6000
+                timeout: 6000,
             },
             endpointConfig: {
                 getData: {
                     url: 'https://myapi.org/myData',
-                    method: 'GET'
-                }
+                    method: 'GET',
+                },
             },
             requests: {
                 [getRequestKey('getData')]: {
@@ -112,11 +110,11 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     endpointKey: 'getData',
                     result: 1,
                     url: 'https://myapi.org/myData',
-                }
+                },
             },
             entities: {
                 users: {
-                    '123abc': 'oberon'
+                    '123abc': 'oberon',
                 },
                 articles: {
                     1: {
@@ -128,12 +126,13 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     1: {
                         id: 1,
                         content: 'Comment 1',
-                    }, 2: {
+                    },
+                    2: {
                         id: 2,
                         content: 'Comment 2',
-                    }
-                }
-            }
+                    },
+                },
+            },
         };
 
         const result = getResultData(apiDataState2, 'getData');
@@ -142,22 +141,21 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
     });
 
     test('should return denormalized result data', () => {
-
         const commentsSchema = new schema.Entity('comments');
         const articlesSchema = new schema.Entity('articles', {
-            comments: [commentsSchema]
+            comments: [commentsSchema],
         });
 
         const apiDataState3: ApiDataState = {
             globalConfig: {
-                timeout: 6000
+                timeout: 6000,
             },
             endpointConfig: {
                 getData: {
                     url: 'https://myapi.org/myData',
                     method: 'GET',
-                    responseSchema: articlesSchema
-                }
+                    responseSchema: articlesSchema,
+                },
             },
             requests: {
                 [getRequestKey('getData')]: {
@@ -167,17 +165,18 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     endpointKey: 'getData',
                     result: 1,
                     url: 'https://myapi.org/myData',
-                }, [getRequestKey('getData', { id: 'one' })]: {
+                },
+                [getRequestKey('getData', { id: 'one' })]: {
                     networkStatus: 'success',
                     lastCall: Date.now(),
                     duration: 6000,
                     endpointKey: 'getData',
                     url: 'https://myapi.org/myData',
-                }
+                },
             },
             entities: {
                 users: {
-                    '123abc': 'oberon'
+                    '123abc': 'oberon',
                 },
                 articles: {
                     1: {
@@ -189,12 +188,13 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                     1: {
                         id: 1,
                         content: 'Comment 1',
-                    }, 2: {
+                    },
+                    2: {
                         id: 2,
                         content: 'Comment 2',
-                    }
-                }
-            }
+                    },
+                },
+            },
         };
 
         const result = getResultData(apiDataState3, 'getData');
@@ -209,8 +209,8 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
                 {
                     id: 2,
                     content: 'Comment 2',
-                }
-            ]
+                },
+            ],
         });
     });
 });

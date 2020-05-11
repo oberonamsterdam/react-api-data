@@ -1,5 +1,5 @@
 import { ApiDataState } from '../reducer';
-import { EndpointParams } from '../index';
+import { EndpointParams } from '../types';
 import { getApiDataRequest } from './getApiDataRequest';
 
 /**

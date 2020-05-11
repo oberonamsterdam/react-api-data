@@ -1,6 +1,6 @@
 // @flow
 
-import type { EndpointParams } from '../index';
+import type { EndpointParams } from '../types';
 import type { ActionCreator } from 'redux';
 import type { Action, ApiDataState } from '../reducer';
 import type { RequestHandler } from '../request';
@@ -17,6 +17,6 @@ declare export var performApiRequest: (
   }
 ) => Promise<void>;
 
-declare export var useRequestHandler: (
+declare export var setRequestHandler: (
   requestHandler: RequestHandler
 ) => void;

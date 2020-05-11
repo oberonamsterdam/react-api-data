@@ -6,7 +6,7 @@
   - [`useActions()`](#useactions)
 - [Config](#config)
   - [`configureApiData()`](#configureapidata)
-  - [`useRequestHandler()`](#userequesthandler)
+  - [`setRequestHandler()`](#setrequesthandler)
 - [Redux Actions](#redux-actions)
   - [`afterRehydrate()`](#afterrehydrate)
   - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
@@ -16,7 +16,7 @@
   - [`getApiDataRequest()` (Deprecated)](#getapidatarequest-deprecated)
   - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
 - [HOC](#hoc)
-    - [`withApiData()`](#withapidata)
+  - [`withApiData()`](#withapidata)
 - [Types and interfaces](#types-and-interfaces)
   - [`NetworkStatus`](#networkstatus)
   - [`ApiDataBinding`](#apidatabinding)
@@ -111,7 +111,7 @@ withApiData.
 
 ---
 
-### `useRequestHandler()`
+### `setRequestHandler()`
 
 Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
 [RequestHandler](#requesthandler) interface.

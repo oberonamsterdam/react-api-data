@@ -1,5 +1,5 @@
 // @flow
-import type { EndpointParams } from '../index';
+import type { EndpointParams } from '../types';
 
 export interface InvalidateApiDataRequestAction {
   type: 'INVALIDATE_API_DATA_REQUEST';

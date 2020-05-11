@@ -1,5 +1,5 @@
 // @flow
-import type { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../index';
+import type { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../types';
 
 export type ConfigureApiDataAction = {
   type: 'CONFIGURE_API_DATA';

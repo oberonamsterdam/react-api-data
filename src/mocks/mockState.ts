@@ -1,9 +1,9 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import {ApiDataEndpointConfig, ApiDataGlobalConfig} from '../index';
+import { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../types';
 
 const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
-    body: JSON.stringify(requestProperties.body)
+    body: JSON.stringify(requestProperties.body),
 });
 
 const setPostHeaders = (headers: any) => ({
@@ -29,19 +29,16 @@ export default (
             setRequestProperties: config.method === 'POST' ? setPostRequestProperties : null,
             ...config,
         },
-        getMoreData: {
-
-        }
+        getMoreData: {},
     },
-    requests: hasRequest ? {
-        [getRequestKey(binding, params[binding], instanceId)]: {
-            networkStatus,
-            lastCall,
-            duration: 0,
-        }
-    } : {},
-    entities: {
-
-    }
+    requests: hasRequest
+        ? {
+              [getRequestKey(binding, params[binding], instanceId)]: {
+                  networkStatus,
+                  lastCall,
+                  duration: 0,
+              },
+          }
+        : {},
+    entities: {},
 });
-

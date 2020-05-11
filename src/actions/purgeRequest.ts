@@ -1,8 +1,8 @@
 import { EndpointParams } from '../types';
 import { getRequestKey } from '../helpers/getRequestKey';
 
-export interface InvalidateApiDataRequestAction {
-    type: 'INVALIDATE_API_DATA_REQUEST';
+export interface PurgeRequestAction {
+    type: 'PURGE_API_DATA_REQUEST';
     payload: {
         requestKey: string;
     };
@@ -13,12 +13,12 @@ export interface InvalidateApiDataRequestAction {
  * a GET list request, which might need to include the newly created entity.
  */
 
-export const invalidateApiDataRequest = (
+export const purgeRequest = (
     endpointKey: string,
     params?: EndpointParams,
     instanceId: string = ''
-): InvalidateApiDataRequestAction => ({
-    type: 'INVALIDATE_API_DATA_REQUEST',
+): PurgeRequestAction => ({
+    type: 'PURGE_API_DATA_REQUEST',
     payload: {
         requestKey: getRequestKey(endpointKey, params, instanceId),
     },
