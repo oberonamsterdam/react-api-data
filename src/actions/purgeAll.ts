@@ -1,4 +1,3 @@
-
 export interface PurgeAllAction {
     type: 'PURGE_ALL_API_DATA';
 }

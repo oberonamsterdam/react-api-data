@@ -20,11 +20,23 @@ import { RequestHandler } from '../request';
 import { getActions } from '../helpers/getActions';
 import { Dispatch } from 'redux';
 import { getResultData } from '../selectors/getResultData';
+import { shouldAutoTrigger } from '../withApiData';
 
-export const getRequestProperties = (endpointConfig: EndpointConfig, globalConfig: GlobalConfig, state: any, body?: any) => {
+export const getRequestProperties = (
+    endpointConfig: EndpointConfig,
+    globalConfig: GlobalConfig,
+    state: any,
+    body?: any
+) => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
-    const requestProperties = composeConfigPipeFn(endpointConfig.setRequestProperties, globalConfig.setRequestProperties)(defaultProperties, state);
-    requestProperties.headers = composeConfigPipeFn(endpointConfig.setHeaders, globalConfig.setHeaders)(defaultProperties.headers, state);
+    const requestProperties = composeConfigPipeFn(
+        endpointConfig.setRequestProperties,
+        globalConfig.setRequestProperties
+    )(defaultProperties, state);
+    requestProperties.headers = composeConfigPipeFn(endpointConfig.setHeaders, globalConfig.setHeaders)(
+        defaultProperties.headers,
+        state
+    );
 
     return requestProperties;
 };
@@ -51,14 +63,27 @@ let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
-type PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) => 
-    (dispatch: Dispatch, getState: () => { apiData: State }) => Promise<Binding<any>>;
+type PerformApiRequest = (
+    endpointKey: string,
+    params?: EndpointParams,
+    body?: any,
+    instanceId?: string,
+    bindingsStore?: BindingsStore
+) => (dispatch: Dispatch, getState: () => { apiData: State }) => Promise<Binding<any>>;
+
+const loadingPromises: {[requestKey: string]: Promise<Binding<any>> } = {};
 
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest: PerformApiRequest = (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '', bindingsStore: BindingsStore = new BindingsStore()) => {
+export const performApiRequest: PerformApiRequest = (
+    endpointKey: string,
+    params?: EndpointParams,
+    body?: any,
+    instanceId: string = '',
+    bindingsStore: BindingsStore = new BindingsStore()
+) => {
     return (dispatch: Dispatch, getState: () => { apiData: State }): Promise<Binding<any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
@@ -76,41 +101,46 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
         };
 
         const apiDataRequest = getRequest(state.apiData, endpointKey, params, instanceId);
-        // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
-        if (apiDataRequest && (
-            apiDataRequest.networkStatus === 'loading' ||
-            (config.method === 'GET' && apiDataRequest.networkStatus === 'success' && !cacheExpired(config, apiDataRequest))
-        )) {
-            return Promise.resolve(getCurrentBinding(apiDataRequest));
+        const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
+        
+        if (apiDataRequest && apiDataRequest.networkStatus === 'loading' && loadingPromises[requestKey]) {
+            return loadingPromises[requestKey];
         }
 
-        const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
-        const url = formatUrl(config.url, params);
+        // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
+        // TODO: unit test this scenario
+        if (
+            apiDataRequest && 
+            (shouldAutoTrigger(state.apiData, endpointKey) &&
+                apiDataRequest.networkStatus === 'success' && 
+                !cacheExpired(config, apiDataRequest))
+        ) {
+            return Promise.resolve(getCurrentApiDataBinding(apiDataRequest));
+        }
 
-        dispatch(({
+        const url = formatUrl(config.url, params, config.queryStringOpts);
+
+        dispatch({
             type: 'FETCH_API_DATA',
             payload: {
                 requestKey,
                 endpointKey,
                 params,
-                url
-            }
-        }));
+                url,
+            },
+        });
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
+        const promise = new Promise((resolve: (Binding: Binding<any>) => void) => {
 
-        return new Promise((resolve: (Binding: Binding<any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
 
             if (timeout) {
-                abortTimeout = setTimeout(
-                    () => {
-                        aborted = true;
-                        handleFail(new Error('Timeout'));
-                    },
-                    timeout
-                );
+                abortTimeout = setTimeout(() => {
+                    aborted = true;
+                    handleFail(new Error('Timeout'));
+                }, timeout);
             }
             requestFunction(url, requestProperties).then(
                 (handledResponse: HandledResponse) => {
@@ -138,7 +168,7 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
                 return {
                     request: getRequest(getState().apiData, endpointKey, params, instanceId)!, // there should always be a request after dispatching fetch
                     requestBody: body,
-                    endpointKey
+                    endpointKey,
                 };
             }
 
@@ -203,6 +233,9 @@ export const performApiRequest: PerformApiRequest = (endpointKey: string, params
                 resolve(getCurrentBinding());
             }
         });
+        loadingPromises[requestKey] = promise;
+        promise.finally(() => delete loadingPromises[requestKey]);
+        return promise;
     };
 };
 

@@ -9,10 +9,10 @@ describe('Fail action creator', () => {
             payload: {
                 requestKey: 'getData',
                 errorBody: {
-                    data: 'test-data'
+                    data: 'test-data',
                 },
-                response: undefined
-            }
+                response: undefined,
+            },
         });
     });
 
@@ -22,7 +22,7 @@ describe('Fail action creator', () => {
             redirected: false,
             data: 'test-data',
             statusText: 'Not Found',
-            url: 'https://myapi.org/myData'
+            url: 'https://myapi.org/myData',
         };
 
         // @ts-ignore
@@ -33,10 +33,10 @@ describe('Fail action creator', () => {
             payload: {
                 requestKey: 'getData',
                 errorBody: {
-                    data: 'test-data'
+                    data: 'test-data',
                 },
-                response
-            }
+                response,
+            },
         });
     });
 });

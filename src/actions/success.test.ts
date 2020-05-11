@@ -9,7 +9,7 @@ describe('Success action creator', () => {
         const config = {
             url: 'https://myapi.org/myData',
             method: 'GET',
-            cacheDuration: 60000
+            cacheDuration: 60000,
         };
 
         // Set up a fake response object for the response parameter.
@@ -18,7 +18,7 @@ describe('Success action creator', () => {
             redirected: false,
             data: 'test-data',
             statusText: 'Not Found',
-            url: 'https://myapi.org/myData'
+            url: 'https://myapi.org/myData',
         };
 
         // @ts-ignore
@@ -29,9 +29,9 @@ describe('Success action creator', () => {
             payload: {
                 requestKey: 'getData',
                 response,
-                responseBody: {data: 'json'},
-                normalizedData: undefined
-            }
+                responseBody: { data: 'json' },
+                normalizedData: undefined,
+            },
         });
     });
 
@@ -42,19 +42,19 @@ describe('Success action creator', () => {
             redirected: false,
             data: 'test-data',
             statusText: 'Not Found',
-            url: 'https://myapi.org/myData'
+            url: 'https://myapi.org/myData',
         };
 
         // Set up a fake body argument to be normalizd.
         const body: any = [
             {
                 id: '123',
-                data: 'json'
+                data: 'json',
             },
             {
                 id: '456',
-                data: 'json'
-            }
+                data: 'json',
+            },
         ];
 
         // Set up schema.
@@ -66,7 +66,7 @@ describe('Success action creator', () => {
             url: 'https://myapi.org/myData',
             method: 'GET',
             cacheDuration: 60000,
-            responseSchema: dataListSchema
+            responseSchema: dataListSchema,
         };
 
         // @ts-ignore
@@ -78,8 +78,8 @@ describe('Success action creator', () => {
                 requestKey: 'getData',
                 response,
                 responseBody: body,
-                normalizedData: normalize(body, config.responseSchema)
-            }
+                normalizedData: normalize(body, config.responseSchema),
+            },
         });
     });
 
@@ -90,31 +90,31 @@ describe('Success action creator', () => {
             redirected: false,
             data: 'test-data',
             statusText: 'Not Found',
-            url: 'https://myapi.org/myData'
+            url: 'https://myapi.org/myData',
         };
 
         // Set up a fake body argument to be normalizd.
         const body1: any = [
             {
                 id: '123',
-                data: 'json'
+                data: 'json',
             },
             {
                 id: '456',
-                data: 'json'
-            }
+                data: 'json',
+            },
         ];
 
         // Set up a fake body argument to be normalizd.
         const body2: any = [
             {
                 id: 'abc',
-                data: 'json'
+                data: 'json',
             },
             {
                 id: 'def',
-                data: 'json'
-            }
+                data: 'json',
+            },
         ];
 
         // Set up schema.
@@ -126,7 +126,7 @@ describe('Success action creator', () => {
             url: 'https://myapi.org/myData',
             method: 'GET',
             cacheDuration: 60000,
-            responseSchema: dataListSchema
+            responseSchema: dataListSchema,
         };
 
         // @ts-ignore
@@ -138,8 +138,8 @@ describe('Success action creator', () => {
                 requestKey: 'getData',
                 response,
                 responseBody: body2,
-                normalizedData: normalize(body1, config.responseSchema)
-            }
+                normalizedData: normalize(body1, config.responseSchema),
+            },
         });
     });
 });

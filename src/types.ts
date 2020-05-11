@@ -1,6 +1,7 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { State } from './reducer';
 import { BindingsStore } from './helpers/createBinding';
+import { StringifyOptions } from 'query-string';
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
 
@@ -9,8 +10,8 @@ export type NormalizeResult = string | number | Array<string | number>;
 export interface NormalizedData {
     entities: {
         [type: string]: {
-            [id: string]: any,
-        }
+            [id: string]: any;
+        };
     };
     result: NormalizeResult;
 }
@@ -19,7 +20,7 @@ export interface NormalizedData {
  * Map parameter names to values.
  */
 export interface EndpointParams {
-    [paramName: string]: string | number;
+    [paramName: string]: string | number | string[] | number[];
 }
 
 /**
@@ -40,9 +41,15 @@ export interface Request {
 export interface GlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: object, state: object) => object;
-    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
+    beforeSuccess?: (
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
     afterSuccess?: (afterProps: ConfigAfterProps) => void;
-    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
+    beforeFailed?: (
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
     afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
@@ -57,19 +64,30 @@ export interface EndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
     method: Method;
     cacheDuration?: number;
-    responseSchema?: any | any[];
+    responseSchema?: any;
+    queryStringOpts?: StringifyOptions;
     /*
-    * @deprecated Use beforeSuccess instead
-    */
+     * @deprecated Use beforeSuccess instead
+     */
     transformResponseBody?: (responseBody: any) => NormalizedData; // todo: this should transform before normalize or without normalize if no schema (so return any)
     /*
     * @deprecated Use beforeFailed instead
     */
-    handleErrorResponse?: (responseBody: any, params: EndpointParams, requestBody: any, dispatch: ActionCreator<any>, getState: () => { apiData: State }, response?: Response) => boolean | void;
+    handleErrorResponse?: (
+        responseBody: any,
+        params: EndpointParams,
+        requestBody: any,
+        dispatch: ActionCreator<any>,
+        getState: () => { apiData: State },
+        response?: Response
+    ) => boolean | void;
     /*
     * Edit the response before it gets handled by react-api-data.
     */
-    beforeFailed?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
+    beforeFailed?: (
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
@@ -77,18 +95,21 @@ export interface EndpointConfig {
     /*
     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
     */
-    beforeSuccess?: (handledResponse: { response: Response, body: any }, beforeProps: ConfigBeforeProps) => { response: Response, body: any };
+    beforeSuccess?: (
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
     /*
     * return false to not trigger global function
     */
     afterSuccess?: (afterProps: ConfigAfterProps) => boolean | void;
     /*
-    * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
-    */
+     * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
+     */
     setHeaders?: (defaultHeaders: object, state: object) => object;
     /*
-    * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
-    */
+     * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
+     */
     setRequestProperties?: (defaultProperties: object, state: object) => object;
 
     timeout?: number;
@@ -129,6 +150,12 @@ export interface Binding<T> {
 
 export interface Actions {
     invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
-    perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string, bindingsStore?: BindingsStore) => Promise<Binding<any>>;
+    perform: (
+        endpointKey: string,
+        params?: EndpointParams,
+        body?: any,
+        instanceId?: string,
+        bindingsStore?: BindingsStore
+    ) => Promise<Binding<any>>;
     purgeAll: () => void;
 }

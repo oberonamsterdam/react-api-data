@@ -28,7 +28,8 @@
 import {
     EndpointConfig,
     GlobalConfig,
-    Request, EndpointParams,
+    Request,
+    EndpointParams,
     NetworkStatus,
 } from './types';
 
@@ -44,7 +45,7 @@ import { PurgeRequestAction } from './actions/purgeRequest';
 
 interface Entities {
     [type: string]: {
-        [id: string]: any
+        [id: string]: any;
     };
 }
 
@@ -63,7 +64,7 @@ export const defaultState = {
     globalConfig: {},
     endpointConfig: {},
     requests: {},
-    entities: {}
+    entities: {},
 };
 
 export interface ClearAction {
@@ -73,10 +74,10 @@ export interface ClearAction {
 export interface FetchAction {
     type: 'FETCH_API_DATA';
     payload: {
-        requestKey: string,
-        endpointKey: string,
-        params?: EndpointParams,
-        url: string,
+        requestKey: string;
+        endpointKey: string;
+        params?: EndpointParams;
+        url: string;
     };
 }
 
@@ -100,7 +101,7 @@ export default (state: State = defaultState, action: Action): State => {
         case 'CONFIGURE_API_DATA':
             return {
                 ...state,
-                ...action.payload
+                ...action.payload,
             };
         case 'FETCH_API_DATA':
             return {
@@ -115,8 +116,8 @@ export default (state: State = defaultState, action: Action): State => {
                         endpointKey: action.payload.endpointKey,
                         params: action.payload.params,
                         url: action.payload.url,
-                    }
-                }
+                    },
+                },
             };
         case 'API_DATA_SUCCESS': {
             const request = state.requests[action.payload.requestKey];
@@ -133,17 +134,18 @@ export default (state: State = defaultState, action: Action): State => {
                         ...request,
                         networkStatus: 'success',
                         duration: Date.now() - request.lastCall,
-                        result: action.payload.normalizedData ? action.payload.normalizedData.result : action.payload.responseBody,
+                        result: action.payload.normalizedData
+                            ? action.payload.normalizedData.result
+                            : action.payload.responseBody,
                         response: action.payload.response,
-                        errorBody: undefined
-                    }
+                        errorBody: undefined,
+                    },
                 },
                 entities: {
                     ...(action.payload.normalizedData
-                            ? addEntities(state.entities, action.payload.normalizedData.entities)
-                            : state.entities
-                    )
-                }
+                        ? addEntities(state.entities, action.payload.normalizedData.entities)
+                        : state.entities),
+                },
             };
         }
         case 'API_DATA_FAIL': {
@@ -163,31 +165,35 @@ export default (state: State = defaultState, action: Action): State => {
                         duration: Date.now() - request.lastCall,
                         response: action.payload.response,
                         errorBody: action.payload.errorBody,
-                        result: undefined
-                    }
-                }
+                        result: undefined,
+                    },
+                },
             };
         }
         case 'INVALIDATE_API_DATA_REQUEST': {
             const request = state.requests[action.payload.requestKey];
-            return request ? {
-                ...state,
-                requests: {
-                    ...state.requests,
-                    [action.payload.requestKey]: {
-                        ...request,
-                        networkStatus: 'ready'
-                    }
-                }
-            } : state;
+            return request
+                ? {
+                      ...state,
+                      requests: {
+                          ...state.requests,
+                          [action.payload.requestKey]: {
+                              ...request,
+                              networkStatus: 'ready',
+                          },
+                      },
+                  }
+                : state;
         }
         case 'PURGE_API_DATA_REQUEST': {
             const requests = { ...state.requests };
             delete requests[action.payload.requestKey];
-            return requests ? {
-                ...state,
-                requests
-            } : state;
+            return requests
+                ? {
+                      ...state,
+                      requests,
+                  }
+                : state;
         }
         case 'CLEAR_API_DATA': {
             return defaultState;
@@ -202,7 +208,7 @@ export default (state: State = defaultState, action: Action): State => {
         case 'API_DATA_AFTER_REHYDRATE':
             return {
                 ...state,
-                requests: recoverNetworkStatuses(state.requests)
+                requests: recoverNetworkStatuses(state.requests),
             };
         default:
             return state;
@@ -210,31 +216,34 @@ export default (state: State = defaultState, action: Action): State => {
 };
 
 // merges newEntities into entities
-export const addEntities = (entities: Entities, newEntities: Entities): Entities => Object.keys(newEntities).reduce(
-    (result, entityType) => ({
-        ...result,
-        [entityType]: {
-            ...(entities[entityType] || {}),
-            ...newEntities[entityType]
-        }
-    }),
-    { ...entities }
-);
+export const addEntities = (entities: Entities, newEntities: Entities): Entities =>
+    Object.keys(newEntities).reduce(
+        (result, entityType) => ({
+            ...result,
+            [entityType]: {
+                ...(entities[entityType] || {}),
+                ...newEntities[entityType],
+            },
+        }),
+        { ...entities }
+    );
 
 // resets a networkStatus to ready if it was loading. Use when recovering state from storage to prevent loading states
 // when no calls are running.
 export const recoverNetworkStatus = (networkStatus: NetworkStatus): NetworkStatus =>
     networkStatus === 'loading' ? 'ready' : networkStatus;
 
-export const recoverNetworkStatuses = (requests: { [requestKey: string]: Request }): { [requestKey: string]: Request } => ({
-    ...(Object.keys(requests).reduce(
-            (result, key) => ({
-                ...result,
-                [key]: {
-                    ...requests[key],
-                    networkStatus: recoverNetworkStatus(requests[key].networkStatus)
-                }
-            }),
-            {})
+export const recoverNetworkStatuses = (requests: {
+    [requestKey: string]: Request
+}): { [requestKey: string]: Request } => ({
+    ...Object.keys(requests).reduce(
+        (result, key) => ({
+            ...result,
+            [key]: {
+                ...requests[key],
+                networkStatus: recoverNetworkStatus(requests[key].networkStatus)
+            }
+        }),
+        {}
     )
 });
