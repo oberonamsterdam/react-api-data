@@ -7,6 +7,10 @@ import { apiDataFail } from './apiDataFail';
 import { EndpointParams, ApiDataConfigBeforeProps } from '../types';
 import { getResultData } from '../selectors/getResultData';
 import { getApiDataRequest } from '../selectors/getApiDataRequest';
+import thunk from 'redux-thunk';
+import { applyMiddleware, createStore, combineReducers } from 'redux';
+import reducer from '../reducer';
+import { configureApiData } from './configureApiData';
 
 const defaultState = {
     apiData: {
@@ -20,12 +24,21 @@ const defaultState = {
 const dispatch = jest.fn();
 
 jest.mock('../request', () =>
-    jest.fn(() =>
-        Promise.resolve({
-            response: {
-                ok: true,
-            },
-        })
+    jest.fn(
+        () =>
+            new Promise(resolve => {
+                setTimeout(() => {
+                    const rand = Math.random();
+                    resolve({
+                        response: {
+                            ok: true,
+                        },
+                        body: {
+                            rand,
+                        },
+                    });
+                }, 500);
+            })
     )
 );
 
@@ -81,7 +94,28 @@ describe('performApiDataRequest', () => {
     });
 
     test('The function resolves when request is loading with result data', () => {
-        const state = { apiData: getState('postData', true, {}, 'loading', { method: 'POST' }) };
+        const store = createStore(combineReducers({ apiData: reducer }), applyMiddleware(thunk));
+        store.dispatch(
+            configureApiData(
+                {},
+                {
+                    postData: {
+                        url: 'mockAction.get',
+                        method: 'POST',
+                    },
+                }
+            )
+        );
+
+        const firstCall = performApiRequest('postData', {}, { data: 'json' })(store.dispatch, store.getState);
+        const secondCall = performApiRequest('postData', {}, { data: 'json' })(store.dispatch, store.getState);
+        return Promise.all([firstCall, secondCall]).then(([firstResult, secondResult]) => {
+            expect(firstResult).toEqual(secondResult);
+        });
+    });
+
+    test('The function resolves when request is success with result data', () => {
+        const state = { apiData: getState('postData', true, {}, 'success', { method: 'POST' }) };
         const result = {
             data: getResultData(state.apiData, 'postData', {}),
             request: getApiDataRequest(state.apiData, 'postData', {}),
