@@ -114,23 +114,23 @@ describe('performApiDataRequest', () => {
             payload: {
                 requestKey: getRequestKey('getData', {}),
                 endpointKey: 'getData',
-                endParams: {},
+                params: {},
                 url: 'mockAction.get',
             },
         });
 
         // cache has expired
-        const endParams = { test: 'a' }; // include test for params here
-        performApiRequest('getData', endParams, { data: 'json' })(dispatch, () => ({
-            apiData: getState('getData', true, endParams, 'success', { cacheDuration: 500 }, {}, Date.now() - 1000),
+        const params = { test: 'a' }; // include test for params here
+        performApiRequest('getData', params, { data: 'json' })(dispatch, () => ({
+            apiData: getState('getData', true, params, 'success', { cacheDuration: 500 }, {}, Date.now() - 1000),
         }));
 
         expect(dispatch).toHaveBeenCalledWith({
             type: 'FETCH_API_DATA',
             payload: {
-                requestKey: getRequestKey('getData', endParams),
+                requestKey: getRequestKey('getData', params),
                 endpointKey: 'getData',
-                endParams: { test: 'a' },
+                params: { test: 'a' },
                 url: 'mockAction.get?test=a',
             },
         });
@@ -466,6 +466,8 @@ describe('performApiDataRequest', () => {
         return expect(afterFailed).toHaveBeenCalledWith(afterProps);
     });
 
+    /* TEST CASES FOR DEFAULT PARAMS  */
+
     test('should use the default param set in the config', () => {
         const defaultParams = {
             language: 'nl',
@@ -484,7 +486,7 @@ describe('performApiDataRequest', () => {
             payload: {
                 requestKey: getRequestKey('getData', defaultParams),
                 endpointKey: 'getData',
-                endParams: defaultParams,
+                params: defaultParams,
                 url: 'mockAction.get?language=nl',
             },
         });
@@ -495,15 +497,15 @@ describe('performApiDataRequest', () => {
             language: 'nl',
         };
 
-        const params = {
+        const inputParams = {
             language: 'en',
         };
 
-        performApiRequest('getData', params, { data: 'json' })(dispatch, () => ({
+        performApiRequest('getData', inputParams, { data: 'json' })(dispatch, () => ({
             apiData: getState(
                 'getData',
                 true,
-                params,
+                inputParams,
                 'success',
                 {
                     defaultParams,
@@ -516,9 +518,9 @@ describe('performApiDataRequest', () => {
         expect(dispatch).toHaveBeenCalledWith({
             type: 'FETCH_API_DATA',
             payload: {
-                requestKey: getRequestKey('getData', params),
+                requestKey: getRequestKey('getData', inputParams),
                 endpointKey: 'getData',
-                endParams: params,
+                params: inputParams,
                 url: 'mockAction.get?language=en',
             },
         });
@@ -543,9 +545,8 @@ describe('performApiDataRequest', () => {
             payload: {
                 requestKey: getRequestKey('getData', defaultParams),
                 endpointKey: 'getData',
-                endParams: {
-                    language: 'nl',
-                    test: 'b',
+                params: {
+                    ...defaultParams,
                 },
                 url: 'mockAction.get?language=nl&test=b',
             },
@@ -558,16 +559,16 @@ describe('performApiDataRequest', () => {
             test: 'b',
         };
 
-        const params = {
+        const inputParams = {
             language: 'en',
             test: 'c',
         };
 
-        performApiRequest('getData', params, { data: 'json' })(dispatch, () => ({
+        performApiRequest('getData', inputParams, { data: 'json' })(dispatch, () => ({
             apiData: getState(
                 'getData',
                 true,
-                params,
+                inputParams,
                 'success',
                 {
                     defaultParams,
@@ -580,9 +581,9 @@ describe('performApiDataRequest', () => {
         expect(dispatch).toHaveBeenCalledWith({
             type: 'FETCH_API_DATA',
             payload: {
-                requestKey: getRequestKey('getData', params),
+                requestKey: getRequestKey('getData', inputParams),
                 endpointKey: 'getData',
-                endParams: params,
+                params: inputParams,
                 url: 'mockAction.get?language=en&test=c',
             },
         });
@@ -594,16 +595,16 @@ describe('performApiDataRequest', () => {
             test: 'b',
         };
 
-        const params = {
+        const inputParams = {
             language: 'en',
             number: 1,
         };
 
-        performApiRequest('getData', params, { data: 'json' })(dispatch, () => ({
+        performApiRequest('getData', inputParams, { data: 'json' })(dispatch, () => ({
             apiData: getState(
                 'getData',
                 true,
-                params,
+                inputParams,
                 'success',
                 {
                     defaultParams,
@@ -616,10 +617,13 @@ describe('performApiDataRequest', () => {
         expect(dispatch).toHaveBeenCalledWith({
             type: 'FETCH_API_DATA',
             payload: {
-                requestKey: getRequestKey('getData', { ...defaultParams, ...params }),
+                requestKey: getRequestKey('getData', { ...defaultParams, ...inputParams }),
                 endpointKey: 'getData',
-                endParams: { ...defaultParams, ...params },
-                url: 'mockAction.get?language=en&test=b&number=1',
+                params: {
+                    ...defaultParams,
+                    ...inputParams,
+                },
+                url: 'mockAction.get?language=en&number=1&test=b',
             },
         });
     });
