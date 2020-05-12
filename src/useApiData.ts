@@ -34,7 +34,7 @@ const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointPar
     useEffect(() => {
         if (
             autoTrigger &&
-            (!shallowEqual(prevParams.current, params) || prevEndpointKey.current !== endpointKey || networkStatus === 'ready')
+            ((prevParams.current && !shallowEqual(prevParams.current, params)) || (prevEndpointKey.current && prevEndpointKey.current !== endpointKey) || networkStatus === 'ready')
         ) {
             prevParams.current = params;
             prevEndpointKey.current = endpointKey;
