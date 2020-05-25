@@ -4,6 +4,7 @@ import { Binding, EndpointParams } from './types';
 import { BindingsStore } from './helpers/createBinding';
 import { shouldAutoTrigger } from './withApiData';
 import { State } from './reducer';
+import shallowEqual from 'shallowequal';
 
 type UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => Binding<T>;
 
@@ -30,7 +31,7 @@ const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, in
     useEffect(() => {
         if (
             autoTrigger &&
-            (prevParams.current !== params || prevEndpointKey.current !== endpointKey || networkStatus === 'ready')
+            ((prevParams.current && !shallowEqual(prevParams.current, params)) || (prevEndpointKey.current && prevEndpointKey.current !== endpointKey) || networkStatus === 'ready')
         ) {
             prevParams.current = params;
             prevEndpointKey.current = endpointKey;

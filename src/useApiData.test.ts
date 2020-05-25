@@ -57,11 +57,25 @@ describe('useApiData should trigger perform under the right conditions', () => {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
         expect(performMock1).toHaveBeenCalledTimes(1);
-        rerender();
+        expect(performMock1).toHaveBeenCalled();
+        // set ready to success to make a new store to test the invalidations.
+        const newBindings: ConfigureBinding[] = [
+            { name: 'testEndpoint', params: {}, networkStatus: 'failed', method: 'GET' },
+            { name: 'newEndpoint', params: {}, networkStatus: 'ready', method: 'GET' },
+        ];
+        const store2 = mockStore(setMockedStoreConfig(newBindings));
+        mockBindingWithStore(store2, endpointKey1, performMock1, getBinding);
+
+        jest.mock('react-redux', () => ({
+            useSelector: (fn: any) => fn(store2.getState()),
+            useDispatch: () => store2.dispatch,
+        }));
+        rerender({ endpointKey: 'testEndpoint', params: {} });
         expect(performMock1).toHaveBeenCalledTimes(1);
     }, 3000);
 
     it('performs a request when status is ready and also when hook got rerenderd with different params', async () => {
+        mockBindingWithStore(store1, endpointKey1, performMock1, getBinding);
         const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params), {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
@@ -88,7 +102,7 @@ describe('useApiData should trigger perform under the right conditions', () => {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
         expect(performMock1).toHaveBeenCalled();
-        // set ready tot success to make a new store to test the invalidations.
+        // set ready to success to make a new store to test the invalidations.
         const newBindings: ConfigureBinding[] = [
             { name: 'testEndpoint', params: {}, networkStatus: 'success', method: 'GET' },
             { name: 'newEndpoint', params: {}, networkStatus: 'ready', method: 'GET' },
