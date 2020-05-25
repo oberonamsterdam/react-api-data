@@ -64,4 +64,5 @@ export type ApiDataGlobalConfig = GlobalConfig;
 export type ApiDataEndpointConfig = EndpointConfig;
 export type ApiDataConfigBeforeProps = ConfigBeforeProps;
 export type ApiDataConfigAfterProps = ConfigAfterProps;
-export type ApiDataBinding = Binding<any>;
+// tslint:disable-next-line
+export interface ApiDataBinding implements Binding {}

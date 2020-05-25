@@ -7,7 +7,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { Action, State } from '../reducer';
 import { purgeRequest } from '../actions/purgeRequest';
 
-
 type GetActions = (dispatch: ThunkDispatch<{ apiData: State }, void, Action>) => Actions;
 
 export const getActions: GetActions = (dispatch: ThunkDispatch<{ apiData: State }, void, Action>) => {
