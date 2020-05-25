@@ -26,7 +26,7 @@ export interface EndpointParams {
 /**
  * Information about a request made to an endpoint.
  */
-export interface Request {
+export interface DataRequest {
     result?: any;
     networkStatus: NetworkStatus;
     lastCall: number;
@@ -118,13 +118,13 @@ export interface EndpointConfig {
 
 export interface ConfigBeforeProps {
     endpointKey: string;
-    request: Request;
+    request: DataRequest;
     requestBody?: any;
 }
 
 export interface ConfigAfterProps {
     endpointKey: string;
-    request: Request;
+    request: DataRequest;
     requestBody?: any;
     resultData: any;
     actions: Actions;
@@ -142,7 +142,7 @@ export interface ConfigAfterProps {
  */
 export interface Binding<T> {
     data?: T;
-    request: Request;
+    request: DataRequest;
     perform: (params?: EndpointParams, body?: any) => Promise<Binding<T>>;
     invalidateCache: () => void;
     getInstance: (instanceId: string) => Binding<T>;

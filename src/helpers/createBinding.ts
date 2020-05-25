@@ -1,4 +1,4 @@
-import { EndpointParams, Binding, Request } from '../types';
+import { EndpointParams, Binding, DataRequest } from '../types';
 import createRequest from './createRequest';
 import { getRequestKey } from './getRequestKey';
 import { State, Action } from '../reducer';
@@ -9,7 +9,7 @@ import { performApiRequest } from '../actions/performRequest';
 import { invalidateRequest } from '../actions/invalidateRequest';
 
 type BindingInstances = {
-    [requestKey in string]: (apiData: State, newRequest?: Request) => Binding<any>;
+    [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any>;
 };
 
 export class BindingsStore {
@@ -21,7 +21,7 @@ export class BindingsStore {
         dispatch: ThunkDispatch<{ apiData: State }, void, Action>,
         instanceId: string = '',
         apiData: State,
-        request?: Request
+        request?: DataRequest
     ) {
         const requestKey = getRequestKey(endpointKey, params, instanceId);
         if (!this.bindingInstances[requestKey]) {
@@ -37,10 +37,10 @@ const createBinding = (
     dispatch: ThunkDispatch<{ apiData: State; }, void, Action>,
     bindingsStore: BindingsStore,
     instanceId: string = '',
-): ((apiData: State, request?: Request) => Binding<any>) => {
+): ((apiData: State, request?: DataRequest) => Binding<any>) => {
     let params: EndpointParams = bindingParams;
 
-    return (apiData: State, request?: Request) => ({
+    return (apiData: State, request?: DataRequest) => ({
         data: getResultData(apiData, endpointKey, params, instanceId),
         request:
             request || getRequest(apiData, endpointKey, params, instanceId) || createRequest(endpointKey),

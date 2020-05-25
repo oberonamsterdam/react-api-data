@@ -16,7 +16,7 @@ export type {
     NormalizeResult,
     NormalizedData,
     EndpointParams,
-    Request,
+    DataRequest,
     GlobalConfig,
     Method,
     EndpointConfig,
@@ -38,3 +38,14 @@ export {
     reducer,
     purge,
 };
+
+export var purgeApiData = purge;
+export var getApiDataRequest = getRequest;
+export var configureApiData = configure;
+
+export interface ApiDataRequest implements DataRequest {}
+export interface ApiDataGlobalConfig implements GlobalConfig {}
+export interface ApiDataEndpointConfig implements EndpointConfig {}
+export interface ApiDataConfigBeforeProps implements ConfigBeforeProps {}
+export interface ApiDataConfigAfterProps implements ConfigAfterProps {}
+export interface ApiDataBinding implements Binding {}

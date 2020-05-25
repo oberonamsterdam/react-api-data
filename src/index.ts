@@ -16,7 +16,7 @@ import {
     NormalizeResult,
     NormalizedData,
     EndpointParams,
-    Request,
+    DataRequest,
     GlobalConfig,
     Method,
     EndpointConfig,
@@ -45,7 +45,7 @@ export {
     NormalizeResult,
     NormalizedData,
     EndpointParams,
-    Request,
+    DataRequest,
     GlobalConfig,
     Method,
     EndpointConfig,
@@ -59,7 +59,7 @@ export const configureApiData = configure;
 export const getApiDataRequest = getRequest;
 export const purgeAllApiData = purgeAll;
 export type ApiDataState = State;
-export type ApiDataRequest = Request;
+export type ApiDataRequest = DataRequest;
 export type ApiDataGlobalConfig = GlobalConfig;
 export type ApiDataEndpointConfig = EndpointConfig;
 export type ApiDataConfigBeforeProps = ConfigBeforeProps;

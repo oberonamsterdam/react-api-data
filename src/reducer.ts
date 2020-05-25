@@ -28,7 +28,7 @@
 import {
     EndpointConfig,
     GlobalConfig,
-    Request,
+    DataRequest,
     EndpointParams,
     NetworkStatus,
 } from './types';
@@ -55,7 +55,7 @@ export interface State {
         [endpointKey: string]: EndpointConfig
     };
     requests: {
-        [requestKey: string]: Request
+        [requestKey: string]: DataRequest
     };
     entities: Entities;
 }
@@ -234,8 +234,8 @@ export const recoverNetworkStatus = (networkStatus: NetworkStatus): NetworkStatu
     networkStatus === 'loading' ? 'ready' : networkStatus;
 
 export const recoverNetworkStatuses = (requests: {
-    [requestKey: string]: Request
-}): { [requestKey: string]: Request } => ({
+    [requestKey: string]: DataRequest
+}): { [requestKey: string]: DataRequest } => ({
     ...Object.keys(requests).reduce(
         (result, key) => ({
             ...result,

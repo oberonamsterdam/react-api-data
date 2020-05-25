@@ -34,7 +34,7 @@ export type EndpointParams = {
 /**
  * Information about a request made to an endpoint.
  */
-export interface Request {
+export interface DataRequest {
     result?: any;
     networkStatus: NetworkStatus;
     lastCall: number;
@@ -103,13 +103,13 @@ export interface EndpointConfig {
 
 export interface ConfigBeforeProps {
     endpointKey: string;
-    request: Request;
+    request: DataRequest;
     requestBody?: any;
 }
 
 export interface ConfigAfterProps {
     endpointKey: string;
-    request: Request;
+    request: DataRequest;
     requestBody?: any;
     resultData: any;
     // redux functions
@@ -126,7 +126,7 @@ users: Binding<Array<User>>
  */
 export interface Binding<T> {
     data?: T;
-    request: Request;
+    request: DataRequest;
     perform: (
         params?: EndpointParams | void,
         body?: any

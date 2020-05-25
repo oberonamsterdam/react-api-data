@@ -1,5 +1,5 @@
-import { EndpointConfig, Request } from '../types';
+import { EndpointConfig, DataRequest } from '../types';
 
-export const cacheExpired = (endpointConfig: EndpointConfig, request: Request): boolean =>
+export const cacheExpired = (endpointConfig: EndpointConfig, request: DataRequest): boolean =>
     Date.now() - request.lastCall >
     (typeof endpointConfig.cacheDuration === 'number' ? endpointConfig.cacheDuration : Number.POSITIVE_INFINITY);

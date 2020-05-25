@@ -5,8 +5,8 @@ import {
     ConfigBeforeProps,
     EndpointConfig,
     GlobalConfig,
-    EndpointParams, 
-    Request as RequestType
+    EndpointParams,
+    DataRequest
 } from '../types';
 import { getRequest } from '../selectors/getRequest';
 import { fail } from './fail';
@@ -96,7 +96,7 @@ export const performApiRequest: PerformApiRequest = (
             return Promise.reject(errorMsg);
         }
 
-        const getCurrentBinding = (request?: RequestType): Binding<any> => {
+        const getCurrentBinding = (request?: DataRequest): Binding<any> => {
             return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
         };
 

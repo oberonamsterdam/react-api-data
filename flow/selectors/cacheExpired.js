@@ -1,4 +1,4 @@
 // @flow
-import { EndpointConfig, Request } from '../';
+import { EndpointConfig, DataRequest } from '../';
 
-declare export var cacheExpired: (endpointConfig: EndpointConfig, request: Request) => boolean;
+declare export var cacheExpired: (endpointConfig: EndpointConfig, request: DataRequest) => boolean;

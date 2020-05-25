@@ -3,7 +3,7 @@
 import {
     type EndpointConfig,
     type GlobalConfig,
-    type Request,
+    type DataRequest,
     type EndpointParams,
     type NetworkStatus
 } from './';
@@ -26,7 +26,7 @@ export type State = {
         [endpointKey: string]: EndpointConfig
     };
     requests: {
-        [requestKey: string]: Request
+        [requestKey: string]: DataRequest
     };
     entities: Entities;
 }
@@ -58,9 +58,9 @@ declare export var recoverNetworkStatus: (
     networkStatus: NetworkStatus
 ) => NetworkStatus;
 declare export var recoverNetworkStatuses: (requests: {
-    [requestKey: string]: Request
+    [requestKey: string]: DataRequest
 }) => {
-    [requestKey: string]: Request
+    [requestKey: string]: DataRequest
 };
 
 declare var _default: (state: ?State, action: Action) => State;

@@ -1,5 +1,5 @@
 import { cacheExpired } from './cacheExpired';
-import { EndpointConfig, Request } from '../types';
+import { EndpointConfig, DataRequest } from '../types';
 
 describe('check wether the cacheExpired function works correctly', () => {
     test('should return true if the current Date - lastCall property is greater than the cacheDuration', () => {
@@ -10,7 +10,7 @@ describe('check wether the cacheExpired function works correctly', () => {
             cacheDuration: 6000,
         };
 
-        const request: Request = {
+        const request: DataRequest = {
             networkStatus: 'failed',
             lastCall: 6000,
             duration: 12000,
@@ -31,7 +31,7 @@ describe('check wether the cacheExpired function works correctly', () => {
             cacheDuration: 6000,
         };
 
-        const request: Request = {
+        const request: DataRequest = {
             networkStatus: 'failed',
             lastCall: Date.now() + 1,
             duration: 12000,

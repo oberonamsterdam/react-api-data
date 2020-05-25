@@ -1,5 +1,5 @@
 import React from 'react';
-import { Binding, Request, EndpointParams, Actions } from './types';
+import { Binding, DataRequest, EndpointParams, Actions } from './types';
 import { connect, ConnectedComponent } from 'react-redux';
 import { State } from './reducer';
 import { Action } from './reducer';
@@ -49,7 +49,7 @@ export const shouldPerformApiRequest = (
     const keyParamsHaveChanged = (key: string) => !shallowEqual(newProps.params[key], oldProps.params[key]);
     const getApiDataRequest = (props: WithApiDataProps, key: string) =>
         getRequest(props.apiData, bindings[key], props.params[key] as EndpointParams);
-    const hasBeenInvalidated = (oldRequest?: Request, newRequest?: Request) =>
+    const hasBeenInvalidated = (oldRequest?: DataRequest, newRequest?: DataRequest) =>
         !!oldRequest && oldRequest.networkStatus !== 'ready' && !!newRequest && newRequest.networkStatus === 'ready';
     const apiDataChanged = newProps.apiData !== oldProps.apiData;
     return (
