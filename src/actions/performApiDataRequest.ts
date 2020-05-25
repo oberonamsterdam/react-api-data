@@ -71,9 +71,9 @@ type PerformApiRequest = (
     body?: any,
     instanceId?: string,
     bindingsStore?: BindingsStore
-) => (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any>>;
+) => (dispatch: Dispatch, getState: () => { apiData: ApiDataState }) => Promise<ApiDataBinding<any, any>>;
 
-const loadingPromises: {[requestKey: string]: Promise<ApiDataBinding<any>> } = {};
+const loadingPromises: {[requestKey: string]: Promise<ApiDataBinding<any, any>> } = {};
 
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
@@ -86,7 +86,7 @@ export const performApiRequest: PerformApiRequest = (
     instanceId: string = '',
     bindingsStore: BindingsStore = new BindingsStore()
 ) => {
-    return (dispatch: Dispatch, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any>> => {
+    return (dispatch: Dispatch, getState: () => { apiData: ApiDataState }): Promise<ApiDataBinding<any, any>> => {
         const state = getState();
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
@@ -98,7 +98,7 @@ export const performApiRequest: PerformApiRequest = (
             throw new Error(errorMsg);
         }
 
-        const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any> => {
+        const getCurrentApiDataBinding = (request?: ApiDataRequest): ApiDataBinding<any, any> => {
             return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
         };
 
@@ -132,7 +132,7 @@ export const performApiRequest: PerformApiRequest = (
             },
         });
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
-        const promise = new Promise((resolve: (ApiDataBinding: ApiDataBinding<any>) => void, reject: (ApiDataBinding: ApiDataBinding<any>) => void) => {
+        const promise = new Promise((resolve: (ApiDataBinding: ApiDataBinding<any, any>) => void, reject: (ApiDataBinding: ApiDataBinding<any, any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;

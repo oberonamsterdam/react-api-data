@@ -27,7 +27,7 @@ export interface WithApiDataProps {
 }
 
 export type WithApiDataBindingProps<TPropNames extends string> = {
-    [k in TPropNames]: ApiDataBinding<any> | Array<ApiDataBinding<any>>;
+    [k in TPropNames]: ApiDataBinding<any, any> | Array<ApiDataBinding<any, any>>;
 };
 
 export interface ActionProp {
@@ -144,7 +144,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 propName: keyof BindingPropNameBindingsStore<TPropNames>,
                 instanceId: string = '',
                 apiData: ApiDataState
-            ): ApiDataBinding<any> {
+            ): ApiDataBinding<any, any> {
                 // check if we already have an instance of this bindingStore
                 let propNameBindingsStore: BindingsStore = this.bindingPropNameBindingsStore[propName];
                 if (propNameBindingsStore === undefined) {

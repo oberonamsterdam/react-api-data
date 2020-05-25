@@ -124,13 +124,15 @@ export interface ApiDataConfigAfterProps {
 users: ApiDataBinding<Array<User>>
 }
  */
-export interface ApiDataBinding<T> {
-    data?: T;
-    request: ApiDataRequest;
+export interface ApiDataBinding<T, F> {
+    data?: T,
+    request: ApiDataRequest,
     perform: (
         params?: EndpointParams | void,
-        body?: any
-    ) => Promise<ApiDataBinding<T>>;
-    invalidateCache: () => Promise<void>;
-    getInstance: (instanceId: string) => ApiDataBinding<T>;
+        body?: any,
+    ) => Promise<ApiDataBinding<T>>,
+    loading: boolean,
+    dataFailed?: F,
+    invalidateCache: () => Promise<void>,
+    getInstance: (instanceId: string) => ApiDataBinding<T, F>,
 }
