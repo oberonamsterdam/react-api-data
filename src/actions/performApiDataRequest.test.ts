@@ -539,7 +539,7 @@ describe('performApiDataRequest', () => {
             apiData: getState(
                 'getData',
                 true,
-                { getData: 'inputParams' },
+                { getData: inputParams },
                 'success',
                 {
                     defaultParams,
