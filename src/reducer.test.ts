@@ -286,6 +286,7 @@ describe('API_DATA_FAIL', () => {
                 requestKey: getRequestKey('postData'),
                 // @ts-ignore
                 response: {
+                    // @ts-ignore
                     body: { data: 'json', extraData: 'moreJson' },
                     ok: true,
                     redirected: false,

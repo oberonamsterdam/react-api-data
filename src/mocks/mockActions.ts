@@ -1,5 +1,6 @@
 import { getRequestKey } from '../helpers/getRequestKey';
 import { State } from '../reducer';
+import { NetworkStatus, Method, EndpointParams } from '../types';
 
 export const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
@@ -14,9 +15,9 @@ export const setPostHeaders = (headers: any) => ({
 export const getState: any = (
     binding: string,
     hasRequest?: boolean,
-    params?: any,
-    networkStatus?: string,
-    method?: string,
+    params?: { [bindingKey: string]: EndpointParams },
+    networkStatus?: NetworkStatus,
+    method?: Method,
     cacheDuration?: number,
     beforeSuccess?: () => void,
     afterSuccess?: () => void,
@@ -38,7 +39,7 @@ export const getState: any = (
     },
     requests: hasRequest
         ? {
-              [getRequestKey(binding, params[binding])]: {
+              [getRequestKey(binding, params?.[binding] ?? {})]: {
                   networkStatus,
                   lastCall: 10,
                   duration: 0,
