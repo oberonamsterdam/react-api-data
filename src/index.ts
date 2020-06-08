@@ -59,6 +59,7 @@ export const configureApiData = configure;
 export const getApiDataRequest = getRequest;
 export const purgeAllApiData = purgeAll;
 export const invalidateApiDataRequest = invalidateRequest;
+export const performApiRequest = performRequest;
 export type ApiDataState = State;
 export type ApiDataRequest = DataRequest;
 export type ApiDataGlobalConfig = GlobalConfig;

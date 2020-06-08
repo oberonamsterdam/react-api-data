@@ -40,7 +40,7 @@ type BindingPropNameBindingsStore<TPropNames extends string> = {
     [k in TPropNames]: BindingsStore;
 };
 
-export const shouldPerformApiRequest = (
+export const shouldPerformRequest = (
     newProps: WithApiDataProps,
     oldProps: WithApiDataProps,
     bindings: { [propName in string]: string },
@@ -120,7 +120,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     if (Array.isArray(prevProps.params[bindingKey])) {
                         const paramsArray: EndpointParams[] = prevProps.params[bindingKey] as EndpointParams[];
                         paramsArray.forEach((params, index) => {
-                            if (shouldPerformApiRequest(
+                            if (shouldPerformRequest(
                                 { ...this.props as WithApiDataProps, params: { [bindingKey]: (this.props.params[bindingKey] as EndpointParams[])[index] } },
                                 { ...prevProps as WithApiDataProps, params: { [bindingKey]: params } },
                                 bindings,
@@ -130,7 +130,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                             }
                         });
                     } else {
-                        if (shouldPerformApiRequest(this.props, prevProps, bindings, bindingKey)) {
+                        if (shouldPerformRequest(this.props, prevProps, bindings, bindingKey)) {
                             this.props.dispatch(performRequest(bindings[bindingKey], this.props.params[bindingKey] as EndpointParams));
                         }
                     }
