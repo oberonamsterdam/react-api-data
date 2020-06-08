@@ -245,9 +245,9 @@ const endpointConfig = {
 };
 ```
 
-Multiple default params can be set. Their value should be either a `string` or a `number`.
+You can set default values for multiple parameters or only part of the parameters. Their value should be either a `string` or a `number`.
 
-Please note that these `defaultParams` will be overwritten if they are explicitly set in the URL.
+Please note that these `defaultParams` will be overwritten if they are explicitly set in the request paramaters.
 
 ## Uploading a file
 
