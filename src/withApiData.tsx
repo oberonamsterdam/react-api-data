@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { BindingsStore } from './helpers/createBinding';
 import { getActions } from './helpers/getActions';
 import { getRequest } from './selectors/getRequest';
-import { performApiRequest } from './actions/performRequest';
+import { performRequest } from './actions/performRequest';
 
 type GetParams<TPropName extends string> = (
     ownProps: any,
@@ -126,12 +126,12 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                                 bindings,
                                 bindingKey
                             )) {
-                                this.props.dispatch(performApiRequest(bindings[bindingKey], params, undefined, index.toString()));
+                                this.props.dispatch(performRequest(bindings[bindingKey], params, undefined, index.toString()));
                             }
                         });
                     } else {
                         if (shouldPerformApiRequest(this.props, prevProps, bindings, bindingKey)) {
-                            this.props.dispatch(performApiRequest(bindings[bindingKey], this.props.params[bindingKey] as EndpointParams));
+                            this.props.dispatch(performRequest(bindings[bindingKey], this.props.params[bindingKey] as EndpointParams));
                         }
                     }
                 });
@@ -161,12 +161,12 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     const endpointKey = bindings[propName];
 
                     if (shouldAutoTrigger(this.props.apiData, endpointKey)) {
-                        // performApiRequest will check if fetch is needed
+                        // performRequest will check if fetch is needed
                         if (Array.isArray(params[propName])) {
                             const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
                             paramsArray.forEach((propNameParams, index) => {
                                 dispatch(
-                                    performApiRequest(
+                                    performRequest(
                                         endpointKey,
                                         propNameParams,
                                         undefined,
@@ -177,7 +177,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                             });
                         } else {
                             dispatch(
-                                performApiRequest(
+                                performRequest(
                                     endpointKey,
                                     params[propName] as EndpointParams,
                                     undefined,

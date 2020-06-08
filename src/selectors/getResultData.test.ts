@@ -7,7 +7,7 @@ import { getRequestKey } from '../helpers/getRequestKey';
 import { State } from '../reducer';
 
 describe('getResultData should return the resultData of a given Endpoint', () => {
-    const apiDataState: State = {
+    const state: State = {
         globalConfig: {
             timeout: 6000,
         },
@@ -44,39 +44,39 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
 
     // Set up request.
 
-    test('should equal the result object form the apiDataState', () => {
-        const result = getResultData(apiDataState, 'getData', { id: 'one' });
+    test('should equal the result object form the state', () => {
+        const result = getResultData(state, 'getData', { id: 'one' });
         expect(result).toEqual({ mobilePhone: 'Iphone', provider: 'Ben' });
     });
 
     test('should return undefined because parram no found', () => {
-        const result = getResultData(apiDataState, 'getData', { id: 'two' });
+        const result = getResultData(state, 'getData', { id: 'two' });
         expect(result).toBeUndefined();
     });
 
     test('should return undefined when there is no config, dev const, request, or request.result provided', () => {
-        const result = getResultData(apiDataState, 'getData', { id: 'one' });
+        const result = getResultData(state, 'getData', { id: 'one' });
         expect(result).toEqual({ mobilePhone: 'Iphone', provider: 'Ben' });
     });
 
     test('should return undefined when there is no config, dev const, request, or request.result provided', () => {
-        const result = getResultData(apiDataState, 'this endpointKey does not exist');
+        const result = getResultData(state, 'this endpointKey does not exist');
 
         expect(result).toBeUndefined();
     });
 
-    test('should equal the result object form the apiDataState when empty string is passed as instanceId', () => {
-        const result = getResultData(apiDataState, 'getData', { id: 'one' }, '');
+    test('should equal the result object form the state when empty string is passed as instanceId', () => {
+        const result = getResultData(state, 'getData', { id: 'one' }, '');
         expect(result).toEqual({ mobilePhone: 'Iphone', provider: 'Ben' });
     });
 
     test('should return undefined when an unknown instanceId is entered', () => {
-        const result = getResultData(apiDataState, 'getData', { id: 'one' }, 'otherInstance');
+        const result = getResultData(state, 'getData', { id: 'one' }, 'otherInstance');
         expect(result).toBeUndefined();
     });
 
-    test('should equal the result object form the apiDataState when an known instanceId is entered', () => {
-        const result = getResultData(apiDataState, 'getData', { id: 'two' }, 'primary');
+    test('should equal the result object form the state when an known instanceId is entered', () => {
+        const result = getResultData(state, 'getData', { id: 'two' }, 'primary');
         expect(result).toEqual({ mobilePhone: 'Samsung', provider: 'T-Mobile' });
     });
 
@@ -86,13 +86,13 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
 
         const consoleSpy = jest.spyOn(global.console, 'warn');
 
-        getResultData(apiDataState, 'triggerWarning endpointKey');
+        getResultData(state, 'triggerWarning endpointKey');
 
         expect(consoleSpy).toHaveBeenCalled();
     });
 
     test('should return the result of the request if there is no responseSchema in the config', () => {
-        const apiDataState2: State = {
+        const state2: State = {
             globalConfig: {
                 timeout: 6000,
             },
@@ -135,7 +135,7 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
             },
         };
 
-        const result = getResultData(apiDataState2, 'getData');
+        const result = getResultData(state2, 'getData');
 
         expect(result).toEqual(1);
     });
@@ -146,7 +146,7 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
             comments: [commentsSchema],
         });
 
-        const apiDataState3: State = {
+        const state3: State = {
             globalConfig: {
                 timeout: 6000,
             },
@@ -197,7 +197,7 @@ describe('getResultData should return the resultData of a given Endpoint', () =>
             },
         };
 
-        const result = getResultData(apiDataState3, 'getData');
+        const result = getResultData(state3, 'getData');
 
         expect(result).toEqual({
             id: 1,

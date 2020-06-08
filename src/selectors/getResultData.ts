@@ -8,12 +8,12 @@ import { getRequest } from './getRequest';
  * bound when using {@link withApiData}.
  */
 export const getResultData = (
-    apiDataState: State,
+    state: State,
     endpointKey: string,
     params?: EndpointParams,
     instanceId: string = ''
 ): any | any[] | void => {
-    const config = apiDataState.endpointConfig[endpointKey];
+    const config = state.endpointConfig[endpointKey];
 
     if (!config) {
         if (process.env.NODE_ENV === 'development') {
@@ -22,7 +22,7 @@ export const getResultData = (
         return;
     }
 
-    const request = getRequest(apiDataState, endpointKey, params, instanceId);
+    const request = getRequest(state, endpointKey, params, instanceId);
 
     if (!request) {
         return;
@@ -32,6 +32,6 @@ export const getResultData = (
         ? request.errorBody
         : request.result &&
               (config.responseSchema
-                  ? denormalize(request.result, config.responseSchema, apiDataState.entities)
+                  ? denormalize(request.result, config.responseSchema, state.entities)
                   : request.result);
 };

@@ -262,7 +262,7 @@ export default connectApiData(ItemsList);
     // Use the callback of redux-persist to dispatch the afterRehydrate function.
     // This will make sure all loading states are properly reset.
     const persistor = persistStore(store, {}, () => store.dispatch(afterRehydrate()));
-    store.dispatch(configureApiData({}, endpointConfig));
+    store.dispatch(configure({}, endpointConfig));
     return {
         store,
         persistor,

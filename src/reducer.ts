@@ -10,7 +10,7 @@
  * - withApiData HOC to bind data from the api to your component. Automatically calls your endpoint if needed.
  *
  * Sending data to endpoints (i.e. POST, PATCH, DELETE)
- * - performApiRequest action creator thunk. Dispatch to manually trigger an endpoint request, i.e. when executing a post or patch
+ * - performRequest action creator thunk. Dispatch to manually trigger an endpoint request, i.e. when executing a post or patch
  *
  * Getting specific info from the api data store:
  * - getRequest - get the Request object to monitor endpoint status

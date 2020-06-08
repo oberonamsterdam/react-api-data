@@ -5,7 +5,7 @@ import { State, Action } from '../reducer';
 import { getRequest } from '../selectors/getRequest';
 import { getResultData } from '../selectors/getResultData';
 import { ThunkDispatch } from 'redux-thunk';
-import { performApiRequest } from '../actions/performRequest';
+import { performRequest } from '../actions/performRequest';
 import { invalidateRequest } from '../actions/invalidateRequest';
 
 type BindingInstances = {
@@ -46,7 +46,7 @@ const createBinding = (
             request || getRequest(apiData, endpointKey, params, instanceId) || createRequest(endpointKey),
         perform: (performParams?: EndpointParams, body?: any) => {
             params = { ...bindingParams, ...performParams };
-            return dispatch(performApiRequest(endpointKey, params, body, instanceId, bindingsStore));
+            return dispatch(performRequest(endpointKey, params, body, instanceId, bindingsStore));
         },
         invalidateCache: () => dispatch(invalidateRequest(endpointKey, params, instanceId)),
         getInstance: (newInstanceId: string) =>

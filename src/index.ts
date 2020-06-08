@@ -5,7 +5,7 @@ import { purgeAll } from './actions/purgeAll';
 import { getRequest } from './selectors/getRequest';
 import { getResultData } from './selectors/getResultData';
 import { invalidateRequest } from './actions/invalidateRequest';
-import { performApiRequest, useRequestHandler } from './actions/performRequest';
+import { performRequest, useRequestHandler } from './actions/performRequest';
 import { getEntity } from './selectors/getEntity';
 import reducer from './reducer';
 import { State } from './reducer';
@@ -29,7 +29,7 @@ import {
 export {
     withApiData,
     configure,
-    performApiRequest,
+    performRequest,
     getRequest,
     getResultData,
     getEntity,
@@ -58,11 +58,11 @@ export {
 export const configureApiData = configure;
 export const getApiDataRequest = getRequest;
 export const purgeAllApiData = purgeAll;
+export const invalidateApiDataRequest = invalidateRequest;
 export type ApiDataState = State;
 export type ApiDataRequest = DataRequest;
 export type ApiDataGlobalConfig = GlobalConfig;
 export type ApiDataEndpointConfig = EndpointConfig;
 export type ApiDataConfigBeforeProps = ConfigBeforeProps;
 export type ApiDataConfigAfterProps = ConfigAfterProps;
-// @ts-ignore
-interface ApiDataBinding<T> extends Binding<T> {}
+export interface ApiDataBinding<T> extends Binding<T> {}

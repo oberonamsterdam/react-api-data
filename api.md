@@ -9,7 +9,7 @@
   - [`useRequestHandler()`](#userequesthandler)
 - [Redux Actions](#redux-actions)
   - [`afterRehydrate()`](#afterrehydrate)
-  - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
+  - [`performRequest()` (Deprecated)](#performapirequest-deprecated)
   - [`invalidateRequest()` (Deprecated)](#invalidaterequest-deprecated)
 - [Selectors](#selectors)
   - [`getEntity()`](#getentity)
@@ -134,14 +134,14 @@ the entire apiData state. This is needed to reset loading statuses.
 
 ---
 
-### `performApiRequest()` (Deprecated)
+### `performRequest()` (Deprecated)
 
 Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred
 to use [withApiData](#withapidata).
 
 **Deprecated**
 
-The performApiRequest Action has been deprecated. It is recommended to use the perform action in the [Binding](#binding) or the [Action](#action) perform, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
+The performRequest Action has been deprecated. It is recommended to use the perform action in the [Binding](#binding) or the [Action](#action) perform, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
 
 **Parameters**
 
@@ -183,7 +183,7 @@ Selector for getting a single entity from normalized data.
 
 **Parameters**
 
-- `apiDataState` **[State](#state)**
+- `state` **[State](#state)**
 - `schema` **Object**
 - `id` **string | number**
 
@@ -205,7 +205,7 @@ The getRequest selector has been deprecated. It is recommended to use the reques
 
 **Parameters**
 
-- `apiDataState` **[State](#state)**
+- `state` **[State](#state)**
 - `endpointKey` **string**
 - `params` **[EndpointParams](#endpointparams)**
 - `instanceId?` **string**
@@ -228,7 +228,7 @@ The getResultData selector has been deprecated. It is recommended to use the req
 
 **Parameters**
 
-- `apiDataState` **[State](#state)**
+- `state` **[State](#state)**
 - `endpointKey` **string**
 - `params` **[EndpointParams](#endpointparams)**
 - `instanceId?` **string**

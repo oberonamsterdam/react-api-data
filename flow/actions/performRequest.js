@@ -5,7 +5,7 @@ import type { ActionCreator } from 'redux';
 import type { Action, State } from '../reducer';
 import type { RequestHandler } from '../request';
 
-declare export var performApiRequest: (
+declare export var performRequest: (
   endpointKey: string,
   params?: EndpointParams | void,
   body?: any,

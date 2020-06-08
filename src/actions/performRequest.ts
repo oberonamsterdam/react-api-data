@@ -77,7 +77,7 @@ const loadingPromises: {[requestKey: string]: Promise<Binding<any>> } = {};
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performApiRequest: PerformApiRequest = (
+export const performRequest: PerformApiRequest = (
     endpointKey: string,
     params?: EndpointParams,
     body?: any,
@@ -89,7 +89,7 @@ export const performApiRequest: PerformApiRequest = (
         const config = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
         if (!config) {
-            const errorMsg = `apiData.performApiRequest: no config with key ${endpointKey} found!`;
+            const errorMsg = `apiData.performRequest: no config with key ${endpointKey} found!`;
             if (__DEV__) {
                 console.error(errorMsg);
             }

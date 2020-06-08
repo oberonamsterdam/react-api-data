@@ -3,7 +3,7 @@
 import withApiData from './withApiData';
 import reducer, { type State } from './reducer';
 import { configure } from './actions/configure';
-import { performApiRequest } from './actions/performRequest';
+import { performRequest } from './actions/performRequest';
 import { invalidateRequest } from './actions/invalidateRequest';
 import { afterRehydrate } from './actions/afterRehydrate';
 import { purge } from './actions/purge';
@@ -28,7 +28,7 @@ export type {
 export {
     withApiData,
     configure,
-    performApiRequest,
+    performRequest,
     invalidateRequest,
     afterRehydrate,
     useRequestHandler,
@@ -42,3 +42,5 @@ export {
 export var purgeApiData = purge;
 export var getApiDataRequest = getRequest;
 export var configureApiData = configure;
+export var invalidateApiDataRequest = invalidateRequest;
+export var performApiDataRequest = performRequest;
