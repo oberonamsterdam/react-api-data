@@ -31,7 +31,7 @@ export type WithApiDataBindingProps<TPropNames extends string> = {
 };
 
 export interface ActionProp {
-    apiDataActions: Actions;
+    actions: Actions;
 }
 
 export type WithApiDataChildProps<TPropNames extends string> = WithApiDataBindingProps<TPropNames> & ActionProp;
@@ -220,9 +220,9 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                         );
                     }
                 });
-                const apiDataActions: Actions = getActions(dispatch);
+                const actions: Actions = getActions(dispatch);
 
-                return <WrappedComponent {...componentProps} {...addProps} apiDataActions={apiDataActions} />;
+                return <WrappedComponent {...componentProps} {...addProps} actions={actions} />;
             }
         }
         hoistNonReactStatic<any, React.ComponentType<WithApiDataChildProps<TPropNames>>>(WithApiData, WrappedComponent); // move static methods to wrapper

@@ -141,7 +141,7 @@ to use [withApiData](#withapidata).
 
 **Deprecated**
 
-The performRequest Action has been deprecated. It is recommended to use the perform action in the [Binding](#binding) or the [Action](#action) perform, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
+The performRequest Action has been deprecated. It is recommended to use the perform action in the [Binding](#binding) or the [Action](#action) perform, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
 
 **Parameters**
 
@@ -163,7 +163,7 @@ a GET list request, which might need to include the newly created entity.
 
 **Deprecated**
 
-The invalidateRequest Action has been deprecated. It is recommended to use the invalidateCache action in the [Binding](#binding) or the [Action](#action) invalidateCache, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
+The invalidateRequest Action has been deprecated. It is recommended to use the invalidateCache action in the [Binding](#binding) or the [Action](#action) invalidateCache, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
 
 **Parameters**
 
@@ -260,7 +260,7 @@ withApiData({
 // props.article will be an Binding
 // props.users will be an array of Binding
 // props.editArticle will be an Binding
-// props.apiDataActions will be an Actions object
+// props.actions will be an Actions object
 
 // perform can be used to trigger calls with autoTrigger: false
 props.editArticle.perform({
@@ -271,11 +271,11 @@ props.editArticle.perform({
 });
 
 // the apiDataAction property can be used to perform actions on any endpoint in the endpoint config, not only those which are in the current binding.
-props.apiDataActions.invalidateCache('getArticles');
+props.actions.invalidateCache('getArticles');
 ```
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an [Binding](#binding) or [Binding](#binding)[] added to each property key of the bindings param and a property `apiDataActions` of type [Action](#action).
+component will get an [Binding](#binding) or [Binding](#binding)[] added to each property key of the bindings param and a property `actions` of type [Action](#action).
 
 **Parameters**
 
@@ -284,7 +284,7 @@ component will get an [Binding](#binding) or [Binding](#binding)[] added to each
 
 **Returns**
 
-**Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional apiDataActions property with type [Actions](#actions).
+**Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional actions property with type [Actions](#actions).
 
 
 ## Types and interfaces
