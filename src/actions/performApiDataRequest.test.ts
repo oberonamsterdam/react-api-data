@@ -156,7 +156,7 @@ describe('performApiDataRequest', () => {
         // cache has expired
         const params = { test: 'a' }; // include test for params here
         performApiRequest('getData', params, { data: 'json' })(dispatch, () => ({
-            apiData: getState('getData', true, params, 'success', { cacheDuration: 500 }, {}, Date.now() - 1000),
+            apiData: getState('getData', true, { getData: params }, 'success', { cacheDuration: 500 }, {}, Date.now() - 1000),
         }));
 
         expect(dispatch).toHaveBeenCalledWith({
