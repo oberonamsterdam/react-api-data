@@ -21,7 +21,8 @@ export const getState: any = (
     cacheDuration?: number,
     beforeSuccess?: () => void,
     afterSuccess?: () => void,
-    timeout?: number
+    timeout?: number,
+    defaultParams?: any
 ) => ({
     globalConfig: {},
     endpointConfig: {
@@ -34,6 +35,9 @@ export const getState: any = (
             beforeSuccess,
             afterSuccess,
             timeout,
+            defaultParams: {
+                language: 'nl'
+            }
         },
         getMoreData: {},
     },
