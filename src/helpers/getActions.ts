@@ -1,21 +1,22 @@
 import { EndpointParams, Actions } from '../types';
-import { invalidateApiDataRequest } from '../actions/invalidateApiDataRequest';
-import { purgeAllApiData } from '../actions/purgeAllApiData';
-import { performApiRequest } from '../actions/performApiDataRequest';
+
+import { invalidateRequest } from '..';
+import { purgeAll } from '..';
+import { performRequest } from '..';
 import { ThunkDispatch } from 'redux-thunk';
-import { Action, ApiDataState } from '../reducer';
+import { Action, State } from '../reducer';
 import { purgeRequest } from '../actions/purgeRequest';
 
-type GetActions = (dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>) => Actions;
+type GetActions = (dispatch: ThunkDispatch<{ apiData: State }, void, Action>) => Actions;
 
-export const getActions: GetActions = (dispatch: ThunkDispatch<{ apiData: ApiDataState }, void, Action>) => {
+export const getActions: GetActions = (dispatch: ThunkDispatch<{ apiData: State }, void, Action>) => {
     return {
-        invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId: string = '') =>
-            dispatch(invalidateApiDataRequest(endpointKey, params, instanceId)),
-        perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '') =>
-            dispatch(performApiRequest(endpointKey, params, body, instanceId)),
+        invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId: string = '') => 
+            dispatch(invalidateRequest(endpointKey, params, instanceId)),
+        perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId: string = '') => 
+            dispatch(performRequest(endpointKey, params, body, instanceId)),
         purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId: string = '') =>
             dispatch(purgeRequest(endpointKey, params, instanceId)),
-        purgeAll: () => dispatch(purgeAllApiData()),
+        purgeAll: () => dispatch(purgeAll())
     };
 };

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ApiDataBinding, EndpointParams } from './types';
-import { BindingsStore } from './helpers/createApiDataBinding';
+import { Binding, EndpointParams } from './types';
+import { BindingsStore } from './helpers/createBinding';
 import { shouldAutoTrigger } from './withApiData';
-import { ApiDataState } from './reducer';
+import { State } from './reducer';
 import shallowEqual from 'shallowequal';
 
-type UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => ApiDataBinding<T>;
+type UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => Binding<T>;
 
 // the hook should call perform when shouldAutoTrigger and:
 // - the component gets mounted
@@ -14,22 +14,19 @@ type UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instance
 // - the endpoint has changed
 // - the call has been invalidated (networkStatus is ready)
 
-const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
+const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
     const prevParams = useRef<EndpointParams>();
     const prevEndpointKey = useRef<string>();
-    const apiData: ApiDataState = useSelector((state: { apiData: ApiDataState }) => {
-        return state.apiData;
-    });
+    const apiData: State = useSelector((state: { apiData: State }) => state.apiData);
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
-    const binding: ApiDataBinding<T> = bindingsStore.current.getBinding(
+    const binding: Binding<T> = bindingsStore.current.getBinding(
         endpointKey,
         params,
         dispatch,
         instanceId,
-        apiData
-    );
+        apiData);
     const networkStatus = binding.request.networkStatus;
     useEffect(() => {
         if (
@@ -41,6 +38,7 @@ const useApiData: UseApiDataHook = <T>(endpointKey: string, params?: EndpointPar
             binding.perform(params);
         }
     }, [autoTrigger, params, endpointKey, networkStatus]);
+
     return binding;
 };
 
