@@ -1,6 +1,6 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { ApiDataState } from './reducer';
-import { BindingsStore } from './helpers/createApiDataBinding';
+import { State } from './reducer';
+import { BindingsStore } from './helpers/createBinding';
 import { StringifyOptions } from 'query-string';
 
 export type NetworkStatus = 'ready' | 'loading' | 'failed' | 'success';
@@ -26,7 +26,7 @@ export interface EndpointParams {
 /**
  * Information about a request made to an endpoint.
  */
-export interface ApiDataRequest {
+export interface DataRequest {
     result?: any;
     networkStatus: NetworkStatus;
     lastCall: number;
@@ -38,19 +38,19 @@ export interface ApiDataRequest {
     url: string;
 }
 
-export interface ApiDataGlobalConfig {
+export interface GlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: object, state: object) => object;
     beforeSuccess?: (
-        handledResponse: { response: Response; body: any },
-        beforeProps: ApiDataConfigBeforeProps
-    ) => { response: Response; body: any };
-    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => void;
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
+    afterSuccess?: (afterProps: ConfigAfterProps) => void;
     beforeFailed?: (
-        handledResponse: { response: Response; body: any },
-        beforeProps: ApiDataConfigBeforeProps
-    ) => { response: Response; body: any };
-    afterFailed?: (afterProps: ApiDataConfigAfterProps) => void;
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
+    afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
 }
@@ -60,7 +60,7 @@ export interface ApiDataGlobalConfig {
  */
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-export interface ApiDataEndpointConfig {
+export interface EndpointConfig {
     url: string; // add parameters as :paramName, eg https://myapi.org/:myparam
     method: Method;
     cacheDuration?: number;
@@ -71,38 +71,38 @@ export interface ApiDataEndpointConfig {
      */
     transformResponseBody?: (responseBody: any) => NormalizedData; // todo: this should transform before normalize or without normalize if no schema (so return any)
     /*
-     * @deprecated Use beforeFailed instead
-     */
+    * @deprecated Use beforeFailed instead
+    */
     handleErrorResponse?: (
         responseBody: any,
         params: EndpointParams,
         requestBody: any,
         dispatch: ActionCreator<any>,
-        getState: () => { apiData: ApiDataState },
+        getState: () => { apiData: State },
         response?: Response
     ) => boolean | void;
     /*
-     * Edit the response before it gets handled by react-api-data.
-     */
+    * Edit the response before it gets handled by react-api-data.
+    */
     beforeFailed?: (
-        handledResponse: { response: Response; body: any },
-        beforeProps: ApiDataConfigBeforeProps
-    ) => { response: Response; body: any };
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
     /*
-     * return false to not trigger global function
-     */
-    afterFailed?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
+    * return false to not trigger global function
+    */
+    afterFailed?: (afterProps: ConfigAfterProps) => boolean | void;
     /*
-     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
-     */
+    * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
+    */
     beforeSuccess?: (
-        handledResponse: { response: Response; body: any },
-        beforeProps: ApiDataConfigBeforeProps
-    ) => { response: Response; body: any };
+        handledResponse: { response: Response, body: any },
+        beforeProps: ConfigBeforeProps
+    ) => { response: Response, body: any };
     /*
-     * return false to not trigger global function
-     */
-    afterSuccess?: (afterProps: ApiDataConfigAfterProps) => boolean | void;
+    * return false to not trigger global function
+    */
+    afterSuccess?: (afterProps: ConfigAfterProps) => boolean | void;
     /*
      * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
      */
@@ -122,15 +122,15 @@ export interface ApiDataEndpointConfig {
     autoTrigger?: boolean;
 }
 
-export interface ApiDataConfigBeforeProps {
+export interface ConfigBeforeProps {
     endpointKey: string;
-    request: ApiDataRequest;
+    request: DataRequest;
     requestBody?: any;
 }
 
-export interface ApiDataConfigAfterProps {
+export interface ConfigAfterProps {
     endpointKey: string;
-    request: ApiDataRequest;
+    request: DataRequest;
     requestBody?: any;
     resultData: any;
     actions: Actions;
@@ -143,15 +143,15 @@ export interface ApiDataConfigAfterProps {
  * The value that withApiData binds to the property of your component.
  * @example
  * type Props = {
- *   users: ApiDataBinding<Array<User>>
+ *   users: Binding<Array<User>>
  * }
  */
-export interface ApiDataBinding<T> {
+export interface Binding<T> {
     data?: T;
-    request: ApiDataRequest;
-    perform: (params?: EndpointParams, body?: any) => Promise<ApiDataBinding<T>>;
+    request: DataRequest;
+    perform: (params?: EndpointParams, body?: any) => Promise<Binding<T>>;
     invalidateCache: () => void;
-    getInstance: (instanceId: string) => ApiDataBinding<T>;
+    getInstance: (instanceId: string) => Binding<T>;
 }
 
 export interface Actions {
@@ -162,6 +162,6 @@ export interface Actions {
         body?: any,
         instanceId?: string,
         bindingsStore?: BindingsStore
-    ) => Promise<ApiDataBinding<any>>;
+    ) => Promise<Binding<any>>;
     purgeAll: () => void;
 }

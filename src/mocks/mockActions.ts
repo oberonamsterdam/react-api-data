@@ -1,5 +1,5 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 import { NetworkStatus, Method, EndpointParams } from '../types';
 
 export const setPostRequestProperties = (requestProperties: any) => ({
@@ -91,7 +91,7 @@ const getRequests = (bindings: ConfigureBinding[]) =>
         return obj;
     }, {});
 
-export const setMockedStoreConfig = (bindings: ConfigureBinding[]): ApiDataState => ({
+export const setMockedStoreConfig = (bindings: ConfigureBinding[]): State => ({
     globalConfig: {},
     endpointConfig: getEndpointConfig(bindings),
     requests: getRequests(bindings),

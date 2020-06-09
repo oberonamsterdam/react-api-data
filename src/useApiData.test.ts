@@ -3,13 +3,13 @@ import useApiData from './useApiData';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ConfigureBinding, setMockedStoreConfig } from './mocks/mockActions';
-import { BindingsStore } from './helpers/createApiDataBinding';
+import { BindingsStore } from './helpers/createBinding';
 import { getResultData } from './selectors/getResultData';
-import { getApiDataRequest } from './selectors/getApiDataRequest';
-import createApiDataRequest from './helpers/createApiDataRequest';
-import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
+import { getRequest } from './selectors/getRequest';
+import createRequest from './helpers/createRequest';
+import { invalidateRequest } from './actions/invalidateRequest';
 
-jest.mock('./helpers/createApiDataBinding');
+jest.mock('./helpers/createBinding');
 const bindings: ConfigureBinding[] = [
     { name: 'testEndpoint', params: {}, networkStatus: 'ready', method: 'GET' },
     { name: 'newEndpoint', params: {}, networkStatus: 'ready', method: 'GET' },
@@ -43,10 +43,10 @@ describe('useApiData should trigger perform under the right conditions', () => {
         binding.mockReturnValue({
             data: getResultData(store.getState().apiData, endpointKey, {}, ''),
             request:
-                getApiDataRequest(store.getState().apiData, endpointKey, {}, '') || createApiDataRequest(endpointKey),
+                getRequest(store.getState().apiData, endpointKey, {}, '') || createRequest(endpointKey),
             perform: mockFunction,
-            invalidateCache: () => store.dispatch(invalidateApiDataRequest(endpointKey, {}, '')),
-        });
+            invalidateCache: () => store.dispatch(invalidateRequest(endpointKey, {}, '')),
+    });
     mockBindingWithStore(store1, endpointKey1, performMock1, getBinding);
     afterEach(() => {
         jest.clearAllMocks();

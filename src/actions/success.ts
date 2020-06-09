@@ -1,22 +1,22 @@
-import { ApiDataEndpointConfig, NormalizedData } from '../types';
+import { EndpointConfig, NormalizedData } from '../types';
 import { normalize } from 'normalizr';
 
-export interface ApiDataSuccessAction {
+export interface SuccessAction {
     type: 'API_DATA_SUCCESS';
     payload: {
-        requestKey: string;
-        response: Response;
-        normalizedData?: NormalizedData;
-        responseBody?: any;
+        requestKey: string,
+        response: Response,
+        normalizedData?: NormalizedData,
+        responseBody?: any,
     };
 }
 
-export const apiDataSuccess = (
+export const success = (
     requestKey: string,
-    endpointConfig: ApiDataEndpointConfig,
+    endpointConfig: EndpointConfig,
     response: Response,
     body: any
-): ApiDataSuccessAction => ({
+): SuccessAction => ({
     type: 'API_DATA_SUCCESS',
     payload: {
         requestKey,
@@ -26,5 +26,5 @@ export const apiDataSuccess = (
                 ? endpointConfig.transformResponseBody(body)
                 : body,
         normalizedData: endpointConfig.responseSchema ? normalize(body, endpointConfig.responseSchema) : undefined,
-    },
+    }
 });

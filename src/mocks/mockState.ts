@@ -1,5 +1,5 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import { ApiDataEndpointConfig, ApiDataGlobalConfig, NetworkStatus, EndpointParams } from '../types';
+import { EndpointConfig, GlobalConfig, NetworkStatus, EndpointParams } from '../types';
 
 const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
@@ -16,8 +16,8 @@ export default (
     hasRequest?: boolean,
     params?: { [bindingKey: string]: EndpointParams },
     networkStatus?: NetworkStatus,
-    config: Partial<ApiDataEndpointConfig> = {},
-    globalConfig: Partial<ApiDataGlobalConfig> = {},
+    config: Partial<EndpointConfig> = {},
+    globalConfig: Partial<GlobalConfig> = {},
     lastCall = Date.now(),
     instanceId = ''
 ): any => ({
