@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Fragment } from 'react';
-import { type ApiDataBinding, withApiData } from '../flow';
+import { type Binding, withApiData } from '../flow';
 
 type OwnProps = {
-    article: ApiDataBinding<{
+    article: Binding<{
         title: string;
         author: { name: string; };
         body: string;
@@ -12,7 +12,7 @@ type OwnProps = {
     articleId: number;
 }
 
-const connectApiData = withApiData(
+const connect = withApiData(
     {
         // specify property name and endpoint
         article: 'getArticle'
@@ -48,4 +48,4 @@ const Example = (props) => {
     }
 };
 
-export default connectApiData(Example);
+export default connect(Example);

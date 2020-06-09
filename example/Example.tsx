@@ -1,5 +1,5 @@
 import React, { Fragment, SFC } from 'react';
-import { ApiDataBinding, useApiData } from '../src';
+import { Binding, useApiData } from '../src';
 
 interface OwnProps {
     articleId: number;
@@ -11,7 +11,7 @@ interface Article {
     body: string;
 }
 const Example: SFC<OwnProps> = (props) => {
-    const article: ApiDataBinding<Article> = useApiData('getArticle', { articleId: props.articleId });
+    const article: Binding<Article> = useApiData('getArticle', { articleId: props.articleId });
     if (!article) {
         return null;
     }

@@ -1,4 +1,4 @@
-export interface ApiDataAfterRehydrateAction {
+export interface AfterRehydrateAction {
     type: 'API_DATA_AFTER_REHYDRATE';
 }
 
@@ -6,6 +6,6 @@ export interface ApiDataAfterRehydrateAction {
  * Call this after you've re-hydrated the store when using redux-persist or any other method of persisting and restoring
  * the entire apiData state. This is needed to reset loading statuses.
  */
-export const afterRehydrate = (): ApiDataAfterRehydrateAction => ({
-    type: 'API_DATA_AFTER_REHYDRATE',
+export const afterRehydrate = (): AfterRehydrateAction => ({
+    type: 'API_DATA_AFTER_REHYDRATE'
 });

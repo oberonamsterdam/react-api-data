@@ -2,10 +2,10 @@
 
 import type { EndpointParams } from '../types';
 import type { ActionCreator } from 'redux';
-import type { Action, ApiDataState } from '../reducer';
+import type { Action, State } from '../reducer';
 import type { RequestHandler } from '../request';
 
-declare export var performApiRequest: (
+declare export var performRequest: (
   endpointKey: string,
   params?: EndpointParams | void,
   body?: any,
@@ -13,7 +13,7 @@ declare export var performApiRequest: (
 ) => (
   dispatch: ActionCreator<Action>,
   getState: () => {
-    apiData: ApiDataState
+    apiData: State
   }
 ) => Promise<void>;
 

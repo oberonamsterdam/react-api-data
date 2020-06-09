@@ -10,28 +10,35 @@
  * - withApiData HOC to bind data from the api to your component. Automatically calls your endpoint if needed.
  *
  * Sending data to endpoints (i.e. POST, PATCH, DELETE)
- * - performApiRequest action creator thunk. Dispatch to manually trigger an endpoint request, i.e. when executing a post or patch
+ * - performRequest action creator thunk. Dispatch to manually trigger an endpoint request, i.e. when executing a post or patch
  *
  * Getting specific info from the api data store:
- * - getApiDataRequest - get the Request object to monitor endpoint status
+ * - getRequest - get the Request object to monitor endpoint status
  * - getResultData - get the (de-normalized) result of an endpint
  * - getEntity - get a specific entity from the store
  *
  * Invalidating an endpoint so it will reload:
- * - invalidateApiDataRequest - Use for example to invalidate a get (list) request after a POST or DELETE. withApiData
+ * - invalidateRequest - Use for example to invalidate a get (list) request after a POST or DELETE. withApiData
  * HOC will automatically re-trigger calls to invalidated requests.
  *
  * NOTE: THIS LIB STORES ITS DATA IN state.apiData. NEVER ACCESS THIS PROPERTY FROM ANYWHERE OUTSIDE THIS FILE DIRECTLY.
  * THIS STORE ITSELF IS CONSIDERED PRIVATE TO THIS LIB AND IT'S ARCHITECTURE MIGHT CHANGE. An interface is provided through
  * the HOC and the selectors, use those.
  */
-import { ApiDataEndpointConfig, ApiDataGlobalConfig, ApiDataRequest, EndpointParams, NetworkStatus } from './types';
-import { ConfigureApiDataAction } from './actions/configureApiData';
-import { ApiDataSuccessAction } from './actions/apiDataSuccess';
-import { ApiDataFailAction } from './actions/apiDataFail';
-import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
-import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
-import { PurgeAllApiDataAction } from './actions/purgeAllApiData';
+import {
+    EndpointConfig,
+    GlobalConfig,
+    DataRequest,
+    EndpointParams,
+    NetworkStatus,
+} from './types';
+
+import { ConfigureAction } from './actions/configure';
+import { SuccessAction } from './actions/success';
+import { FailAction } from './actions/fail';
+import { InvalidateRequestAction } from './actions/invalidateRequest';
+import { AfterRehydrateAction } from './actions/afterRehydrate';
+import { PurgeAllAction } from './actions/purgeAll';
 import { PurgeRequestAction } from './actions/purgeRequest';
 
 // state def
@@ -42,13 +49,13 @@ interface Entities {
     };
 }
 
-export interface ApiDataState {
-    globalConfig: ApiDataGlobalConfig;
+export interface State {
+    globalConfig: GlobalConfig;
     endpointConfig: {
-        [endpointKey: string]: ApiDataEndpointConfig;
+        [endpointKey: string]: EndpointConfig
     };
     requests: {
-        [requestKey: string]: ApiDataRequest;
+        [requestKey: string]: DataRequest
     };
     entities: Entities;
 }
@@ -60,11 +67,11 @@ export const defaultState = {
     entities: {},
 };
 
-export interface ClearApiDataAction {
+export interface ClearAction {
     type: 'CLEAR_API_DATA';
 }
 
-export interface FetchApiDataAction {
+export interface FetchAction {
     type: 'FETCH_API_DATA';
     payload: {
         requestKey: string;
@@ -75,19 +82,21 @@ export interface FetchApiDataAction {
 }
 
 export type Action =
-    | ConfigureApiDataAction
-    | FetchApiDataAction
-    | ApiDataSuccessAction
-    | ApiDataFailAction
-    | InvalidateApiDataRequestAction
-    | ClearApiDataAction
-    | ApiDataAfterRehydrateAction
+
+    | ConfigureAction
+    | FetchAction
+    | SuccessAction
+    | FailAction
+    | InvalidateRequestAction
+    | ClearAction
+    | AfterRehydrateAction
     | PurgeRequestAction
-    | PurgeAllApiDataAction;
+    | PurgeAllAction
+    ;
 
 // reducer
 
-export default (state: ApiDataState = defaultState, action: Action): ApiDataState => {
+export default (state: State = defaultState, action: Action): State => {
     switch (action.type) {
         case 'CONFIGURE_API_DATA':
             return {
@@ -225,16 +234,16 @@ export const recoverNetworkStatus = (networkStatus: NetworkStatus): NetworkStatu
     networkStatus === 'loading' ? 'ready' : networkStatus;
 
 export const recoverNetworkStatuses = (requests: {
-    [requestKey: string]: ApiDataRequest;
-}): { [requestKey: string]: ApiDataRequest } => ({
+    [requestKey: string]: DataRequest
+}): { [requestKey: string]: DataRequest } => ({
     ...Object.keys(requests).reduce(
         (result, key) => ({
             ...result,
             [key]: {
                 ...requests[key],
-                networkStatus: recoverNetworkStatus(requests[key].networkStatus),
-            },
+                networkStatus: recoverNetworkStatus(requests[key].networkStatus)
+            }
         }),
         {}
-    ),
+    )
 });

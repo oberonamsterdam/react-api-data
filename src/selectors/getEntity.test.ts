@@ -1,11 +1,11 @@
 import { denormalize, schema } from 'normalizr';
 
 import { getEntity } from './getEntity';
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 
 describe(' getEntity function should return a single entity from normalized data', () => {
-    // Set up apiDataState object.
-    const apiDataState: ApiDataState = {
+    // Set up state object.
+    const state: State = {
         globalConfig: {
             timeout: 6000,
         },
@@ -30,19 +30,19 @@ describe(' getEntity function should return a single entity from normalized data
     test('returns a denormalized data object from the entities in the endPointConfig', () => {
         const dataSchema = new schema.Entity('users');
         const id = 'abc';
-        const entity = getEntity(apiDataState, dataSchema, id);
-        expect(entity).toEqual(denormalize(id, dataSchema, apiDataState.entities));
+        const entity = getEntity(state, dataSchema, id);
+        expect(entity).toEqual(denormalize(id, dataSchema, state.entities));
     });
     test('returns undefined because no schema found', () => {
         const dataSchema = new schema.Entity('clients');
         const id = 'abc';
-        const entity = getEntity(apiDataState, dataSchema, id);
+        const entity = getEntity(state, dataSchema, id);
         expect(entity).toEqual(undefined);
     });
     test('returns undefined because no id found', () => {
         const dataSchema = new schema.Entity('users');
         const id = 'cba';
-        const entity = getEntity(apiDataState, dataSchema, id);
+        const entity = getEntity(state, dataSchema, id);
         expect(entity).toEqual(undefined);
     });
 });
