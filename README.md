@@ -229,6 +229,26 @@ export const globalConfig = {
 };
 ```
 
+## Using default parameters
+
+There might be situations where default parameters are needed, for example when using a language in a URL. These default parameters can be set with the `defaultParams` object in your [endpointConfig](https://github.com/oberonamsterdam/react-api-data#config):
+
+```js
+const endpointConfig = {
+    getData: {
+        url: `${BASE_URL}/:language/getData.json`,
+        method: 'GET',
+        defaultParams: {
+            language: 'en',
+        },
+    },
+};
+```
+
+You can set default values for multiple parameters or only part of the parameters. Their value should be either a `string` or a `number`.
+
+Please note that these `defaultParams` will be overwritten if they are explicitly set in the request paramaters.
+
 ## Uploading a file
 
 [See file Upload examples](./example.file-upload.md)

@@ -65,7 +65,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
 
 type PerformApiRequest = (
     endpointKey: string,
-    params?: EndpointParams,
+    inputParams?: EndpointParams,
     body?: any,
     instanceId?: string,
     bindingsStore?: BindingsStore
@@ -79,7 +79,7 @@ const loadingPromises: {[requestKey: string]: Promise<Binding<any>> } = {};
  */
 export const performRequest: PerformApiRequest = (
     endpointKey: string,
-    params?: EndpointParams,
+    inputParams?: EndpointParams,
     body?: any,
     instanceId: string = '',
     bindingsStore: BindingsStore = new BindingsStore()
@@ -95,6 +95,9 @@ export const performRequest: PerformApiRequest = (
             }
             return Promise.reject(errorMsg);
         }
+
+        // Merge the defaultParams and URL inputParams. This is where any defaultParams get overwritten.
+        const params = { ...config.defaultParams, ...inputParams };
 
         const getCurrentBinding = (request?: DataRequest): Binding<any> => {
             return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
@@ -129,6 +132,7 @@ export const performRequest: PerformApiRequest = (
                 url,
             },
         });
+        
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
         const promise = new Promise((resolve: (Binding: Binding<any>) => void) => {
 

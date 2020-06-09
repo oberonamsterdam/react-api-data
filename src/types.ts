@@ -111,6 +111,12 @@ export interface EndpointConfig {
      * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
      */
     setRequestProperties?: (defaultProperties: object, state: object) => object;
+    /*
+    * Set defaultParams in a URL.
+    */
+    defaultParams?: {
+        [paramName: string]: string | number;
+    };
 
     timeout?: number;
     autoTrigger?: boolean;
