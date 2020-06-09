@@ -267,7 +267,7 @@ describe('performRequest', () => {
         await performRequest('getData', {}, { data: 'json' })(dispatch, () => state);
         expect(dispatch).toHaveBeenCalledWith(
             // @ts-ignore fake Response
-            apiDataFail(getRequestKey('getData'), response3.body, { ...response3.response, ok: false })
+            fail(getRequestKey('getData'), response3.body, { ...response3.response, ok: false })
         );
 
         expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_SUCCESS' }));
