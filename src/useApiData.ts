@@ -14,7 +14,7 @@ interface Options {
     config?: Partial<EndpointConfig>;
 }
 
-type UseHook = <T>(endpointKey: string, options: Options) => Binding<T>;
+type UseHook = <T>(endpointKey: string, options?: Options) => Binding<T>;
 
 // the hook should call perform when shouldAutoTrigger and:
 // - the component gets mounted
@@ -49,7 +49,7 @@ const useApiData: UseHook = <T>(endpointKey: string, options?: Options) => {
         ) {
             prevParams.current = params;
             prevEndpointKey.current = endpointKey;
-            binding.perform(params);
+            binding.perform(params, undefined, config);
         }
     }, [autoTrigger, params, endpointKey, networkStatus]);
 
