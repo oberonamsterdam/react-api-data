@@ -1,4 +1,4 @@
-import { EndpointParams, Binding, DataRequest } from '../types';
+import { EndpointParams, Binding, DataRequest, EndpointConfig } from '../types';
 import createRequest from './createRequest';
 import { getRequestKey } from './getRequestKey';
 import { State, Action } from '../reducer';
@@ -21,32 +21,33 @@ export class BindingsStore {
         dispatch: ThunkDispatch<{ apiData: State }, void, Action>,
         instanceId: string = '',
         apiData: State,
-        request?: DataRequest
+        request?: DataRequest,
+        config?: Partial<EndpointConfig>
     ) {
         const requestKey = getRequestKey(endpointKey, params, instanceId);
         if (!this.bindingInstances[requestKey]) {
-            this.bindingInstances[requestKey] = createBinding(endpointKey, params, dispatch, this, instanceId);
+            this.bindingInstances[requestKey] = createBinding(endpointKey, params, dispatch, this, instanceId, config);
         }
         return this.bindingInstances[requestKey](apiData, request);
     }
 }
 
 const createBinding = (
-    endpointKey: string, 
-    bindingParams: EndpointParams = {}, 
-    dispatch: ThunkDispatch<{ apiData: State; }, void, Action>,
+    endpointKey: string,
+    bindingParams: EndpointParams = {},
+    dispatch: ThunkDispatch<{ apiData: State }, void, Action>,
     bindingsStore: BindingsStore,
     instanceId: string = '',
+    config?: Partial<EndpointConfig>
 ): ((apiData: State, request?: DataRequest) => Binding<any>) => {
     let params: EndpointParams = bindingParams;
 
     return (apiData: State, request?: DataRequest) => ({
         data: getResultData(apiData, endpointKey, params, instanceId),
-        request:
-            request || getRequest(apiData, endpointKey, params, instanceId) || createRequest(endpointKey),
+        request: request || getRequest(apiData, endpointKey, params, instanceId) || createRequest(endpointKey),
         perform: (performParams?: EndpointParams, body?: any) => {
             params = { ...bindingParams, ...performParams };
-            return dispatch(performRequest(endpointKey, params, body, instanceId, bindingsStore));
+            return dispatch(performRequest(endpointKey, params, body, instanceId, bindingsStore, config));
         },
         invalidateCache: () => dispatch(invalidateRequest(endpointKey, params, instanceId)),
         getInstance: (newInstanceId: string) =>

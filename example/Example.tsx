@@ -7,11 +7,11 @@ interface OwnProps {
 
 interface Article {
     title: string;
-    author: { name: string; };
+    author: { name: string };
     body: string;
 }
 const Example: SFC<OwnProps> = (props) => {
-    const article: Binding<Article> = useApiData('getArticle', { articleId: props.articleId });
+    const article: Binding<Article> = useApiData('getArticle', { params: { articleId: props.articleId } });
     if (!article) {
         return null;
     }
@@ -25,7 +25,8 @@ const Example: SFC<OwnProps> = (props) => {
             return (
                 <div>
                     <h1>{article.data?.title}</h1>
-                    <em>{article.data?.author.name}</em><br />
+                    <em>{article.data?.author.name}</em>
+                    <br />
                     {article.data?.body}
                 </div>
             );

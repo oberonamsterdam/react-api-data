@@ -1,12 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Binding, EndpointParams } from './types';
+import { Binding, EndpointParams, EndpointConfig } from './types';
 import { BindingsStore } from './helpers/createBinding';
 import { shouldAutoTrigger } from './withApiData';
 import { State } from './reducer';
 import shallowEqual from 'shallowequal';
 
-type UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: string) => Binding<T>;
+interface Options {
+    /** Optionally provide the params of the endpoint */
+    params?: EndpointParams;
+    instanceId?: string;
+    /** Optionally provide overrides for the endpoint config */
+    config?: Partial<EndpointConfig>;
+}
+
+type UseHook = <T>(endpointKey: string, options: Options) => Binding<T>;
 
 // the hook should call perform when shouldAutoTrigger and:
 // - the component gets mounted
@@ -14,7 +22,8 @@ type UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: st
 // - the endpoint has changed
 // - the call has been invalidated (networkStatus is ready)
 
-const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
+const useApiData: UseHook = <T>(endpointKey: string, options?: Options) => {
+    const { params, instanceId, config } = options ?? {};
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
     const prevParams = useRef<EndpointParams>();
     const prevEndpointKey = useRef<string>();
@@ -26,12 +35,17 @@ const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, in
         params,
         dispatch,
         instanceId,
-        apiData);
+        apiData,
+        undefined,
+        config
+    );
     const networkStatus = binding.request.networkStatus;
     useEffect(() => {
         if (
             autoTrigger &&
-            ((prevParams.current && !shallowEqual(prevParams.current, params)) || (prevEndpointKey.current && prevEndpointKey.current !== endpointKey) || networkStatus === 'ready')
+            ((prevParams.current && !shallowEqual(prevParams.current, params)) ||
+                (prevEndpointKey.current && prevEndpointKey.current !== endpointKey) ||
+                networkStatus === 'ready')
         ) {
             prevParams.current = params;
             prevEndpointKey.current = endpointKey;

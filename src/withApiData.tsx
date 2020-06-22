@@ -1,5 +1,5 @@
 import React from 'react';
-import { Binding, DataRequest, EndpointParams, Actions } from './types';
+import { Binding, DataRequest, EndpointParams, Actions, EndpointConfig } from './types';
 import { connect, ConnectedComponent } from 'react-redux';
 import { State } from './reducer';
 import { Action } from './reducer';
@@ -96,7 +96,8 @@ export const shouldAutoTrigger = (apiData: State, endpointKey: string) => {
 
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(
     bindings: { [propName in TPropNames]: string },
-    getParams?: GetParams<TPropNames>
+    getParams?: GetParams<TPropNames>,
+    configs?: { [propName in TPropNames]: Partial<EndpointConfig> }
 ) {
     // note: return type ComponentType<TChildProps> and ComponentClass<TChildProps> have been replaced with <any> because
     // these generics don't support the new feature of params array with array of Binding as a result
@@ -114,24 +115,51 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 this.fetchDataIfNeeded();
             }
 
-            componentDidUpdate(prevProps: WithApiDataProps, prevState: State) {
+            componentDidUpdate(prevProps: WithApiDataProps) {
                 // automatically fetch when parameters change or re-fetch when a request gets invalidated
                 Object.keys(bindings).forEach((bindingKey: TPropNames) => {
+                    const bindingConfig = configs?.[bindingKey];
+
                     if (Array.isArray(prevProps.params[bindingKey])) {
                         const paramsArray: EndpointParams[] = prevProps.params[bindingKey] as EndpointParams[];
                         paramsArray.forEach((params, index) => {
-                            if (shouldPerformRequest(
-                                { ...this.props as WithApiDataProps, params: { [bindingKey]: (this.props.params[bindingKey] as EndpointParams[])[index] } },
-                                { ...prevProps as WithApiDataProps, params: { [bindingKey]: params } },
-                                bindings,
-                                bindingKey
-                            )) {
-                                this.props.dispatch(performRequest(bindings[bindingKey], params, undefined, index.toString()));
+                            if (
+                                shouldPerformRequest(
+                                    {
+                                        ...(this.props as WithApiDataProps),
+                                        params: {
+                                            [bindingKey]: (this.props.params[bindingKey] as EndpointParams[])[index],
+                                        },
+                                    },
+                                    { ...(prevProps as WithApiDataProps), params: { [bindingKey]: params } },
+                                    bindings,
+                                    bindingKey
+                                )
+                            ) {
+                                this.props.dispatch(
+                                    performRequest(
+                                        bindings[bindingKey],
+                                        params,
+                                        undefined,
+                                        index.toString(),
+                                        undefined,
+                                        bindingConfig
+                                    )
+                                );
                             }
                         });
                     } else {
                         if (shouldPerformRequest(this.props, prevProps, bindings, bindingKey)) {
-                            this.props.dispatch(performRequest(bindings[bindingKey], this.props.params[bindingKey] as EndpointParams));
+                            this.props.dispatch(
+                                performRequest(
+                                    bindings[bindingKey],
+                                    this.props.params[bindingKey] as EndpointParams,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    bindingConfig
+                                )
+                            );
                         }
                     }
                 });
@@ -200,14 +228,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     if (Array.isArray(params[propName])) {
                         const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
                         addProps[propName] = paramsArray.map((propNameParams, index) =>
-                            this.getBinding(
-                                endpointKey,
-                                propNameParams,
-                                dispatch,
-                                propName,
-                                index.toString(),
-                                apiData
-                            )
+                            this.getBinding(endpointKey, propNameParams, dispatch, propName, index.toString(), apiData)
                         );
                     } else {
                         addProps[propName] = this.getBinding(
@@ -230,7 +251,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
         return connect((state: { apiData: State }, ownProps: TChildProps) => ({
             params:
                 typeof getParams === 'function' ? (getParams(ownProps, state) as Required<GetParams<TPropNames>>) : {},
-            apiData: state.apiData
+            apiData: state.apiData,
         }))(WithApiData);
     };
 }
