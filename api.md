@@ -316,6 +316,7 @@ Type: **String enum**
 - `perform` **(params?: [EndpointParams](#endpointparams), body?: any) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>**
   Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an Binding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original Binding and the resolved promise contain the result of the performed request.
 - `invalidateCache` **() => Promise&lt;void>** Manually trigger a cache invalidation of the endpoint with the current parameters.
+- `purge` **() => Promise&lt;void>** Clears the request and the retrieved data.
 - `getInstance` **(instanceId: string) => [Binding](#binding)** get an independent instance of this binding. This enables you to make multiple (possibly parallel) calls to the same endpoint while maintaining access to all of them.
 
 **Examples**
@@ -336,7 +337,8 @@ Perform actions on any configured endpoint. These actions do not need to be disp
 
 - `perform` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `body?` any, `instanceId?` string) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>** Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred to use [withApiData](#withapidata).
 - `invalidateCache` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => void** Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
-- `purgeAll()` **() => void** Clears the whole apiData redux store. Might be useful fore logout functions.
+- `purgeRequest` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => Promise&lt;void>** Clears the request and the retrieved data.
+- `purgeAll` **() => void** Clears the whole apiData redux store. Might be useful fore logout functions.
 a GET list request, which might need to include the newly created entity.
 
 ---
