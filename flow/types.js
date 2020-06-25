@@ -1,7 +1,6 @@
 // @flow
 
 import { type ActionCreator } from 'redux';
-import { type Actions } from './helpers/getActions';
 import { type State } from './reducer';
 
 
@@ -132,5 +131,13 @@ export interface Binding<T> {
         body?: any
     ) => Promise<Binding<T>>;
     invalidateCache: () => Promise<void>;
+    purge: () => Promise<void>;
     getInstance: (instanceId: string) => Binding<T>;
 }
+
+export type Actions = {
+    perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string) => Promise<Binding<any>>,
+    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void,
+    purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void,
+    purgeAll: () => void,
+};
