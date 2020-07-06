@@ -64,7 +64,7 @@ let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
-type PerformApiRequest = (
+type PerformRequest = (
     endpointKey: string,
     inputParams?: EndpointParams,
     body?: any,
@@ -78,7 +78,7 @@ const loadingPromises: {[requestKey: string]: Promise<Binding<any, any>> } = {};
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performRequest: PerformApiRequest = (
+export const performRequest: PerformRequest = (
     endpointKey: string,
     inputParams?: EndpointParams,
     body?: any,
@@ -135,7 +135,7 @@ export const performRequest: PerformApiRequest = (
         });
         
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
-        const promise = new Promise((resolve: (ApiDataBinding: Binding<any, any>) => void, reject: (ApiDataBinding: Binding<any, any>) => void) => {
+        const promise = new Promise((resolve: (binding: Binding<any, any>) => void, reject: (binding: Binding<any, any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;

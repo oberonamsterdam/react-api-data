@@ -44,3 +44,4 @@ export var getApiDataRequest = getRequest;
 export var configureApiData = configure;
 export var invalidateApiDataRequest = invalidateRequest;
 export var performApiDataRequest = performRequest;
+export var useRequestHandler = setRequestHandler;
