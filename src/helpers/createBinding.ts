@@ -9,6 +9,7 @@ import { performRequest } from '../actions/performRequest';
 import { invalidateRequest } from '../actions/invalidateRequest';
 import { getFailedData } from '../selectors/getFailedData';
 import { getLoadingState } from '../selectors/getLoadingState';
+import { purgeRequest } from '../actions/purgeRequest';
 
 type BindingInstances = {
     [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any, any>;
@@ -53,6 +54,7 @@ const createBinding = (
             return dispatch(performRequest(endpointKey, params, body, instanceId, bindingsStore));
         },
         invalidateCache: () => dispatch(invalidateRequest(endpointKey, params, instanceId)),
+        purge: () => dispatch(purgeRequest(endpointKey, params, instanceId)),
         getInstance: (newInstanceId: string) =>
             bindingsStore.getBinding(endpointKey, params, dispatch, newInstanceId, apiData),
     });

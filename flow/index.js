@@ -11,6 +11,8 @@ import { setRequestHandler } from './actions/performRequest';
 import { getRequest } from './selectors/getRequest';
 import { getResultData } from './selectors/getResultData';
 import { getEntity } from './selectors/getEntity';
+import useApiData from './useApiData';
+import useActions from './useActions';
 export type {
     NetworkStatus,
     NormalizeResult,
@@ -23,6 +25,7 @@ export type {
     ConfigBeforeProps,
     ConfigAfterProps,
     Binding,
+    Actions,
 } from './types';
 
 export {
@@ -37,6 +40,8 @@ export {
     getEntity,
     reducer,
     purge,
+    useApiData,
+    useActions,
 };
 
 export var purgeApiData = purge;
