@@ -8,7 +8,7 @@
     "test-watch": "jest --watch",
     "build": "npm run test && npm run build:clean && npm run build:lib && npm run build:flow",
     "build:clean": "rimraf lib/",
-    "build:lib": "tsc",
+    "build:lib": "npx tsc",
     "build:flow": "flow example && flow-copy-source flow lib",
     "build:docs": "documentation build lib/index.js -f md > api.md",
     "precommit": "tslint --project .",

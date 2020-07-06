@@ -7,10 +7,12 @@ import { getResultData } from '../selectors/getResultData';
 import { ThunkDispatch } from 'redux-thunk';
 import { performRequest } from '../actions/performRequest';
 import { invalidateRequest } from '../actions/invalidateRequest';
+import { getFailedData } from '../selectors/getFailedData';
+import { getLoadingState } from '../selectors/getLoadingState';
 import { purgeRequest } from '../actions/purgeRequest';
 
 type BindingInstances = {
-    [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any>;
+    [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any, any>;
 };
 
 export class BindingsStore {
@@ -38,11 +40,13 @@ const createBinding = (
     dispatch: ThunkDispatch<{ apiData: State; }, void, Action>,
     bindingsStore: BindingsStore,
     instanceId: string = '',
-): ((apiData: State, request?: DataRequest) => Binding<any>) => {
+): ((apiData: State, request?: DataRequest) => Binding<any, any>) => {
     let params: EndpointParams = bindingParams;
 
     return (apiData: State, request?: DataRequest) => ({
         data: getResultData(apiData, endpointKey, params, instanceId),
+        dataFailed: getFailedData(apiData, endpointKey, params, instanceId),
+        loading: getLoadingState(apiData, endpointKey, params, instanceId),
         request:
             request || getRequest(apiData, endpointKey, params, instanceId) || createRequest(endpointKey),
         perform: (performParams?: EndpointParams, body?: any) => {

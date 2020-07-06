@@ -88,9 +88,7 @@ describe('performRequest', () => {
 
     test('It gets an error message when config is empty', () => {
         const state = defaultState;
-        return expect(performRequest('postData/', {}, { data: 'json' })(dispatch, () => state)).rejects.toBe(
-            'apiData.performRequest: no config with key postData/ found!'
-        );
+        return expect(() => performRequest('postData/', {}, { data: 'json' })(dispatch, () => state)).toThrowError('apiData.performRequest: no config with key postData/ found!');
     });
 
     test('The function resolves when request is loading with result data', () => {
@@ -173,6 +171,7 @@ describe('performRequest', () => {
     });
 
     test('The function resolves with custom response and calls success', async () => {
+        expect.assertions(1);
         const state = { apiData: getState('postData', true, {}, 'ready', { method: 'POST' }) };
         mockResponse(response1);
         await performRequest('postData', {}, { data: 'json' })(dispatch, () => state);
@@ -182,19 +181,22 @@ describe('performRequest', () => {
         );
     });
 
-    test('it calls Fail when ok = false', async () => {
+    test('it calls fail when ok = false', async () => {
+        expect.assertions(1);
         const requestKey = getRequestKey('postData');
         const state = { apiData: getState('postData', true, {}, 'ready', { method: 'POST' }) };
         mockResponse(response2);
-        await performRequest('postData', {}, { data: 'json' })(dispatch, () => state);
-        // @ts-ignore
-        return expect(dispatch).toHaveBeenCalledWith(fail(requestKey, response2.body, response2.response));
+        performRequest('postData', {}, { data: 'json' })(dispatch, () => state).catch(() => {
+            // @ts-ignore
+            return expect(dispatch).toHaveBeenCalledWith(fail(requestKey, response2.body, response2.response));
+        });
     });
 
     test('The function resolves with cacheDuration but does not trigger the request function when the cacheDuration is not outdated yet', async () => {
+        expect.assertions(1);
         const state = { apiData: getState('getData', true, {}, 'success', { method: 'GET', cacheDuration: 1000 }) };
         mockResponse(response1);
-        await performRequest('getData', {}, { data: 'json' })(dispatch, () => state);
+        await performRequest('getData', {}, {data: 'json'})(dispatch, () => state);
         const requestKey = getRequestKey('getData');
         return expect(dispatch).not.toHaveBeenCalledWith(
             // @ts-ignore
@@ -204,6 +206,7 @@ describe('performRequest', () => {
     });
 
     test('should call beforeSuccess from endpointConfig and globalConfig', async () => {
+        expect.assertions(3);
         const postBody = { data: 'json' };
         const beforePropsMatch = {
             endpointKey: 'getData',
@@ -258,6 +261,7 @@ describe('performRequest', () => {
     });
 
     test('beforeSuccess should be able to turn success into fail', async () => {
+        expect.assertions(2);
         const beforeSuccess = (resp: HandledResponse) => ({
             response: { ...resp.response, ok: false },
             body: resp.body,
@@ -266,16 +270,18 @@ describe('performRequest', () => {
             apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeSuccess }),
         };
         mockResponse(response3);
-        await performRequest('getData', {}, { data: 'json' })(dispatch, () => state);
-        expect(dispatch)
-            .toHaveBeenCalledWith(
-                // @ts-ignore fake Response
-                fail(getRequestKey('getData'), response3.body, { ...response3.response, ok: false })
-            );
-        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_SUCCESS' }));
+        performRequest('getData', {}, { data: 'json' })(dispatch, () => state).catch(() => {
+            expect(dispatch)
+                .toHaveBeenCalledWith(
+                    // @ts-ignore fake Response
+                    fail(getRequestKey('getData'), response3.body, { ...response3.response, ok: false })
+                );
+            expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_SUCCESS' }));
+        });
     });
 
     test('should call beforeFailed from endpointConfig and globalConfig', async () => {
+        expect.assertions(3);
         const postBody = { data: 'json' };
         const beforePropsMatch = {
             endpointKey: 'getData',
@@ -316,18 +322,20 @@ describe('performRequest', () => {
             ),
         };
         mockResponse(response2);
-        await (performRequest('getData', {}, { data: 'json' })(dispatch, () => state));
-        return expect(dispatch).toHaveBeenCalledWith(
-            fail(
-                getRequestKey('getData'),
-                { ...response2.body, endpoint: true, global: true },
-                // @ts-ignore fake Response object
-                response2.response,
-            )
-        );
+        performRequest('getData', {}, {data: 'json'})(dispatch, () => state).catch(() => {
+            expect(dispatch).toHaveBeenCalledWith(
+                fail(
+                    getRequestKey('getData'),
+                    { ...response2.body, endpoint: true, global: true },
+                    // @ts-ignore fake Response object
+                    response2.response
+                )
+            );
+        });
     });
 
     test('beforeFailed should be able to turn fail into success', async () => {
+        expect.assertions(2);
         const beforeFailed = (resp: HandledResponse) => ({
             response: { ...resp.response, ok: true },
             body: resp.body,
@@ -336,18 +344,18 @@ describe('performRequest', () => {
             apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeFailed }),
         };
         mockResponse(response2);
-        await performRequest('getData', {}, { data: 'json' })(dispatch, () => state);
-        expect(dispatch)
-            .toHaveBeenCalledWith(success(
-                getRequestKey('getData'),
-                state.apiData.endpointConfig,
-                // @ts-ignore fake Response
-                { ...response2.response, ok: true },
-                response2.body
-            )
-        );
-
-        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_FAIL' }));
+        performRequest('getData', {}, {data: 'json'})(dispatch, () => state).then(() => {
+            expect(dispatch).toHaveBeenCalledWith(
+                success(
+                    getRequestKey('getData'),
+                    state.apiData.endpointConfig,
+                    // @ts-ignore fake Response
+                    { ...response2.response, ok: true },
+                    response2.body
+                )
+            );
+            expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_FAIL' }));
+        });
     });
 
     test('should call afterSuccess if set in config', async () => {
@@ -401,6 +409,7 @@ describe('performRequest', () => {
     });
 
     test('should dispatch a failure when a timeout gets exceeded', async () => {
+        expect.assertions(1);
         const state = {
             apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: -1, timeout: 2900 }),
         };
@@ -409,20 +418,23 @@ describe('performRequest', () => {
             jest.advanceTimersByTime(3000);
             return Promise.resolve(response1);
         });
-        await performRequest('getData', {}, { data: 'json' })(dispatch, () => state);
-        const error = new Error('Timeout');
-        const requestKey = getRequestKey('getData');
-        expect(dispatch).toHaveBeenCalledWith(fail(requestKey, error));
+        performRequest('getData', {}, {data: 'json'})(dispatch, () => state).catch(() => {
+            const error = new Error('Timeout');
+            const requestKey = getRequestKey('getData');
+            expect(dispatch).toHaveBeenCalledWith(fail(requestKey, error));
+        });
+
     });
 
     test('The function resolves with a result argument', () => {
+        expect.assertions(4);
         const state = { apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 50000 }) };
         const result = {
             data: getResultData(state.apiData, 'getData', {}),
             request: getRequest(state.apiData, 'getData', {}),
             perform: (myParams: EndpointParams, body: any) => dispatch(performRequest('getData', myParams, body))
         };
-        return performRequest(
+        performRequest(
             'getData',
             {},
             { data: 'json' }
@@ -435,6 +447,7 @@ describe('performRequest', () => {
     });
 
     test('The function resolves with a result argument for an instance', () => {
+        expect.assertions(4);
         const state = {
             apiData: getState(
                 'getData',
@@ -452,7 +465,7 @@ describe('performRequest', () => {
             request: getRequest(state.apiData, 'getData', {}, 'primary'),
             perform: (myParams: EndpointParams, body: any) => dispatch(performRequest('getData', myParams, body))
         };
-        return performRequest(
+        performRequest(
             'getData',
             {},
             { data: 'json' },
@@ -466,6 +479,7 @@ describe('performRequest', () => {
     });
 
     test('The function resolves with a beforeFailed argument and triggers fail with the beforeFailed response', async () => {
+        expect.assertions(1);
         const beforeFailed = () => {
             return response2;
         };
@@ -474,14 +488,16 @@ describe('performRequest', () => {
             apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1, beforeFailed }),
         };
         mockResponse(response2);
-        await performRequest('getData', {}, { data: 'json' })(dispatch, () => state);
-        return expect(dispatch).toHaveBeenCalledWith(
-            // @ts-ignore
-            fail(getRequestKey('getData'), response2.body, response2.response)
-        );
+        performRequest('getData', {}, { data: 'json' })(dispatch, () => state).catch(() => {
+            return expect(dispatch).toHaveBeenCalledWith(
+                // @ts-ignore
+                fail(getRequestKey('getData'), response2.body, response2.response)
+            );
+        });
     });
 
     test('should call afterFailed if set in config', async () => {
+        expect.assertions(1);
         const afterFailed = jest.fn();
         const postBody = { data: 'json' };
         const state = {
@@ -489,22 +505,24 @@ describe('performRequest', () => {
         };
         const getStateFn = () => state;
         mockResponse(response2);
-        await performRequest('getData', {}, postBody)(dispatch, getStateFn);
-        const afterProps = {
-            endpointKey: 'getData',
-            request: expect.any(Object),
-            requestBody: postBody,
-            resultData: undefined, // result data is not generated in our mock getState function
-            dispatch,
-            getState: getStateFn,
-            actions: expect.any(Object),
-        };
-        return expect(afterFailed).toHaveBeenCalledWith(afterProps);
+        performRequest('getData', {}, postBody)(dispatch, getStateFn).catch(() => {
+            const afterProps = {
+                endpointKey: 'getData',
+                request: expect.any(Object),
+                requestBody: postBody,
+                resultData: undefined, // result data is not generated in our mock getState function
+                dispatch,
+                getState: getStateFn,
+                actions: expect.any(Object),
+            };
+            return expect(afterFailed).toHaveBeenCalledWith(afterProps);
+        });
     });
 
     /* TEST CASES FOR DEFAULT PARAMS  */
 
     test('should use the default param set in the config', () => {
+        expect.assertions(1);
         const defaultParams = {
             language: 'nl',
         };
@@ -529,6 +547,7 @@ describe('performRequest', () => {
     });
 
     test('param set in the URL should overwrite the default param set in the config', () => {
+        expect.assertions(1);
         const defaultParams = {
             language: 'nl',
         };
@@ -563,6 +582,7 @@ describe('performRequest', () => {
     });
 
     test('should use multiple default params set in the config', () => {
+        expect.assertions(1);
         const defaultParams = {
             language: 'nl',
             test: 'b',
@@ -590,6 +610,7 @@ describe('performRequest', () => {
     });
 
     test('params set in the URL should overwrite the default params set in the config', () => {
+        expect.assertions(1);
         const defaultParams = {
             language: 'nl',
             test: 'b',
@@ -626,6 +647,7 @@ describe('performRequest', () => {
     });
 
     test('params set in the URL should only overwrite the matching default params set in the config', () => {
+        expect.assertions(1);
         const defaultParams = {
             language: 'nl',
             test: 'b',

@@ -123,16 +123,18 @@ export interface ConfigAfterProps {
 users: Binding<Array<User>>
 }
  */
-export interface Binding<T> {
+export interface Binding<T, F> {
     data?: T;
+    dataFailed?: F,
+    loading: boolean,
     request: DataRequest;
     perform: (
         params?: EndpointParams | void,
         body?: any
-    ) => Promise<Binding<T>>;
+    ) => Promise<Binding<T, F>>;
     invalidateCache: () => Promise<void>;
     purge: () => Promise<void>;
-    getInstance: (instanceId: string) => Binding<T>;
+    getInstance: (instanceId: string) => Binding<T, F>;
 }
 
 export type Actions = {

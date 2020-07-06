@@ -6,10 +6,10 @@
   - [`useActions()`](#useactions)
 - [Config](#config)
   - [`configure()`](#configure)
-  - [`useRequestHandler()`](#userequesthandler)
+  - [`setRequestHandler()`](#setrequesthandler)
 - [Redux Actions](#redux-actions)
   - [`afterRehydrate()`](#afterrehydrate)
-  - [`performRequest()` (Deprecated)](#performapirequest-deprecated)
+  - [`performRequest()` (Deprecated)](#performrequest-deprecated)
   - [`invalidateRequest()` (Deprecated)](#invalidaterequest-deprecated)
 - [Selectors](#selectors)
   - [`getEntity()`](#getentity)
@@ -111,7 +111,7 @@ withApiData.
 
 ---
 
-### `useRequestHandler()`
+### `setRequestHandler()`
 
 Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
 [RequestHandler](#requesthandler) interface.
@@ -141,7 +141,7 @@ to use [withApiData](#withapidata).
 
 **Deprecated**
 
-The performRequest Action has been deprecated. It is recommended to use the perform action in the [Binding](#binding) or the [Action](#action) perform, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
+The performRequest Action has been deprecated. It is recommended to use the perform action in the [Binding](#binding) or the [Action](#action) perform, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#endpointconfig) and [afterFailed](#endpointconfig) events in the [endpoint configuration](#endpointconfig).
 
 **Parameters**
 
@@ -163,7 +163,7 @@ a GET list request, which might need to include the newly created entity.
 
 **Deprecated**
 
-The invalidateRequest Action has been deprecated. It is recommended to use the invalidateCache action in the [Binding](#binding) or the [Action](#action) invalidateCache, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#EndpointConfig) and [afterFailed](#EndpointConfig) events in the [endpoint configuration](##EndpointConfig).
+The invalidateRequest Action has been deprecated. It is recommended to use the invalidateCache action in the [Binding](#binding) or the [Action](#action) invalidateCache, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#endpointconfig) and [afterFailed](#endpointconfig) events in the [endpoint configuration](#endpointconfig).
 
 **Parameters**
 
@@ -311,7 +311,9 @@ Type: **String enum**
 
 **Properties**
 
-- `data` **any** The result data of your request, or undefined if your request has not completed or has no response body.
+- `data` **any** The result data of your request, or undefined if your request has not completed, has failed, or has no response body.
+- `loading`**boolean** Returns a boolean whether the binding is currently loading or not.
+- `dataFailed` **any** Generic type which returns the failed state returnd by the API, undefined when call is not completed or succeeded.
 - `request` **[Request](#request)** 
 - `perform` **(params?: [EndpointParams](#endpointparams), body?: any) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>**
   Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an Binding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original Binding and the resolved promise contain the result of the performed request.
