@@ -1,8 +1,8 @@
-import { purgeAllApiData } from './purgeAllApiData';
+import { purgeAll } from './purgeAll';
 
 describe('PurgeApiData action creator', () => {
     test('should set up PurgeAllApiDataAction object', () => {
-        const action = purgeAllApiData();
+        const action = purgeAll();
 
         expect(action).toEqual({
             type: 'PURGE_ALL_API_DATA',

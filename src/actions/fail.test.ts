@@ -1,8 +1,8 @@
-import { apiDataFail } from './apiDataFail';
+import { fail } from './fail';
 
-describe('ApiDataFail action creator', () => {
-    test('should set up the ApiDataFail action object without a response', () => {
-        const action = apiDataFail('getData', { data: 'test-data' }, undefined);
+describe('Fail action creator', () => {
+    test('should set up the Fail action object without a response', () => {
+        const action = fail('getData', { data: 'test-data' }, undefined);
 
         expect(action).toEqual({
             type: 'API_DATA_FAIL',
@@ -16,7 +16,7 @@ describe('ApiDataFail action creator', () => {
         });
     });
 
-    test('should set up the ApiDataFail action object with all parameter values', () => {
+    test('should set up the Fail action object with all parameter values', () => {
         const response = {
             ok: false,
             redirected: false,
@@ -26,7 +26,7 @@ describe('ApiDataFail action creator', () => {
         };
 
         // @ts-ignore
-        const action = apiDataFail('getData', { data: 'test-data' }, response);
+        const action = fail('getData', {data: 'test-data'}, response);
 
         expect(action).toEqual({
             type: 'API_DATA_FAIL',

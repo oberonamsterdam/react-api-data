@@ -1,5 +1,6 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
+import { NetworkStatus, Method, EndpointParams } from '../types';
 
 export const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
@@ -14,13 +15,14 @@ export const setPostHeaders = (headers: any) => ({
 export const getState: any = (
     binding: string,
     hasRequest?: boolean,
-    params?: any,
-    networkStatus?: string,
-    method?: string,
+    params?: { [bindingKey: string]: EndpointParams },
+    networkStatus?: NetworkStatus,
+    method?: Method,
     cacheDuration?: number,
     beforeSuccess?: () => void,
     afterSuccess?: () => void,
-    timeout?: number
+    timeout?: number,
+    defaultParams?: any
 ) => ({
     globalConfig: {},
     endpointConfig: {
@@ -33,12 +35,15 @@ export const getState: any = (
             beforeSuccess,
             afterSuccess,
             timeout,
+            defaultParams: {
+                language: 'nl'
+            }
         },
         getMoreData: {},
     },
     requests: hasRequest
         ? {
-              [getRequestKey(binding, params[binding])]: {
+              [getRequestKey(binding, params?.[binding] ?? {})]: {
                   networkStatus,
                   lastCall: 10,
                   duration: 0,
@@ -86,7 +91,7 @@ const getRequests = (bindings: ConfigureBinding[]) =>
         return obj;
     }, {});
 
-export const setMockedStoreConfig = (bindings: ConfigureBinding[]): ApiDataState => ({
+export const setMockedStoreConfig = (bindings: ConfigureBinding[]): State => ({
     globalConfig: {},
     endpointConfig: getEndpointConfig(bindings),
     requests: getRequests(bindings),

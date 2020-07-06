@@ -1,4 +1,4 @@
-import { shouldPerformApiRequest, shouldAutoTrigger } from './withApiData';
+import { shouldPerformRequest, shouldAutoTrigger } from './withApiData';
 import getState from './mocks/mockState';
 import { Method } from './types';
 
@@ -24,9 +24,9 @@ const emptyParams = {
 
 const endpoint = 'getData';
 
-describe('shouldPerformApiRequest', () => {
+describe('shouldPerformRequest', () => {
     test('The request status or params has been changed, binding are set correctly and status is ready', () => {
-        const testOne = shouldPerformApiRequest(
+        const testOne = shouldPerformRequest(
             getProps(endpoint, true, {}, 'ready', { autoTrigger: true }),
             getProps(endpoint, true, {}, 'success', { autoTrigger: true }),
             bindings,
@@ -35,7 +35,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testOne).toBe(true);
     });
     test('The request status or params has been changed, binding are set correctly and status is ready, but method is POST so autoTrigger is false', () => {
-        const testOne = shouldPerformApiRequest(
+        const testOne = shouldPerformRequest(
             getProps(endpoint, true, {}, 'ready', { method: 'POST' }),
             getProps(endpoint, true, {}, 'success', { method: 'POST' }),
             bindings,
@@ -44,7 +44,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testOne).toBe(false);
     });
     test('The request status or params has been changed, or bindings are set correctly and status is not changed (should be false)', () => {
-        const testTwo = shouldPerformApiRequest(
+        const testTwo = shouldPerformRequest(
             getProps(endpoint, true, {}, 'success', { method: 'GET' }),
             getProps(endpoint, true, {}, 'success', { method: 'GET' }),
             bindings,
@@ -53,7 +53,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testTwo).toBe(false);
     });
     test('The request status or params has been changed, when new params are changed (should perform)', () => {
-        const testTree = shouldPerformApiRequest(
+        const testTree = shouldPerformRequest(
             getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { method: 'GET' }),
             getProps(endpoint, true, { getData: { two: 'two' } }, 'success'),
             bindings,
@@ -62,7 +62,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testTree).toBe(true);
     });
     test('The request status or params has been changed, when params are set and status has changed', () => {
-        const testFour = shouldPerformApiRequest(
+        const testFour = shouldPerformRequest(
             getProps(endpoint, true, { getData: { one: 'one' } }, 'ready', { autoTrigger: true }),
             getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { autoTrigger: true }),
             bindings,
@@ -71,7 +71,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testFour).toBe(true);
     });
     test("The request status or params has been changed, when params are set but status hasn't changed", () => {
-        const testFive = shouldPerformApiRequest(
+        const testFive = shouldPerformRequest(
             getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { method: 'GET' }),
             getProps(endpoint, true, { getData: { one: 'one' } }, 'success', { method: 'GET' }),
             bindings,
@@ -80,7 +80,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testFive).toBe(false);
     });
     test('The request status or params has been changed, when status is undefined', () => {
-        const testSix = shouldPerformApiRequest(
+        const testSix = shouldPerformRequest(
             getProps(endpoint, true, { getData: { one: 'one' } }, 'ready', { method: 'GET' }),
             getProps(endpoint, true, {}),
             bindings,
@@ -89,7 +89,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testSix).toBe(true);
     });
     test('The request status or params has been changed, when config is undefined an old request is undefined', () => {
-        const testSeven = shouldPerformApiRequest(
+        const testSeven = shouldPerformRequest(
             getProps(endpoint, true, { getData: { one: 'one' } }),
             getProps(endpoint, false, {}, 'ready'),
             bindings,
@@ -98,7 +98,7 @@ describe('shouldPerformApiRequest', () => {
         expect(testSeven).toBe(false);
     });
     test('The request status or params has been changed, when config is undefined and new config is created', () => {
-        const testEight = shouldPerformApiRequest(
+        const testEight = shouldPerformRequest(
             getProps(endpoint, false, {}),
             getProps(endpoint, true, { getData: {} }, 'ready', { method: 'GET' }),
             bindings,

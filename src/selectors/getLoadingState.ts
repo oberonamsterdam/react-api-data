@@ -1,12 +1,8 @@
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 import { EndpointParams } from '../types';
 import { getApiDataRequest } from './getApiDataRequest';
 
-/**
- * Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
- * bound when using {@link withApiData}.
- */
-export const getLoadingState = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams, instanceId: string = ''): boolean => {
+export const getLoadingState = (apiDataState: State, endpointKey: string, params?: EndpointParams, instanceId: string = ''): boolean => {
     const config = apiDataState.endpointConfig[endpointKey];
 
     if (!config) {

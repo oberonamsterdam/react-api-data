@@ -1,7 +1,7 @@
 // @flow
 
-export interface ApiDataAfterRehydrateAction {
+export interface AfterRehydrateAction {
   type: 'API_DATA_AFTER_REHYDRATE';
 }
 
-declare export var afterRehydrate: () => ApiDataAfterRehydrateAction;
+declare export var afterRehydrate: () => AfterRehydrateAction;

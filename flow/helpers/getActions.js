@@ -1,7 +1,7 @@
 // @flow
-import { type EndpointParams, type ApiDataBinding } from '..';
+import { type EndpointParams, type Binding } from '..';
 
 export type Actions = {
     invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void,
-    perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string) => Promise<ApiDataBinding<any>>,
+    perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string) => Promise<Binding<any>>,
 };

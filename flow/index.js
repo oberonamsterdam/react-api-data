@@ -1,14 +1,14 @@
 // @flow
 
 import withApiData from './withApiData';
-import reducer, { type ApiDataState } from './reducer';
-import { configureApiData } from './actions/configureApiData';
-import { performApiRequest } from './actions/performApiDataRequest';
-import { invalidateApiDataRequest } from './actions/invalidateApiDataRequest';
+import reducer, { type State } from './reducer';
+import { configure } from './actions/configure';
+import { performRequest } from './actions/performRequest';
+import { invalidateRequest } from './actions/invalidateRequest';
 import { afterRehydrate } from './actions/afterRehydrate';
-import { purgeApiData } from './actions/purgeApiData';
-import { setRequestHandler } from './actions/performApiDataRequest';
-import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { purge } from './actions/purge';
+import { setRequestHandler } from './actions/performRequest';
+import { getRequest } from './selectors/getRequest';
 import { getResultData } from './selectors/getResultData';
 import { getEntity } from './selectors/getEntity';
 export type {
@@ -16,25 +16,31 @@ export type {
     NormalizeResult,
     NormalizedData,
     EndpointParams,
-    ApiDataRequest,
-    ApiDataGlobalConfig,
+    DataRequest,
+    GlobalConfig,
     Method,
-    ApiDataEndpointConfig,
-    ApiDataConfigBeforeProps,
-    ApiDataConfigAfterProps,
-    ApiDataBinding,
+    EndpointConfig,
+    ConfigBeforeProps,
+    ConfigAfterProps,
+    Binding,
 } from './types';
 
 export {
     withApiData,
-    configureApiData,
-    performApiRequest,
-    invalidateApiDataRequest,
+    configure,
+    performRequest,
+    invalidateRequest,
     afterRehydrate,
     setRequestHandler,
-    getApiDataRequest,
+    getRequest,
     getResultData,
     getEntity,
     reducer,
-    purgeApiData,
+    purge,
 };
+
+export var purgeApiData = purge;
+export var getApiDataRequest = getRequest;
+export var configureApiData = configure;
+export var invalidateApiDataRequest = invalidateRequest;
+export var performApiDataRequest = performRequest;

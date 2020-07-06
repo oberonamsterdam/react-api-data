@@ -1,22 +1,22 @@
 import reducer, {
     addEntities,
-    ApiDataState,
-    ClearApiDataAction,
+    State,
+    ClearAction,
     defaultState,
-    FetchApiDataAction,
-    recoverNetworkStatuses,
+    FetchAction,
+    recoverNetworkStatuses
 } from './reducer';
 import { setPostHeaders, setPostRequestProperties } from './mocks/mockActions';
-import { ConfigureApiDataAction } from './actions/configureApiData';
+import { ConfigureAction } from './actions/configure';
 import { getRequestKey } from './helpers/getRequestKey';
-import { ApiDataSuccessAction } from './actions/apiDataSuccess';
-import { ApiDataFailAction } from './actions/apiDataFail';
-import { InvalidateApiDataRequestAction } from './actions/invalidateApiDataRequest';
-import { PurgeAllApiDataAction } from './actions/purgeAllApiData';
-import { ApiDataAfterRehydrateAction } from './actions/afterRehydrate';
+import { SuccessAction } from './actions/success';
+import { FailAction } from './actions/fail';
+import { InvalidateRequestAction } from './actions/invalidateRequest';
+import { PurgeAllAction } from './actions/purgeAll';
+import { AfterRehydrateAction } from './actions/afterRehydrate';
 import { schema } from 'normalizr';
 import { purgeRequest } from './actions/purgeRequest';
-import { getApiDataRequest } from './selectors/getApiDataRequest';
+import { getRequest } from './selectors/getRequest';
 
 const getMockRequest = (requestKey: string) => ({
     [requestKey]: {
@@ -85,7 +85,7 @@ test('recoverNetworkStatuses should return a new requests map with loading state
 
 const postDataSchema = new schema.Entity('postData');
 
-const initialState: ApiDataState = {
+const initialState: State = {
     globalConfig: {
         setHeaders: setPostHeaders,
         setRequestProperties: setPostRequestProperties,
@@ -108,7 +108,7 @@ const initialState: ApiDataState = {
 
 describe('CONFIGURE_API_DATA', () => {
     test('initial state gets configured correctly', () => {
-        const action: ConfigureApiDataAction = {
+        const action: ConfigureAction = {
             type: 'CONFIGURE_API_DATA',
             payload: {
                 globalConfig: {
@@ -133,7 +133,7 @@ describe('CONFIGURE_API_DATA', () => {
     });
 });
 
-const updatedState: ApiDataState = {
+const updatedState: State = {
     ...initialState,
     requests: {
         [getRequestKey('postData')]: {
@@ -149,7 +149,7 @@ const updatedState: ApiDataState = {
 describe('FETCH_API_DATA', () => {
     test('new stat is correct', () => {
         const params = { id: 'one' };
-        const action: FetchApiDataAction = {
+        const action: FetchAction = {
             type: 'FETCH_API_DATA',
             payload: {
                 endpointKey: 'getData',
@@ -186,7 +186,7 @@ describe('API_DATA_SUCCESS', () => {
     test('new state is correct', () => {
         const requestKey = getRequestKey('postData');
         // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
-        const action: ApiDataSuccessAction = {
+        const action: SuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
                 requestKey,
@@ -231,7 +231,7 @@ describe('API_DATA_SUCCESS', () => {
 describe('API_DATA_SUCCESS with payload entity', () => {
     test('new state is correct', () => {
         // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
-        const action: ApiDataSuccessAction = {
+        const action: SuccessAction = {
             type: 'API_DATA_SUCCESS',
             payload: {
                 requestKey: getRequestKey('postData'),
@@ -280,12 +280,13 @@ describe('API_DATA_SUCCESS with payload entity', () => {
 
 describe('API_DATA_FAIL', () => {
     test('new state is correct', () => {
-        const action: ApiDataFailAction = {
+        const action: FailAction = {
             type: 'API_DATA_FAIL',
             payload: {
                 requestKey: getRequestKey('postData'),
                 // @ts-ignore
                 response: {
+                    // @ts-ignore
                     body: { data: 'json', extraData: 'moreJson' },
                     ok: true,
                     redirected: false,
@@ -321,7 +322,7 @@ describe('API_DATA_FAIL', () => {
     });
 });
 
-const invalidateAbleState: ApiDataState = {
+const invalidateAbleState: State = {
     ...initialState,
     requests: {
         [getRequestKey('postData')]: {
@@ -336,7 +337,7 @@ const invalidateAbleState: ApiDataState = {
 
 describe('INVALIDATE_API_DATA_REQUEST', () => {
     test('new state is correct', () => {
-        const action: InvalidateApiDataRequestAction = {
+        const action: InvalidateRequestAction = {
             type: 'INVALIDATE_API_DATA_REQUEST',
             payload: {
                 requestKey: getRequestKey('postData'),
@@ -363,7 +364,7 @@ describe('PURGE_API_DATA_REQUEST', () => {
     test('new state is correct', () => {
         const getRequestKeys = [getRequestKey('A'), getRequestKey('B', { paramA: 'a' }), getRequestKey('B')];
 
-        const purgeState: ApiDataState = {
+        const purgeState: State = {
             ...initialState,
             // @ts-ignore struggle faking the Response object from fetch. For test it is sufficient like this.
             requests: {
@@ -374,23 +375,23 @@ describe('PURGE_API_DATA_REQUEST', () => {
         };
 
         let newState = reducer(purgeState, purgeRequest('A'));
-        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
-        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
-        expect(getApiDataRequest(newState, 'B')).toEqual(purgeState.requests[getRequestKeys[2]]);
+        expect(getRequest(newState, 'A')).toBeUndefined();
+        expect(getRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
+        expect(getRequest(newState, 'B')).toEqual(purgeState.requests[getRequestKeys[2]]);
         newState = reducer(newState, purgeRequest('B'));
-        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
-        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
-        expect(getApiDataRequest(newState, 'B')).toBeUndefined();
+        expect(getRequest(newState, 'A')).toBeUndefined();
+        expect(getRequest(newState, 'B', { paramA: 'a' })).toEqual(purgeState.requests[getRequestKeys[1]]);
+        expect(getRequest(newState, 'B')).toBeUndefined();
         newState = reducer(newState, purgeRequest('B', { paramA: 'a' }));
-        expect(getApiDataRequest(newState, 'A')).toBeUndefined();
-        expect(getApiDataRequest(newState, 'B', { paramA: 'a' })).toBeUndefined();
-        expect(getApiDataRequest(newState, 'B')).toBeUndefined();
+        expect(getRequest(newState, 'A')).toBeUndefined();
+        expect(getRequest(newState, 'B', { paramA: 'a' })).toBeUndefined();
+        expect(getRequest(newState, 'B')).toBeUndefined();
     });
 });
 
 describe('CLEAR_API_DATA', () => {
     test('new state is correct', () => {
-        const action: ClearApiDataAction = {
+        const action: ClearAction = {
             type: 'CLEAR_API_DATA',
         };
 
@@ -400,7 +401,7 @@ describe('CLEAR_API_DATA', () => {
 
 describe('PURGE_ALL_API_DATA', () => {
     test('new state is correct', () => {
-        const action: PurgeAllApiDataAction = {
+        const action: PurgeAllAction = {
             type: 'PURGE_ALL_API_DATA',
         };
 
@@ -414,7 +415,7 @@ describe('PURGE_ALL_API_DATA', () => {
 
 describe('API_DATA_AFTER_REHYDRATE', () => {
     test('new state is correct', () => {
-        const action: ApiDataAfterRehydrateAction = {
+        const action: AfterRehydrateAction = {
             type: 'API_DATA_AFTER_REHYDRATE',
         };
 

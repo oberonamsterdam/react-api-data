@@ -1,12 +1,12 @@
-import { ApiDataState } from '../reducer';
+import { State } from '../reducer';
 import { EndpointParams } from '../types';
 import { getApiDataRequest } from './getApiDataRequest';
 
 /**
- * Get the de-normalized result data of an endpoint, or undefined if not (yet) available. This value is automatically
+ * Get the result data of a failed endpoint, or undefined if the request did not fail. This value is automatically
  * bound when using {@link withApiData}.
  */
-export const getFailedData = (apiDataState: ApiDataState, endpointKey: string, params?: EndpointParams, instanceId: string = ''): any | any[] | void => {
+export const getFailedData = (apiDataState: State, endpointKey: string, params?: EndpointParams, instanceId: string = ''): any | any[] | void => {
     const config = apiDataState.endpointConfig[endpointKey];
 
     if (!config) {

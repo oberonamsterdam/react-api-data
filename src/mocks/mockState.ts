@@ -1,5 +1,5 @@
 import { getRequestKey } from '../helpers/getRequestKey';
-import { ApiDataEndpointConfig, ApiDataGlobalConfig } from '../types';
+import { EndpointConfig, GlobalConfig, NetworkStatus, EndpointParams } from '../types';
 
 const setPostRequestProperties = (requestProperties: any) => ({
     ...requestProperties,
@@ -14,10 +14,10 @@ const setPostHeaders = (headers: any) => ({
 export default (
     binding: string,
     hasRequest?: boolean,
-    params?: any,
-    networkStatus?: any,
-    config: Partial<ApiDataEndpointConfig> = {},
-    globalConfig: Partial<ApiDataGlobalConfig> = {},
+    params?: { [bindingKey: string]: EndpointParams },
+    networkStatus?: NetworkStatus,
+    config: Partial<EndpointConfig> = {},
+    globalConfig: Partial<GlobalConfig> = {},
     lastCall = Date.now(),
     instanceId = ''
 ): any => ({
@@ -33,7 +33,7 @@ export default (
     },
     requests: hasRequest
         ? {
-              [getRequestKey(binding, params[binding], instanceId)]: {
+              [getRequestKey(binding, params?.[binding] ?? {}, instanceId)]: {
                   networkStatus,
                   lastCall,
                   duration: 0,
