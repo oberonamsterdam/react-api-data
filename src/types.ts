@@ -151,11 +151,11 @@ export interface Binding<T> {
     request: DataRequest;
     perform: (params?: EndpointParams, body?: any) => Promise<Binding<T>>;
     invalidateCache: () => void;
+    purge: () => void;
     getInstance: (instanceId: string) => Binding<T>;
 }
 
 export interface Actions {
-    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
     perform: (
         endpointKey: string,
         params?: EndpointParams,
@@ -163,5 +163,7 @@ export interface Actions {
         instanceId?: string,
         bindingsStore?: BindingsStore
     ) => Promise<Binding<any>>;
+    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
+    purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
     purgeAll: () => void;
 }

@@ -7,6 +7,7 @@ import { getResultData } from '../selectors/getResultData';
 import { ThunkDispatch } from 'redux-thunk';
 import { performRequest } from '../actions/performRequest';
 import { invalidateRequest } from '../actions/invalidateRequest';
+import { purgeRequest } from '../actions/purgeRequest';
 
 type BindingInstances = {
     [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any>;
@@ -49,6 +50,7 @@ const createBinding = (
             return dispatch(performRequest(endpointKey, params, body, instanceId, bindingsStore));
         },
         invalidateCache: () => dispatch(invalidateRequest(endpointKey, params, instanceId)),
+        purge: () => dispatch(purgeRequest(endpointKey, params, instanceId)),
         getInstance: (newInstanceId: string) =>
             bindingsStore.getBinding(endpointKey, params, dispatch, newInstanceId, apiData),
     });
