@@ -6,15 +6,13 @@ import { shouldAutoTrigger } from './withApiData';
 import { State } from './reducer';
 import shallowEqual from 'shallowequal';
 
-interface Options {
-    /** Optionally provide the params of the endpoint */
-    params?: EndpointParams;
+export interface HookOptions {
     instanceId?: string;
     /** Optionally provide overrides for the endpoint config */
     config?: Partial<EndpointConfig>;
 }
 
-type UseHook = <T>(endpointKey: string, options?: Options) => Binding<T>;
+type UseHook = <T>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => Binding<T>;
 
 // the hook should call perform when shouldAutoTrigger and:
 // - the component gets mounted
@@ -22,8 +20,8 @@ type UseHook = <T>(endpointKey: string, options?: Options) => Binding<T>;
 // - the endpoint has changed
 // - the call has been invalidated (networkStatus is ready)
 
-const useApiData: UseHook = <T>(endpointKey: string, options?: Options) => {
-    const { params, instanceId, config } = options ?? {};
+const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => {
+    const { instanceId, config } = options ?? {};
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
     const prevParams = useRef<EndpointParams>();
     const prevEndpointKey = useRef<string>();

@@ -98,7 +98,7 @@ export const performRequest: PerformApiRequest = (
             return Promise.reject(errorMsg);
         }
 
-        const config = { ...endpointConfig, customConfig };
+        const config = { ...endpointConfig, ...customConfig };
 
         // Merge the defaultParams and URL inputParams. This is where any defaultParams get overwritten.
         const params = { ...config.defaultParams, ...inputParams };
