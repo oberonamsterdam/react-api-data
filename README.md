@@ -231,7 +231,7 @@ export const globalConfig = {
 
 ## Using default parameters
 
-There might be situations where default parameters are needed, for example when using a language in a URL. These default parameters can be set with the `defaultParams` object in your [endpointConfig](https://github.com/oberonamsterdam/react-api-data#config):
+There might be situations where default parameters are needed, for example when using a language in a URL. These default parameters can be set with the `defaultParams` object in your [endpointConfig](https://github.com/oberonamsterdam/react-api-data/blob/master/api.md#endpointconfig):
 
 ```js
 const endpointConfig = {

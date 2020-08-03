@@ -393,6 +393,8 @@ Map of parameter names to values.
 - `timeout?` **number** 
 - `autoTrigger?` **boolean**
   Trigger calls automatically if needed. Defaults to `true` for GET requests and `false` for all other requests.
+- `defaultParams?`: **Object**
+  Provide default params for the params included in the url.
 
 ---
 
