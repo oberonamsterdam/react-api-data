@@ -14,30 +14,46 @@ type UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId?: st
 // - the endpoint has changed
 // - the call has been invalidated (networkStatus is ready)
 
-const useApiData: UseHook = <T>(endpointKey: string, params?: EndpointParams, instanceId: string = '') => {
+const useApiData: UseHook = <T>(
+    endpointKey: string,
+    params?: EndpointParams,
+    instanceId: string = '',
+
+    // we auto detect a SSR environment. If we are on SSR, we will immediately execute the request during every render(!)
+    isSSR: boolean = typeof document === 'undefined'
+) => {
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
     const prevParams = useRef<EndpointParams>();
     const prevEndpointKey = useRef<string>();
     const apiData: State = useSelector((state: { apiData: State }) => state.apiData);
     const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
-    const binding: Binding<T> = bindingsStore.current.getBinding(
-        endpointKey,
-        params,
-        dispatch,
-        instanceId,
-        apiData);
+    const binding: Binding<T> = bindingsStore.current.getBinding(endpointKey, params, dispatch, instanceId, apiData);
     const networkStatus = binding.request.networkStatus;
-    useEffect(() => {
+
+    const fetchDataIfNeeded = () => {
         if (
             autoTrigger &&
-            ((prevParams.current && !shallowEqual(prevParams.current, params)) || (prevEndpointKey.current && prevEndpointKey.current !== endpointKey) || networkStatus === 'ready')
+            ((prevParams.current && !shallowEqual(prevParams.current, params)) ||
+                (prevEndpointKey.current && prevEndpointKey.current !== endpointKey) ||
+                networkStatus === 'ready')
         ) {
             prevParams.current = params;
             prevEndpointKey.current = endpointKey;
             binding.perform(params);
         }
-    }, [autoTrigger, params, endpointKey, networkStatus]);
+    };
+
+    if (isSSR) {
+        // immediately invoke request on SSR
+        fetchDataIfNeeded();
+    } else {
+        // yes indeed dear reader, conditional hooks are very bad.
+        // we're gonna assume isSSR won't change between renders however.
+        useEffect(() => {
+            fetchDataIfNeeded();
+        }, [autoTrigger, params, endpointKey, networkStatus]);
+    }
 
     return binding;
 };

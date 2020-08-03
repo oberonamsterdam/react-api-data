@@ -1,6 +1,9 @@
 {
-  "name": "react-api-data",
-  "version": "0.16.6",
+  "name": "@oberoninternal/react-api-data",
+  "version": "0.16.7-ssr.3",
+  "publishConfig": {
+    "registry": "https://registry.oberon.nl"
+  },
   "description": "Fetch and normalize data from api",
   "main": "lib/index.js",
   "scripts": {

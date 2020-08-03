@@ -105,7 +105,7 @@ export const performRequest: PerformApiRequest = (
 
         const apiDataRequest = getRequest(state.apiData, endpointKey, params, instanceId);
         const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
-        
+
         if (apiDataRequest && apiDataRequest.networkStatus === 'loading' && loadingPromises[requestKey]) {
             return loadingPromises[requestKey];
         }
@@ -113,9 +113,9 @@ export const performRequest: PerformApiRequest = (
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         // TODO: unit test this scenario
         if (
-            apiDataRequest && 
+            apiDataRequest &&
             (shouldAutoTrigger(state.apiData, endpointKey) &&
-                apiDataRequest.networkStatus === 'success' && 
+                apiDataRequest.networkStatus === 'success' &&
                 !cacheExpired(config, apiDataRequest))
         ) {
             return Promise.resolve(getCurrentBinding(apiDataRequest));
@@ -123,16 +123,6 @@ export const performRequest: PerformApiRequest = (
 
         const url = formatUrl(config.url, params, config.queryStringOpts);
 
-        dispatch({
-            type: 'FETCH_API_DATA',
-            payload: {
-                requestKey,
-                endpointKey,
-                params,
-                url,
-            },
-        });
-        
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
         const promise = new Promise((resolve: (Binding: Binding<any>) => void) => {
 
@@ -237,6 +227,18 @@ export const performRequest: PerformApiRequest = (
                 resolve(getCurrentBinding());
             }
         });
+
+        dispatch({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey,
+                endpointKey,
+                params,
+                url,
+                promise
+            },
+        });
+
         loadingPromises[requestKey] = promise;
         promise.finally(() => delete loadingPromises[requestKey]);
         return promise;
