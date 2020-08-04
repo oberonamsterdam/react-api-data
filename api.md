@@ -47,6 +47,7 @@ of the *endpointKey* and the *params*.
 
 - `endpointKey` **string**
 - `params?` **[EndpointParams](#endpointparams)**
+- `options?` **[ApiDataEndpointConfig](#ApiDataEndpointConfig)**
 
 **Returns**
 
@@ -59,18 +60,22 @@ import React from 'react';
 import { useApiData } from 'react-api-data';
 
 const Article = (props) => {
-    const article = useApiData('getArticle', { id: props.articleId });
+    const article = useApiData(
+        'getArticle',
+        { id: props.articleId },
+        { afterSuccess: () => alert(`Article with id ${props.articleId} received successfully`) },
+    );
     return (
         <>
-            {article.request.networkStatus === 'success' && 
+            {article.request.networkStatus === 'success' && (
                 <div>
                     <h1>{article.data.title}</h1>
                     <p>{article.data.body}</p>
                 </div>
-            }
+            )}
         </>
     );
-}
+};
 ```
 
 ### `useActions()`  
@@ -256,7 +261,21 @@ withApiData({
         userId: user.id
     })),
     editArticle: {}
-}))(MyComponent);
+}),
+    // if you want to override the configs for a certain endpoint, you can do so:
+    {
+        editArticle: {
+            autoTrigger: false,
+            afterSucces: ({ dispatch, request, requestBody }) => {
+                dispatch(
+                    invalidateApiDataRequest('getArticle', {
+                        id: request.params.articleId
+                    })
+                );
+            },
+        }
+    }
+)(MyComponent);
 // props.article will be an ApiDataBinding
 // props.users will be an array of ApiDataBinding
 // props.editArticle will be an ApiDataBinding

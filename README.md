@@ -100,7 +100,12 @@ import { useApiData } from 'react-api-data';
 
 const PostComment = props => {
     const [comment, setComment] = useState('');
-    const postComment = useApiData('postComment');
+    const postComment = useApiData('postComment', undefined, {
+        // After a successful post, we can invalidate the cache of the getArticle call, so it gets re-triggered.
+        afterSuccess: ({ dispatch, requestBody }) => {
+            dispatch(invalidateApiDataRequest('getArticle', { articleId: request.params.articleId }));
+        },
+    });
     const { networkStatus } = postComment.request;
     const onSubmit = () => {
         postComment.perform({ id: props.articleId }, { comment });

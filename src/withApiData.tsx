@@ -77,6 +77,7 @@ export const shouldAutoTrigger = (apiData: State, endpointKey: string) => {
  * component will get an Binding added to each property key of the bindings param.
  * @param bindings - maps prop names to endpoint keys
  * @param [getParams] - optionally provide the params of the endpoint
+ * @param configs - optionally provide configs for some endpoints that you want to override
  * @returns {Function} - Function to wrap your component
  * @example
  * withApiData({
@@ -91,7 +92,12 @@ export const shouldAutoTrigger = (apiData: State, endpointKey: string) => {
  *      projectSlug: ownProps.match.params.projectSlug,
  *      env: ownProps.match.params.env
  *    }
- *  }))
+ *  }), {
+ *    settings: {
+ *      autoTrigger: false
+ *    }
+ *  }
+ * )
  */
 
 export default function withApiData<TChildProps extends WithApiDataChildProps<TPropNames>, TPropNames extends string>(
