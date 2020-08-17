@@ -47,13 +47,11 @@ const useApiData: UseHook = <T>(
     if (isSSR) {
         // immediately invoke request on SSR
         fetchDataIfNeeded();
-    } else {
-        // yes indeed dear reader, conditional hooks are very bad.
-        // we're gonna assume isSSR won't change between renders however.
-        useEffect(() => {
-            fetchDataIfNeeded();
-        }, [autoTrigger, params, endpointKey, networkStatus]);
     }
+
+    useEffect(() => {
+        fetchDataIfNeeded();
+    }, [autoTrigger, params, endpointKey, networkStatus]);
 
     return binding;
 };
