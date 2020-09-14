@@ -6,7 +6,7 @@ import {
     EndpointConfig,
     GlobalConfig,
     EndpointParams,
-    DataRequest
+    DataRequest,
 } from '../types';
 import { getRequest } from '../selectors/getRequest';
 import { fail } from './fail';
@@ -69,10 +69,11 @@ type PerformRequest = (
     inputParams?: EndpointParams,
     body?: any,
     instanceId?: string,
-    bindingsStore?: BindingsStore
+    bindingsStore?: BindingsStore,
+    customConfig?: Partial<EndpointConfig>
 ) => (dispatch: Dispatch, getState: () => { apiData: State }) => Promise<Binding<any, any>>;
 
-const loadingPromises: {[requestKey: string]: Promise<Binding<any, any>> } = {};
+const loadingPromises: { [requestKey: string]: Promise<Binding<any, any>> } = {};
 
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
@@ -83,19 +84,22 @@ export const performRequest: PerformRequest = (
     inputParams?: EndpointParams,
     body?: any,
     instanceId: string = '',
-    bindingsStore: BindingsStore = new BindingsStore()
+    bindingsStore: BindingsStore = new BindingsStore(),
+    customConfig?: Partial<EndpointConfig>
 ) => {
     return (dispatch: Dispatch, getState: () => { apiData: State }): Promise<Binding<any, any>> => {
         const state = getState();
-        const config = state.apiData.endpointConfig[endpointKey];
+        const endpointConfig = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
-        if (!config) {
+        if (!endpointConfig) {
             const errorMsg = `apiData.performRequest: no config with key ${endpointKey} found!`;
             if (__DEV__) {
                 console.error(errorMsg);
             }
             throw new Error(errorMsg);
         }
+
+        const config = { ...endpointConfig, ...customConfig };
 
         // Merge the defaultParams and URL inputParams. This is where any defaultParams get overwritten.
         const params = { ...config.defaultParams, ...inputParams };
@@ -106,7 +110,7 @@ export const performRequest: PerformRequest = (
 
         const apiDataRequest = getRequest(state.apiData, endpointKey, params, instanceId);
         const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
-        
+
         if (apiDataRequest && apiDataRequest.networkStatus === 'loading' && loadingPromises[requestKey]) {
             return loadingPromises[requestKey];
         }
@@ -114,10 +118,10 @@ export const performRequest: PerformRequest = (
         // don't re-trigger calls when already loading and don't re-trigger succeeded GET calls
         // TODO: unit test this scenario
         if (
-            apiDataRequest && 
-            (shouldAutoTrigger(state.apiData, endpointKey) &&
-                apiDataRequest.networkStatus === 'success' && 
-                !cacheExpired(config, apiDataRequest))
+            apiDataRequest &&
+            shouldAutoTrigger(state.apiData, endpointKey) &&
+            apiDataRequest.networkStatus === 'success' &&
+            !cacheExpired(config, apiDataRequest)
         ) {
             return Promise.resolve(getCurrentBinding(apiDataRequest));
         }
@@ -133,7 +137,7 @@ export const performRequest: PerformRequest = (
                 url,
             },
         });
-        
+
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
         const promise = new Promise((resolve: (binding: Binding<any, any>) => void, reject: (binding: Binding<any, any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;

@@ -123,7 +123,7 @@ export interface ConfigAfterProps {
 users: Binding<Array<User>>
 }
  */
-export interface Binding<T, F> {
+export interface Binding<T, F = any> {
     data?: T;
     dataFailed?: F,
     loading: boolean,

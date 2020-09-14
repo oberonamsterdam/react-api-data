@@ -280,6 +280,30 @@ describe('performRequest', () => {
         });
     });
 
+    test('beforeSuccess should be able to turn success into fail via config override', () => {
+        expect.assertions(2);
+
+        const beforeSuccess = (resp: HandledResponse) => ({
+            response: { ...resp.response, ok: false },
+            body: resp.body,
+        });
+        const state = {
+            apiData: getState('getData', true, {}, 'ready', { method: 'GET', cacheDuration: 1 }),
+        };
+        mockResponse(response3);
+
+        performRequest('getData', {}, { data: 'json' }, undefined, undefined, { beforeSuccess })(
+            dispatch,
+            () => state
+        ).catch(() => {
+            expect(dispatch).toHaveBeenCalledWith(
+                // @ts-ignore fake Response
+                fail(getRequestKey('getData'), response3.body, { ...response3.response, ok: false })
+            );
+            expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_SUCCESS' }));
+        });
+    });
+
     test('should call beforeFailed from endpointConfig and globalConfig', async () => {
         expect.assertions(3);
         const postBody = { data: 'json' };

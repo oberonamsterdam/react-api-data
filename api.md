@@ -47,6 +47,7 @@ of the *endpointKey* and the *params*.
 
 - `endpointKey` **string**
 - `params?` **[EndpointParams](#endpointparams)**
+- `options?` **[EndpointConfig](#EndpointConfig)**
 
 **Returns**
 
@@ -59,18 +60,22 @@ import React from 'react';
 import { useApiData } from 'react-api-data';
 
 const Article = (props) => {
-    const article = useApiData('getArticle', { id: props.articleId });
+    const article = useApiData(
+        'getArticle',
+        { id: props.articleId },
+        { afterSuccess: () => alert(`Article with id ${props.articleId} received successfully`) },
+    );
     return (
         <>
-            {article.request.networkStatus === 'success' && 
+            {article.request.networkStatus === 'success' && (
                 <div>
                     <h1>{article.data.title}</h1>
                     <p>{article.data.body}</p>
                 </div>
-            }
+            )}
         </>
     );
-}
+};
 ```
 
 ### `useActions()`  
@@ -256,11 +261,25 @@ withApiData({
         userId: user.id
     })),
     editArticle: {}
-}))(MyComponent);
-// props.article will be an Binding
-// props.users will be an array of Binding
-// props.editArticle will be an Binding
-// props.actions will be an Actions object
+}),
+    // if you want to override the configs for a certain endpoint, you can do so:
+    {
+        editArticle: {
+            autoTrigger: false,
+            afterSucces: ({ dispatch, request, requestBody }) => {
+                dispatch(
+                    invalidateApiDataRequest('getArticle', {
+                        id: request.params.articleId
+                    })
+                );
+            },
+        }
+    }
+)(MyComponent);
+// props.article will be an ApiDataBinding
+// props.users will be an array of ApiDataBinding
+// props.editArticle will be an ApiDataBinding
+// props.apiDataActions will be an Actions object
 
 // perform can be used to trigger calls with autoTrigger: false
 props.editArticle.perform({
@@ -313,7 +332,7 @@ Type: **String enum**
 
 - `data` **any** The result data of your request, or undefined if your request has not completed, has failed, or has no response body.
 - `loading`**boolean** Returns a boolean whether the binding is currently loading or not.
-- `dataFailed` **any** Generic type which returns the failed state returnd by the API, undefined when call is not completed or succeeded.
+- `dataFailed` **any** Generic type which returns the failed state returned by the API, undefined when the call is not completed or succeeded.
 - `request` **[Request](#request)** 
 - `perform` **(params?: [EndpointParams](#endpointparams), body?: any) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>**
   Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an Binding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original Binding and the resolved promise contain the result of the performed request.
