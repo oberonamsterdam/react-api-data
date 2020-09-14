@@ -7,9 +7,12 @@ import { getResultData } from '../selectors/getResultData';
 import { ThunkDispatch } from 'redux-thunk';
 import { performRequest } from '../actions/performRequest';
 import { invalidateRequest } from '../actions/invalidateRequest';
+import { getFailedData } from '../selectors/getFailedData';
+import { getLoadingState } from '../selectors/getLoadingState';
+import { purgeRequest } from '../actions/purgeRequest';
 
 type BindingInstances = {
-    [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any>;
+    [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any, any>;
 };
 
 export class BindingsStore {
@@ -39,17 +42,21 @@ const createBinding = (
     bindingsStore: BindingsStore,
     instanceId: string = '',
     config?: Partial<EndpointConfig>
-): ((apiData: State, request?: DataRequest) => Binding<any>) => {
+): ((apiData: State, request?: DataRequest) => Binding<any, any>) => {
     let params: EndpointParams = bindingParams;
 
     return (apiData: State, request?: DataRequest) => ({
         data: getResultData(apiData, endpointKey, params, instanceId),
-        request: request || getRequest(apiData, endpointKey, params, instanceId) || createRequest(endpointKey),
+        dataFailed: getFailedData(apiData, endpointKey, params, instanceId),
+        loading: getLoadingState(apiData, endpointKey, params, instanceId),
+        request:
+            request || getRequest(apiData, endpointKey, params, instanceId) || createRequest(endpointKey),
         perform: (performParams?: EndpointParams, body?: any) => {
             params = { ...bindingParams, ...performParams };
             return dispatch(performRequest(endpointKey, params, body, instanceId, bindingsStore, config));
         },
         invalidateCache: () => dispatch(invalidateRequest(endpointKey, params, instanceId)),
+        purge: () => dispatch(purgeRequest(endpointKey, params, instanceId)),
         getInstance: (newInstanceId: string) =>
             bindingsStore.getBinding(endpointKey, params, dispatch, newInstanceId, apiData),
     });

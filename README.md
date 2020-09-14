@@ -1,5 +1,8 @@
 # react-api-data
 
+[![npm](https://img.shields.io/npm/v/react-api-data.svg)](https://www.npmjs.com/package/react-api-data)
+[![Build Status](https://github.com/oberonamsterdam/react-api-data/workflows/Build/badge.svg?branch=master)](https://github.com/oberonamsterdam/react-api-data/actions?query=workflow%3ABuild+branch%3Amaster)
+
 Automate calling external APIs and handling response data. Supports any API with JSON responses. Uses Fetch for
 performing API requests, normalizr for handling response data and redux for storing data.
 
@@ -35,7 +38,7 @@ or
 ```js
 import { schema } from 'normalizr';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
-import { configureApiData, reducer } from 'react-api-data';
+import { configure, reducer } from 'react-api-data';
 import thunk from 'redux-thunk';
 
 // optionally define normalizr response schemas
@@ -58,7 +61,7 @@ const endpointConfig = {
         method: 'POST',
         afterSuccess: ({ dispatch, request, getState }) => {
             // After successful post, invalidate the cache of the getArticle call, so it gets re-triggered.
-            dispatch(invalidateApiDataRequest('getArticle', {articleId: request.params.articleId, userId: getState().userId})); 
+            dispatch(invalidateRequest('getArticle', {articleId: request.params.articleId, userId: getState().userId})); 
         }
     }
 };
@@ -66,7 +69,7 @@ const endpointConfig = {
 // Configure store and dispatch config before you render components
 
 const store = createStore(combineReducers({apiData: reducer}), applyMiddleware(thunk));
-store.dispatch(configureApiData({}, endpointConfig));
+store.dispatch(configure({}, endpointConfig));
 ```
 
 
@@ -236,7 +239,7 @@ export const globalConfig = {
 
 ## Using default parameters
 
-There might be situations where default parameters are needed, for example when using a language in a URL. These default parameters can be set with the `defaultParams` object in your [endpointConfig](https://github.com/oberonamsterdam/react-api-data#config):
+There might be situations where default parameters are needed, for example when using a language in a URL. These default parameters can be set with the `defaultParams` object in your [endpointConfig](https://github.com/oberonamsterdam/react-api-data/blob/master/api.md#endpointconfig):
 
 ```js
 const endpointConfig = {
@@ -287,7 +290,7 @@ export default connectApiData(ItemsList);
     // Use the callback of redux-persist to dispatch the afterRehydrate function.
     // This will make sure all loading states are properly reset.
     const persistor = persistStore(store, {}, () => store.dispatch(afterRehydrate()));
-    store.dispatch(configureApiData({}, endpointConfig));
+    store.dispatch(configure({}, endpointConfig));
     return {
         store,
         persistor,

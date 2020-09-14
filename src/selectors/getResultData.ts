@@ -29,9 +29,10 @@ export const getResultData = (
     }
 
     return request.networkStatus === 'failed'
-        ? request.errorBody
-        : request.result &&
-              (config.responseSchema
-                  ? denormalize(request.result, config.responseSchema, state.entities)
-                  : request.result);
+        ? undefined
+        : request.result && (
+            config.responseSchema
+                ? denormalize(request.result, config.responseSchema, state.entities)
+                : request.result
+        );
 };

@@ -1,7 +1,6 @@
 // @flow
 
 import { type ActionCreator } from 'redux';
-import { type Actions } from './helpers/getActions';
 import { type State } from './reducer';
 
 
@@ -124,13 +123,23 @@ export interface ConfigAfterProps {
 users: Binding<Array<User>>
 }
  */
-export interface Binding<T> {
+export interface Binding<T, F> {
     data?: T;
+    dataFailed?: F,
+    loading: boolean,
     request: DataRequest;
     perform: (
         params?: EndpointParams | void,
         body?: any
-    ) => Promise<Binding<T>>;
+    ) => Promise<Binding<T, F>>;
     invalidateCache: () => Promise<void>;
-    getInstance: (instanceId: string) => Binding<T>;
+    purge: () => Promise<void>;
+    getInstance: (instanceId: string) => Binding<T, F>;
 }
+
+export type Actions = {
+    perform: (endpointKey: string, params?: EndpointParams, body?: any, instanceId?: string) => Promise<Binding<any>>,
+    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void,
+    purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void,
+    purgeAll: () => void,
+};

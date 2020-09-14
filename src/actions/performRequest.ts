@@ -19,6 +19,7 @@ import { cacheExpired } from '../selectors/cacheExpired';
 import { RequestHandler } from '../request';
 import { getActions } from '../helpers/getActions';
 import { Dispatch } from 'redux';
+import { getFailedData } from '../selectors/getFailedData';
 import { getResultData } from '../selectors/getResultData';
 import { shouldAutoTrigger } from '../withApiData';
 
@@ -63,22 +64,22 @@ let requestFunction = Request;
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 
-type PerformApiRequest = (
+type PerformRequest = (
     endpointKey: string,
     inputParams?: EndpointParams,
     body?: any,
     instanceId?: string,
     bindingsStore?: BindingsStore,
     customConfig?: Partial<EndpointConfig>
-) => (dispatch: Dispatch, getState: () => { apiData: State }) => Promise<Binding<any>>;
+) => (dispatch: Dispatch, getState: () => { apiData: State }) => Promise<Binding<any, any>>;
 
-const loadingPromises: { [requestKey: string]: Promise<Binding<any>> } = {};
+const loadingPromises: { [requestKey: string]: Promise<Binding<any, any>> } = {};
 
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.
  */
-export const performRequest: PerformApiRequest = (
+export const performRequest: PerformRequest = (
     endpointKey: string,
     inputParams?: EndpointParams,
     body?: any,
@@ -86,7 +87,7 @@ export const performRequest: PerformApiRequest = (
     bindingsStore: BindingsStore = new BindingsStore(),
     customConfig?: Partial<EndpointConfig>
 ) => {
-    return (dispatch: Dispatch, getState: () => { apiData: State }): Promise<Binding<any>> => {
+    return (dispatch: Dispatch, getState: () => { apiData: State }): Promise<Binding<any, any>> => {
         const state = getState();
         const endpointConfig = state.apiData.endpointConfig[endpointKey];
         const globalConfig = state.apiData.globalConfig;
@@ -95,7 +96,7 @@ export const performRequest: PerformApiRequest = (
             if (__DEV__) {
                 console.error(errorMsg);
             }
-            return Promise.reject(errorMsg);
+            throw new Error(errorMsg);
         }
 
         const config = { ...endpointConfig, ...customConfig };
@@ -103,7 +104,7 @@ export const performRequest: PerformApiRequest = (
         // Merge the defaultParams and URL inputParams. This is where any defaultParams get overwritten.
         const params = { ...config.defaultParams, ...inputParams };
 
-        const getCurrentBinding = (request?: DataRequest): Binding<any> => {
+        const getCurrentBinding = (request?: DataRequest): Binding<any, any> => {
             return bindingsStore.getBinding(endpointKey, params, dispatch, instanceId, getState().apiData, request);
         };
 
@@ -138,7 +139,7 @@ export const performRequest: PerformApiRequest = (
         });
 
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
-        const promise = new Promise((resolve: (Binding: Binding<any>) => void) => {
+        const promise = new Promise((resolve: (binding: Binding<any, any>) => void, reject: (binding: Binding<any, any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
             let aborted = false;
@@ -179,10 +180,12 @@ export const performRequest: PerformApiRequest = (
                 };
             }
 
-            function afterProps(): ConfigAfterProps {
+            function afterProps(isFailed: boolean): ConfigAfterProps {
                 return {
                     ...beforeProps(),
-                    resultData: getResultData(getState().apiData, endpointKey, params, instanceId),
+                    resultData: isFailed
+                        ? getFailedData(getState().apiData, endpointKey, params, instanceId)
+                        : getResultData(getState().apiData, endpointKey, params, instanceId),
                     getState,
                     dispatch,
                     actions: getActions(dispatch),
@@ -208,7 +211,7 @@ export const performRequest: PerformApiRequest = (
                 // after success cb
                 if (config.afterSuccess || globalConfig.afterSuccess) {
                     const afterSuccess = composeConfigOverrideFn(config.afterSuccess, globalConfig.afterSuccess);
-                    afterSuccess(afterProps());
+                    afterSuccess(afterProps(false));
                 }
 
                 resolve(getCurrentBinding());
@@ -234,10 +237,9 @@ export const performRequest: PerformApiRequest = (
                 // after error cb
                 if (config.afterFailed || globalConfig.afterFailed) {
                     const afterFailed = composeConfigOverrideFn(config.afterFailed, globalConfig.afterFailed);
-                    afterFailed(afterProps());
+                    afterFailed(afterProps(true));
                 }
-
-                resolve(getCurrentBinding());
+                reject(getCurrentBinding());
             }
         });
         loadingPromises[requestKey] = promise;
@@ -251,6 +253,6 @@ export const performRequest: PerformApiRequest = (
  * {@link RequestHandler} interface.
  * @param requestHandler
  */
-export const useRequestHandler = (requestHandler: RequestHandler) => {
+export const setRequestHandler = (requestHandler: RequestHandler) => {
     requestFunction = requestHandler;
 };

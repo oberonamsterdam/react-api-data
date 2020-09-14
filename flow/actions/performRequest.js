@@ -17,6 +17,6 @@ declare export var performRequest: (
   }
 ) => Promise<void>;
 
-declare export var useRequestHandler: (
+declare export var setRequestHandler: (
   requestHandler: RequestHandler
 ) => void;
