@@ -1,5 +1,8 @@
 # react-api-data
 
+[![npm](https://img.shields.io/npm/v/react-api-data.svg)](https://www.npmjs.com/package/react-api-data)
+[![Build Status](https://github.com/oberonamsterdam/react-api-data/workflows/Build/badge.svg?branch=master)](https://github.com/oberonamsterdam/react-api-data/actions?query=workflow%3ABuild+branch%3Amaster)
+
 Automate calling external APIs and handling response data. Supports any API with JSON responses. Uses Fetch for
 performing API requests, normalizr for handling response data and redux for storing data.
 
