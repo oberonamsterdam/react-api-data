@@ -47,7 +47,7 @@ of the *endpointKey* and the *params*.
 
 - `endpointKey` **string**
 - `params?` **[EndpointParams](#endpointparams)**
-- `options?` **[ApiDataEndpointConfig](#ApiDataEndpointConfig)**
+- `options?` **[EndpointConfig](#EndpointConfig)**
 
 **Returns**
 
@@ -332,7 +332,7 @@ Type: **String enum**
 
 - `data` **any** The result data of your request, or undefined if your request has not completed, has failed, or has no response body.
 - `loading`**boolean** Returns a boolean whether the binding is currently loading or not.
-- `dataFailed` **any** Generic type which returns the failed state returnd by the API, undefined when call is not completed or succeeded.
+- `dataFailed` **any** Generic type which returns the failed state returned by the API, undefined when the call is not completed or succeeded.
 - `request` **[Request](#request)** 
 - `perform` **(params?: [EndpointParams](#endpointparams), body?: any) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>**
   Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an Binding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original Binding and the resolved promise contain the result of the performed request.

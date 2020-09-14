@@ -10,7 +10,7 @@ export interface HookOptions extends Partial<EndpointConfig> {
     instanceId?: string;
 }
 
-type UseHook = <T, F>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => Binding<T, F>;
+type UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => Binding<T, F>;
 
 // the hook should call perform when shouldAutoTrigger and:
 // - the component gets mounted
@@ -18,7 +18,7 @@ type UseHook = <T, F>(endpointKey: string, params?: EndpointParams, options?: Ho
 // - the endpoint has changed
 // - the call has been invalidated (networkStatus is ready)
 
-const useApiData: UseHook = <T, F>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => {
+const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => {
     const { instanceId, ...config } = options ?? {};
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
     const prevParams = useRef<EndpointParams>();
@@ -45,7 +45,7 @@ const useApiData: UseHook = <T, F>(endpointKey: string, params?: EndpointParams,
         ) {
             prevParams.current = params;
             prevEndpointKey.current = endpointKey;
-            binding.perform(params, undefined, config);
+            binding.perform(params, undefined);
         }
     }, [autoTrigger, params, endpointKey, networkStatus]);
 

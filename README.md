@@ -95,7 +95,7 @@ const Article = (props) => {
 
 ```
 
-### Post data from you component
+### Post data from your component
 
 ```js
 import React, { useState } from 'react';
@@ -104,10 +104,8 @@ import { useApiData } from 'react-api-data';
 const PostComment = props => {
     const [comment, setComment] = useState('');
     const postComment = useApiData('postComment', undefined, {
-        // After a successful post, we can invalidate the cache of the getArticle call, so it gets re-triggered.
-        afterSuccess: ({ dispatch, requestBody }) => {
-            dispatch(invalidateApiDataRequest('getArticle', { articleId: request.params.articleId }));
-        },
+        // If a certain call requires a different config from what you've defined in the api endpoint config, you can pass config overrides as the third argument.
+        autoTrigger: false,
     });
     const { networkStatus } = postComment.request;
     const onSubmit = () => {
