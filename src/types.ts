@@ -146,22 +146,26 @@ export interface ConfigAfterProps {
  *   users: Binding<Array<User>>
  * }
  */
-export interface Binding<T> {
+export interface Binding<T, F> {
     data?: T;
+    dataFailed?: F;
+    loading: boolean;
     request: DataRequest;
-    perform: (params?: EndpointParams, body?: any) => Promise<Binding<T>>;
+    perform: (params?: EndpointParams, body?: any) => Promise<Binding<T, F>>;
     invalidateCache: () => void;
-    getInstance: (instanceId: string) => Binding<T>;
+    purge: () => void;
+    getInstance: (instanceId: string) => Binding<T, F>;
 }
 
 export interface Actions {
-    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
     perform: (
         endpointKey: string,
         params?: EndpointParams,
         body?: any,
         instanceId?: string,
         bindingsStore?: BindingsStore
-    ) => Promise<Binding<any>>;
+    ) => Promise<Binding<any, any>>;
+    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
+    purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
     purgeAll: () => void;
 }
