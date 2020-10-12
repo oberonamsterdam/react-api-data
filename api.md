@@ -54,7 +54,6 @@ If not passed, isSSR will be determined automatically.
 - `endpointKey` **string**
 - `params?` **[EndpointParams](#endpointparams)**
 - `options?` **[EndpointConfig](#EndpointConfig)**
-- `isSSR?` **boolean**
 
 **Returns**
 
