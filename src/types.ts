@@ -43,14 +43,14 @@ export interface GlobalConfig {
     setHeaders?: (defaultHeaders: any, state: any) => any;
     setRequestProperties?: (defaultProperties: object, state: object) => object;
     beforeSuccess?: (
-        handledResponse: { response: Response, body: any },
+        handledResponse: { response: Response; body: any },
         beforeProps: ConfigBeforeProps
-    ) => { response: Response, body: any };
+    ) => { response: Response; body: any };
     afterSuccess?: (afterProps: ConfigAfterProps) => void;
     beforeFailed?: (
-        handledResponse: { response: Response, body: any },
+        handledResponse: { response: Response; body: any },
         beforeProps: ConfigBeforeProps
-    ) => { response: Response, body: any };
+    ) => { response: Response; body: any };
     afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
@@ -72,8 +72,8 @@ export interface EndpointConfig {
      */
     transformResponseBody?: (responseBody: any) => NormalizedData; // todo: this should transform before normalize or without normalize if no schema (so return any)
     /*
-    * @deprecated Use beforeFailed instead
-    */
+     * @deprecated Use beforeFailed instead
+     */
     handleErrorResponse?: (
         responseBody: any,
         params: EndpointParams,
@@ -83,26 +83,26 @@ export interface EndpointConfig {
         response?: Response
     ) => boolean | void;
     /*
-    * Edit the response before it gets handled by react-api-data.
-    */
+     * Edit the response before it gets handled by react-api-data.
+     */
     beforeFailed?: (
-        handledResponse: { response: Response, body: any },
+        handledResponse: { response: Response; body: any },
         beforeProps: ConfigBeforeProps
-    ) => { response: Response, body: any };
+    ) => { response: Response; body: any };
     /*
-    * return false to not trigger global function
-    */
+     * return false to not trigger global function
+     */
     afterFailed?: (afterProps: ConfigAfterProps) => boolean | void;
     /*
-    * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
-    */
+     * Edit the response before it gets handled by react-api-data. Set response.ok to false to turn the success into a fail.
+     */
     beforeSuccess?: (
-        handledResponse: { response: Response, body: any },
+        handledResponse: { response: Response; body: any },
         beforeProps: ConfigBeforeProps
-    ) => { response: Response, body: any };
+    ) => { response: Response; body: any };
     /*
-    * return false to not trigger global function
-    */
+     * return false to not trigger global function
+     */
     afterSuccess?: (afterProps: ConfigAfterProps) => boolean | void;
     /*
      * defaultHeaders will be the headers returned by the setHeaders function from the global config, if set
@@ -113,8 +113,8 @@ export interface EndpointConfig {
      */
     setRequestProperties?: (defaultProperties: object, state: object) => object;
     /*
-    * Set defaultParams in a URL.
-    */
+     * Set defaultParams in a URL.
+     */
     defaultParams?: {
         [paramName: string]: string | number;
     };
@@ -147,22 +147,26 @@ export interface ConfigAfterProps {
  *   users: Binding<Array<User>>
  * }
  */
-export interface Binding<T> {
+export interface Binding<T, F = unknown> {
     data?: T;
+    dataFailed?: F;
+    loading: boolean;
     request: DataRequest;
-    perform: (params?: EndpointParams, body?: any) => Promise<Binding<T>>;
+    perform: (params?: EndpointParams, body?: any) => Promise<Binding<T, F>>;
     invalidateCache: () => void;
-    getInstance: (instanceId: string) => Binding<T>;
+    purge: () => void;
+    getInstance: (instanceId: string) => Binding<T, F>;
 }
 
 export interface Actions {
-    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
     perform: (
         endpointKey: string,
         params?: EndpointParams,
         body?: any,
         instanceId?: string,
         bindingsStore?: BindingsStore
-    ) => Promise<Binding<any>>;
+    ) => Promise<Binding<any, any>>;
+    invalidateCache: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
+    purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
     purgeAll: () => void;
 }

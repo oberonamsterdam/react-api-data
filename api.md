@@ -6,15 +6,15 @@
   - [`useApiData()`](#useapidata)
   - [`useActions()`](#useactions)
 - [Config](#config)
-  - [`configureApiData()`](#configureapidata)
-  - [`useRequestHandler()`](#userequesthandler)
+  - [`configure()`](#configure)
+  - [`setRequestHandler()`](#setrequesthandler)
 - [Redux Actions](#redux-actions)
   - [`afterRehydrate()`](#afterrehydrate)
-  - [`performApiRequest()` (Deprecated)](#performapirequest-deprecated)
-  - [`invalidateApiDataRequest()` (Deprecated)](#invalidateapidatarequest-deprecated)
+  - [`performRequest()` (Deprecated)](#performrequest-deprecated)
+  - [`invalidateRequest()` (Deprecated)](#invalidaterequest-deprecated)
 - [Selectors](#selectors)
   - [`getEntity()`](#getentity)
-  - [`getApiDataRequest()` (Deprecated)](#getapidatarequest-deprecated)
+  - [`getRequest()` (Deprecated)](#getrequest-deprecated)
   - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
 - [HOC](#hoc)
   - [`withApiData()`](#withapidata)
@@ -22,15 +22,15 @@
   - [`getDataFromTree`](#getdatafromtree)
 - [Types and interfaces](#types-and-interfaces)
   - [`NetworkStatus`](#networkstatus)
-  - [`ApiDataBinding`](#apidatabinding)
+  - [`Binding`](#binding)
   - [`Actions`](#actions)
-  - [`ApiDataRequest`](#apidatarequest)
+  - [`Request`](#request)
   - [`EndpointParams`](#endpointparams)
-  - [`ApiDataEndpointConfig`](#apidataendpointconfig)
-  - [`ApiDataGlobalConfig`](#apidataglobalconfig)
-  - [`ApiDataConfigBeforeProps`](#apidataconfigbeforeprops)
-  - [`ApiDataConfigAfterProps`](#apidataconfigafterprops)
-  - [`ApiDataState`](#apidatastate)
+  - [`EndpointConfig`](#endpointconfig)
+  - [`GlobalConfig`](#globalconfig)
+  - [`ConfigBeforeProps`](#configbeforeprops)
+  - [`ConfigAfterProps`](#configafterprops)
+  - [`State`](#state)
   - [`RequestHandler`](#requesthandler)
   - [`HandledResponse`](#handledresponse)
 
@@ -38,12 +38,12 @@
 
 ### `useApiData()`
 
-Get an [ApiDataBinding](#apidatabinding) for the given endpoint. It will make sure data gets (re-)loaded if needed. This behavior is
-based on the `autoTrigger` and `cacheDuration` settings in [EndpointConfig](#apidataendpointconfig) and will, by default, trigger
+Get an [Binding](#binding) for the given endpoint. It will make sure data gets (re-)loaded if needed. This behavior is
+based on the `autoTrigger` and `cacheDuration` settings in [EndpointConfig](#endpointconfig) and will, by default, trigger
 the call when the endpoint's method is `GET` and the call has not yet been triggered before. This makes it possible to use
 this hook for the same call in multiple components, without needing to worry about which components needs to trigger the call
 and how to share the data between the components. Just "use" the API data in multiple components and the fetching of data will be handled.
-In any case it will return an `ApiDataBinding` that reflects the current state of the _API call_, identified by the combination
+In any case it will return an `Binding` that reflects the current state of the _API call_, identified by the combination
 of the _endpointKey_ and the _params_.
 
 `useApiData` will invoke the request during rendering if `isSSR` is true.
@@ -53,11 +53,12 @@ If not passed, isSSR will be determined automatically.
 
 - `endpointKey` **string**
 - `params?` **[EndpointParams](#endpointparams)**
+- `options?` **[EndpointConfig](#EndpointConfig)**
 - `isSSR?` **boolean**
 
 **Returns**
 
-- `ApiDataBinding` **[ApiDataBinding](#apidatabinding)**
+- `Binding` **[Binding](#binding)**
 
 **Examples**
 
@@ -66,7 +67,9 @@ import React from "react";
 import { useApiData } from "react-api-data";
 
 const Article = props => {
-  const article = useApiData("getArticle", { id: props.articleId });
+  const article = useApiData("getArticle",
+        { id: props.articleId },
+        { afterSuccess: () => alert(`Article with id ${props.articleId} received successfully`) },);
   return (
     <>
       {article.request.networkStatus === "success" && (
@@ -108,14 +111,14 @@ actions.purgeAll();
 
 ## Config
 
-### `configureApiData()`
+### `configure()`
 
 Register your global and endpoint configurations. Make sure you do this before you mount any components using
 withApiData.
 
 **Parameters**
 
-- `globalConfig` **[ApiDataGlobalConfig](#apidataglobalconfig)** - `endpointConfig` **[ApiDataEndpointConfig](#apidataendpointconfig)**
+- `globalConfig` **[GlobalConfig](#globalconfig)** - `endpointConfig` **[EndpointConfig](#endpointconfig)**
 
 **Returns**
 
@@ -123,7 +126,7 @@ withApiData.
 
 ---
 
-### `useRequestHandler()`
+### `setRequestHandler()`
 
 Use your own request function that calls the api and reads the responseBody response. Make sure it implements the
 [RequestHandler](#requesthandler) interface.
@@ -145,14 +148,14 @@ the entire apiData state. This is needed to reset loading statuses.
 
 ---
 
-### `performApiRequest()` (Deprecated)
+### `performRequest()` (Deprecated)
 
 Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred
 to use [withApiData](#withapidata).
 
 **Deprecated**
 
-The performApiRequest Action has been deprecated. It is recommended to use the perform action in the [ApiDataBinding](#apidatabinding) or the [ApiDataAction](#apidataaction) perform, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
+The performRequest Action has been deprecated. It is recommended to use the perform action in the [Binding](#binding) or the [Action](#action) perform, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#endpointconfig) and [afterFailed](#endpointconfig) events in the [endpoint configuration](#endpointconfig).
 
 **Parameters**
 
@@ -163,18 +166,18 @@ The performApiRequest Action has been deprecated. It is recommended to use the p
 
 **Returns**
 
-**Object** Redux action to dispatch. Dispatching this returns: **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Rejects when endpointKey is unknown. Otherwise resolves with ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not.
+**Object** Redux action to dispatch. Dispatching this returns: **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>** Rejects when endpointKey is unknown. Otherwise resolves with Binding after call has completed. Use request networkStatus to see if call was succeeded or not.
 
 ---
 
-### `invalidateApiDataRequest()` (Deprecated)
+### `invalidateRequest()` (Deprecated)
 
 Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
 a GET list request, which might need to include the newly created entity.
 
 **Deprecated**
 
-The invalidateApiDataRequest Action has been deprecated. It is recommended to use the invalidateCache action in the [ApiDataBinding](#apidatabinding) or the [ApiDataAction](#apidataaction) invalidateCache, which is returned by the [HOC](#withapidata) in the apiDataActions prop, and in the [afterSuccess](#ApiDataEndpointConfig) and [afterFailed](#ApiDataEndpointConfig) events in the [endpoint configuration](##ApiDataEndpointConfig).
+The invalidateRequest Action has been deprecated. It is recommended to use the invalidateCache action in the [Binding](#binding) or the [Action](#action) invalidateCache, which is returned by the [HOC](#withapidata) in the actions prop, and in the [afterSuccess](#endpointconfig) and [afterFailed](#endpointconfig) events in the [endpoint configuration](#endpointconfig).
 
 **Parameters**
 
@@ -194,7 +197,7 @@ Selector for getting a single entity from normalized data.
 
 **Parameters**
 
-- `apiDataState` **[ApiDataState](#apidatastate)**
+- `state` **[State](#state)**
 - `schema` **Object**
 - `id` **string | number**
 
@@ -204,26 +207,26 @@ Selector for getting a single entity from normalized data.
 
 ---
 
-### `getApiDataRequest()` (Deprecated)
+### `getRequest()` (Deprecated)
 
-Selector to manually get a [ApiDataRequest](#apidatarequest). This value is automatically bind when using [withApiData](#withapidata).
+Selector to manually get a [Request](#request). This value is automatically bind when using [withApiData](#withapidata).
 This selector can be useful for tracking request status when a request is triggered manually, like a POST after a
 button click.
 
 **Deprecated**
 
-The getApiDataRequest selector has been deprecated. It is recommended to use the request property returned by the [ApiDataBinding](#apidatabinding), which is returned by the [HOC](#withapidata).
+The getRequest selector has been deprecated. It is recommended to use the request property returned by the [Binding](#binding), which is returned by the [HOC](#withapidata).
 
 **Parameters**
 
-- `apiDataState` **[ApiDataState](#apidatastate)**
+- `state` **[State](#state)**
 - `endpointKey` **string**
 - `params` **[EndpointParams](#endpointparams)**
 - `instanceId?` **string**
 
 **Returns**
 
-**[ApiDataRequest](#apidatarequest) | void**
+**[Request](#request) | void**
 
 ---
 
@@ -235,11 +238,11 @@ triggered manually, like a POST after a button click.
 
 **Deprecated**
 
-The getResultData selector has been deprecated. It is recommended to use the request property returned by the [ApiDataBinding](#apidatabinding), which is returned by the [HOC](#withapidata).
+The getResultData selector has been deprecated. It is recommended to use the request property returned by the [Binding](#binding), which is returned by the [HOC](#withapidata).
 
 **Parameters**
 
-- `apiDataState` **[ApiDataState](#apidatastate)**
+- `state` **[State](#state)**
 - `endpointKey` **string**
 - `params` **[EndpointParams](#endpointparams)**
 - `instanceId?` **string**
@@ -271,6 +274,20 @@ withApiData(
     })),
     editArticle: {}
   })
+,
+    // if you want to override the configs for a certain endpoint, you can do so:
+    {
+        editArticle: {
+            autoTrigger: false,
+            afterSucces: ({ dispatch, request, requestBody }) => {
+                dispatch(
+                    invalidateApiDataRequest('getArticle', {
+                        id: request.params.articleId
+                    })
+                );
+            },
+        }
+    }
 )(MyComponent);
 // props.article will be an ApiDataBinding
 // props.users will be an array of ApiDataBinding
@@ -289,20 +306,20 @@ props.editArticle.perform(
 );
 
 // the apiDataAction property can be used to perform actions on any endpoint in the endpoint config, not only those which are in the current binding.
-props.apiDataActions.invalidateCache("getArticles");
+props.actions.invalidateCache("getArticles");
 ```
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
-component will get an [ApiDataBinding](#apidatabinding) or [ApiDataBinding](#apidatabinding)[] added to each property key of the bindings param and a property `apiDataActions` of type [Action](#action).
+component will get an [Binding](#binding) or [Binding](#binding)[] added to each property key of the bindings param and a property `actions` of type [Action](#action).
 
 **Parameters**
 
 - `bindings` **{ [propName in TPropNames]: string }** maps prop names to endpoint keys
-- `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the URL parameters. Providing an `EndpointParams[]` for a binding results in an `ApiDataBinding[]` added to the property key.
+- `getParams` **(ownProps: any, state: any) => { [propName in TPropName]?: EndpointParams | EndpointParams[] }** optionally provide the URL parameters. Providing an `EndpointParams[]` for a binding results in an `Binding[]` added to the property key.
 
 **Returns**
 
-**Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional apiDataActions property with type [Actions](#actions).
+**Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional actions property with type [Actions](#actions).
 
 ## SSR
 
@@ -361,24 +378,27 @@ Type: **String enum**
 
 ---
 
-### `ApiDataBinding`
+### `Binding`
 
 Represents an endpoint _call_.
 
 **Properties**
 
-- `data` **any** The result data of your request, or undefined if your request has not completed or has no response body.
-- `request` **[ApiDataRequest](#apidatarequest)**
-- `perform` **(params?: [EndpointParams](#endpointparams), body?: any) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>**
-  Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an ApiDataBinding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original ApiDataBinding and the resolved promise contain the result of the performed request.
+- `data` **any** The result data of your request, or undefined if your request has not completed, has failed, or has no response body.
+- `loading`**boolean** Returns a boolean whether the binding is currently loading or not.
+- `dataFailed` **any** Generic type which returns the failed state returned by the API, undefined when the call is not completed or succeeded.
+- `request` **[Request](#request)**
+- `perform` **(params?: [EndpointParams](#endpointparams), body?: any) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>**
+  Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an Binding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original Binding and the resolved promise contain the result of the performed request.
 - `invalidateCache` **() => Promise&lt;void>** Manually trigger a cache invalidation of the endpoint with the current parameters.
-- `getInstance` **(instanceId: string) => [ApiDataBinding](#apidatabinding)** get an independent instance of this binding. This enables you to make multiple (possibly parallel) calls to the same endpoint while maintaining access to all of them.
+- `purge` **() => Promise&lt;void>** Clears the request and the retrieved data.
+- `getInstance` **(instanceId: string) => [Binding](#binding)** get an independent instance of this binding. This enables you to make multiple (possibly parallel) calls to the same endpoint while maintaining access to all of them.
 
 **Examples**
 
 ```javascript
 type Props = {
-  users: ApiDataBinding<Array<User>>
+  users: Binding<Array<User>>
 };
 ```
 
@@ -390,14 +410,15 @@ Perform actions on any configured endpoint. These actions do not need to be disp
 
 **Properties**
 
-- `perform` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `body?` any, `instanceId?` string) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[ApiDataBinding](#apidatabinding)>** Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred to use [withApiData](#withapidata).
+- `perform` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `body?` any, `instanceId?` string) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>** Manually trigger an request to an endpoint. Primarily used for any non-GET requests. For GET requests it is preferred to use [withApiData](#withapidata).
 - `invalidateCache` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => void** Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
-- `purgeAll()` **() => void** Clears the whole apiData redux store. Might be useful fore logout functions.
+- `purgeRequest` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => Promise&lt;void>** Clears the request and the retrieved data.
+- `purgeAll` **() => void** Clears the whole apiData redux store. Might be useful fore logout functions.
   a GET list request, which might need to include the newly created entity.
 
 ---
 
-### `ApiDataRequest`
+### `Request`
 
 Information about a request made to an endpoint.
 
@@ -421,7 +442,7 @@ Map of parameter names to values.
 
 ---
 
-### `ApiDataEndpointConfig`
+### `EndpointConfig`
 
 Specification and configuration of an endpoint.
 
@@ -432,23 +453,25 @@ Specification and configuration of an endpoint.
 - `cacheDuration?` **number**
 - `responseSchema?` **Object | Array&lt;Object>**
 - `transformResponseBody?` **function (responseBody: Object): NormalizedData**
-- `beforeSuccess?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
+- `beforeSuccess?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
   Callback function that allows you to alter a response before it gets processed and stored. Can also be used to validate a response and turn it into a failed request by setting the `ok` property of the response to false.
-- `beforeFailed?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
+- `beforeFailed?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
   Callback function that allows you to alter a response before it gets processed and stored. Can also be used to turn it into a successful request by setting the `ok` property of the response to true.
-- `afterSuccess` **function (afterProps: [ApiDataConfigAfterProps](#apidataconfigafterprops)): boolean | void**
+- `afterSuccess` **function (afterProps: [ConfigAfterProps](#configafterprops)): boolean | void**
   Callback for executing side-effects when a call to this endpoint results in a "success" networkStatus. Called directly after the state is updated. If set, afterSuccess in globalConfig gets called after this, unless `false` is returned.
-- `afterFailed` **function (afterProps: [ApiDataConfigAfterProps](#apidataconfigafterprops)): boolean | void**
+- `afterFailed` **function (afterProps: [ConfigAfterProps](#configafterprops)): boolean | void**
   Callback for executing side-effects when a call to this endpoint results in a "failed" networkStatus. Called directly after the state is updated. If set, afterFailed in globalConfig gets called after this, unless `false` is returned.
 - `setHeaders?` **function (defaultHeaders: Object, state: Object): Object**
 - `setRequestProperties?` **function (defaultProperties: Object, state: Object): Object**
 - `timeout?` **number**
 - `autoTrigger?` **boolean**
   Trigger calls automatically if needed. Defaults to `true` for GET requests and `false` for all other requests.
+- `defaultParams?`: **Object**
+  Provide default params for the params included in the url.
 
 ---
 
-### `ApiDataGlobalConfig`
+### `GlobalConfig`
 
 Global configuration for all endpoints.
 
@@ -456,28 +479,28 @@ Global configuration for all endpoints.
 
 - `setHeaders?` **function (defaultHeaders: Object, state: Object): Object**
 - `setRequestProperties` **function (defaultProperties: Object, state: Object): Object**
-- `beforeSuccess?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
-- `beforeFailed?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ApiDataConfigBeforeProps](#apidataconfigbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
-- `afterSuccess?` **function (afterProps: [ApiDataConfigAfterProps](#apidataconfigafterprops)): void**
-- `afterFailed?` **function (afterProps: [ApiDataConfigAfterProps](#apidataconfigafterprops)): void**
+- `beforeSuccess?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
+- `beforeFailed?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
+- `afterSuccess?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void**
+- `afterFailed?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void**
 - `timeout?` **number**
 
 ---
 
-### `ApiDataConfigBeforeProps`
+### `ConfigBeforeProps`
 
 - `endpointKey` **string**
-- `request` **[ApiDataRequest](#apidatarequest)**
+- `request` **[Request](#request)**
 - `requestBody?` **any**
 
   ***
 
-### `ApiDataConfigAfterProps`
+### `ConfigAfterProps`
 
 **Properties**
 
 - `endpointKey` **string**
-- `request` **[ApiDataRequest](#apidatarequest)**
+- `request` **[Request](#request)**
 - `requestBody?` **any**
 - `resultData` **any**
 - `dispatch` **Function**
@@ -489,7 +512,7 @@ Global configuration for all endpoints.
 
 ---
 
-### `ApiDataState`
+### `State`
 
 Type of the Api-data state
 

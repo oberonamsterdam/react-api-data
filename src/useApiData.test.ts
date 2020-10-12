@@ -42,11 +42,10 @@ describe('useApiData should trigger perform under the right conditions', () => {
     const mockBindingWithStore = (store: any, endpointKey: string, mockFunction: () => void, binding: any) =>
         binding.mockReturnValue({
             data: getResultData(store.getState().apiData, endpointKey, {}, ''),
-            request:
-                getRequest(store.getState().apiData, endpointKey, {}, '') || createRequest(endpointKey),
+            request: getRequest(store.getState().apiData, endpointKey, {}, '') || createRequest(endpointKey),
             perform: mockFunction,
             invalidateCache: () => store.dispatch(invalidateRequest(endpointKey, {}, '')),
-    });
+        });
     mockBindingWithStore(store1, endpointKey1, performMock1, getBinding);
     afterEach(() => {
         jest.clearAllMocks();
@@ -76,7 +75,7 @@ describe('useApiData should trigger perform under the right conditions', () => {
 
     it('performs a request when status is ready and also when hook got rerenderd with different params', async () => {
         mockBindingWithStore(store1, endpointKey1, performMock1, getBinding);
-        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params), {
+        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params ), {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
         expect(performMock1).toHaveBeenCalledTimes(1);

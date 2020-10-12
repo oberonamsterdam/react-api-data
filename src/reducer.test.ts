@@ -147,7 +147,7 @@ const updatedState: State = {
 };
 
 describe('FETCH_API_DATA', () => {
-    test('new stat is correct', () => {
+    test('new state is correct', () => {
         const params = { id: 'one' };
         const action: FetchAction = {
             type: 'FETCH_API_DATA',

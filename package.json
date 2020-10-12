@@ -1,6 +1,6 @@
 {
   "name": "react-api-data",
-  "version": "0.16.8",
+  "version": "1.0.0",
   "description": "Fetch and normalize data from api",
   "main": "lib/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "test-watch": "jest --watch",
     "build": "npm run test && npm run build:clean && npm run build:lib && npm run build:flow",
     "build:clean": "rimraf lib/",
-    "build:lib": "tsc",
+    "build:lib": "npx tsc",
     "build:flow": "flow example && flow-copy-source flow lib",
     "build:docs": "documentation build lib/index.js -f md > api.md",
     "precommit": "tslint --project .",
@@ -33,16 +33,16 @@
   "homepage": "https://github.com/oberonamsterdam/react-api-data#readme",
   "devDependencies": {
     "@testing-library/react-hooks": "^3.2.1",
-    "@types/jest": "^22.2.3",
+    "@types/jest": "^26.0.13",
     "@types/node": "^12.11.7",
     "@types/react": "^16.8.17",
     "@types/react-redux": "^7.1.5",
     "@types/redux-mock-store": "^1.0.0",
     "@types/shallowequal": "^0.2.3",
     "flow-bin": "^0.87.0",
-    "flow-copy-source": "^2.0.2",
+    "flow-copy-source": "^2.0.9",
     "husky": "^1.0.1",
-    "jest": "^24.9.0",
+    "jest": "^26.4.2",
     "normalizr": "^3.2.4",
     "oberon-prettier-config": "^1.0.0",
     "prettier": "^1.19.1",
@@ -53,10 +53,10 @@
     "redux": "^4.0.1",
     "redux-mock-store": "^1.5.3",
     "redux-thunk": "^2.3.0",
-    "ts-jest": "^24.0.2",
+    "ts-jest": "^26.3.0",
     "tslint": "^5.10.0",
     "tslint-config-oberon": "^1.0.4",
-    "typescript": "^3.7.4"
+    "typescript": "^4.0.2"
   },
   "dependencies": {
     "@types/query-string": "^6.3.0",

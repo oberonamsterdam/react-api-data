@@ -7,10 +7,12 @@ import { performRequest } from './actions/performRequest';
 import { invalidateRequest } from './actions/invalidateRequest';
 import { afterRehydrate } from './actions/afterRehydrate';
 import { purge } from './actions/purge';
-import { useRequestHandler } from './actions/performRequest';
+import { setRequestHandler } from './actions/performRequest';
 import { getRequest } from './selectors/getRequest';
 import { getResultData } from './selectors/getResultData';
 import { getEntity } from './selectors/getEntity';
+import useApiData from './useApiData';
+import useActions from './useActions';
 export type {
     NetworkStatus,
     NormalizeResult,
@@ -23,6 +25,7 @@ export type {
     ConfigBeforeProps,
     ConfigAfterProps,
     Binding,
+    Actions,
 } from './types';
 
 export {
@@ -31,12 +34,14 @@ export {
     performRequest,
     invalidateRequest,
     afterRehydrate,
-    useRequestHandler,
+    setRequestHandler,
     getRequest,
     getResultData,
     getEntity,
     reducer,
     purge,
+    useApiData,
+    useActions,
 };
 
 export var purgeApiData = purge;
@@ -44,3 +49,4 @@ export var getApiDataRequest = getRequest;
 export var configureApiData = configure;
 export var invalidateApiDataRequest = invalidateRequest;
 export var performApiDataRequest = performRequest;
+export var useRequestHandler = setRequestHandler;
