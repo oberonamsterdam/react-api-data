@@ -1,6 +1,7 @@
 # API
-  ## Table of Contents
-  
+
+## Table of Contents
+
 - [Hooks](#hooks)
   - [`useApiData()`](#useapidata)
   - [`useActions()`](#useactions)
@@ -17,6 +18,8 @@
   - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
 - [HOC](#hoc)
   - [`withApiData()`](#withapidata)
+- [SSR](#hoc)
+  - [`getDataFromTree`](#getdatafromtree)
 - [Types and interfaces](#types-and-interfaces)
   - [`NetworkStatus`](#networkstatus)
   - [`Binding`](#binding)
@@ -30,24 +33,28 @@
   - [`State`](#state)
   - [`RequestHandler`](#requesthandler)
   - [`HandledResponse`](#handledresponse)
-  
+
 ## Hooks
 
-### `useApiData()`  
+### `useApiData()`
 
 Get an [Binding](#binding) for the given endpoint. It will make sure data gets (re-)loaded if needed. This behavior is
-based on the `autoTrigger` and `cacheDuration` settings in [EndpointConfig](#endpointconfig) and will, by default, trigger 
+based on the `autoTrigger` and `cacheDuration` settings in [EndpointConfig](#endpointconfig) and will, by default, trigger
 the call when the endpoint's method is `GET` and the call has not yet been triggered before. This makes it possible to use
 this hook for the same call in multiple components, without needing to worry about which components needs to trigger the call
 and how to share the data between the components. Just "use" the API data in multiple components and the fetching of data will be handled.
-In any case it will return an `Binding` that reflects the current state of the *API call*, identified by the combination
-of the *endpointKey* and the *params*.
+In any case it will return an `Binding` that reflects the current state of the _API call_, identified by the combination
+of the _endpointKey_ and the _params_.
+
+`useApiData` will invoke the request during rendering if `isSSR` is true.
+If not passed, isSSR will be determined automatically.
 
 **Parameters**
 
 - `endpointKey` **string**
 - `params?` **[EndpointParams](#endpointparams)**
 - `options?` **[EndpointConfig](#EndpointConfig)**
+- `isSSR?` **boolean**
 
 **Returns**
 
@@ -55,48 +62,51 @@ of the *endpointKey* and the *params*.
 
 **Examples**
 
- ```javascript
-import React from 'react';
-import { useApiData } from 'react-api-data';
+```javascript
+import React from "react";
+import { useApiData } from "react-api-data";
 
-const Article = (props) => {
-    const article = useApiData(
-        'getArticle',
+const Article = props => {
+  const article = useApiData("getArticle",
         { id: props.articleId },
-        { afterSuccess: () => alert(`Article with id ${props.articleId} received successfully`) },
-    );
-    return (
-        <>
-            {article.request.networkStatus === 'success' && (
-                <div>
-                    <h1>{article.data.title}</h1>
-                    <p>{article.data.body}</p>
-                </div>
-            )}
-        </>
-    );
+        { afterSuccess: () => alert(`Article with id ${props.articleId} received successfully`) },);
+  return (
+    <>
+      {article.request.networkStatus === "success" && (
+        <div>
+          <h1>{article.data.title}</h1>
+          <p>{article.data.body}</p>
+        </div>
+      )}
+    </>
+  );
 };
 ```
 
-### `useActions()`  
+### `useActions()`
 
 **Parameters**
 
-*none*
+_none_
 
 **Returns**
+
 - `Actions` **[Actions](#actions)**
 
 **Examples**
- ```javascript
-    const actions = useActions()
-    // Do a perform on any endpoint configured.
-    actions.perform('postArticle', {id: article.id}, {body: 'The body of my article'})
-    // Invalidate the cache on any endpoint configured.
-    actions.invalidateCache('getArticles');
-    // purge the whole apiData store (invalidate all)
-    actions.purgeAll()
-            
+
+```javascript
+const actions = useActions();
+// Do a perform on any endpoint configured.
+actions.perform(
+  "postArticle",
+  { id: article.id },
+  { body: "The body of my article" }
+);
+// Invalidate the cache on any endpoint configured.
+actions.invalidateCache("getArticles");
+// purge the whole apiData store (invalidate all)
+actions.purgeAll();
 ```
 
 ## Config
@@ -112,7 +122,7 @@ withApiData.
 
 **Returns**
 
- **Object** Redux action
+**Object** Redux action
 
 ---
 
@@ -124,7 +134,6 @@ Use your own request function that calls the api and reads the responseBody resp
 **Parameters**
 
 - `requestHandler` **RequestHandler**
-
 
 ## Redux Actions
 
@@ -247,21 +256,25 @@ The getResultData selector has been deprecated. It is recommended to use the req
 ### `withApiData()`
 
 **Examples**
- ```javascript
-withApiData({
-    article: 'getArticle',
-    users: 'getUser',
-    editArticle: 'editArticle' // an endpoint with autoTrigger false
-}, (ownProps, state) => ({
+
+```javascript
+withApiData(
+  {
+    article: "getArticle",
+    users: "getUser",
+    editArticle: "editArticle" // an endpoint with autoTrigger false
+  },
+  (ownProps, state) => ({
     article: {
-        id: ownProps.articleId,
+      id: ownProps.articleId
     },
     // sometimes you need to call one endpoint multiple times (simultaneously) with different parameter values:
     users: state.users.map(user => ({
-        userId: user.id
+      userId: user.id
     })),
     editArticle: {}
-}),
+  })
+,
     // if you want to override the configs for a certain endpoint, you can do so:
     {
         editArticle: {
@@ -282,15 +295,18 @@ withApiData({
 // props.apiDataActions will be an Actions object
 
 // perform can be used to trigger calls with autoTrigger: false
-props.editArticle.perform({
+props.editArticle.perform(
+  {
     id: props.articleId
-}, {
-    title: 'New Title',
-    content: 'New article content'
-});
+  },
+  {
+    title: "New Title",
+    content: "New article content"
+  }
+);
 
 // the apiDataAction property can be used to perform actions on any endpoint in the endpoint config, not only those which are in the current binding.
-props.actions.invalidateCache('getArticles');
+props.actions.invalidateCache("getArticles");
 ```
 
 Binds api data to component props and automatically triggers loading of data if it hasn't been loaded yet. The wrapped
@@ -305,6 +321,44 @@ component will get an [Binding](#binding) or [Binding](#binding)[] added to each
 
 **Function** Function to wrap your component. This higher order component adds a property for each binding, as defined in the bindings param of the HOC, to the wrapped component and an additional actions property with type [Actions](#actions).
 
+## SSR
+
+### `getDataFromTree()`
+
+**Examples**
+
+While handling the request on the serverside:
+
+```javascript
+const store = initializeStore();
+const app = (
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+
+// prerender to determine what requests are being made
+await getDataFromTree(app, store);
+
+// Requests are now all done, render for real.
+const content = ReactDOMServer.renderToString(app);
+
+// And... continue normal request handling
+res.status(200);
+res.send(`<!doctype html>\n${content}`);
+res.end();
+```
+
+Above sample is highly simplified, please check our [`with-next`](https://github.com/oberonamsterdam/react-api-data/tree/master/examples/with-next/) example for something a bit more concrete.
+
+**Parameters**
+
+- `tree` **ReactNode** Your app tree, containing components that call `useApiData`.
+- `store` **Store<unknown>** Your store. Should be the same store that you have used to wrap your app tree with, otherwise we can't extract the results.
+
+**Returns**
+
+A promise, if complete, all requests in the tree have been completed.
 
 ## Types and interfaces
 
@@ -313,7 +367,7 @@ straight from the react-api-data package.
 
 ### `NetworkStatus`
 
-Type: **String enum** 
+Type: **String enum**
 
 **Possible values**
 
@@ -326,14 +380,14 @@ Type: **String enum**
 
 ### `Binding`
 
- Represents an endpoint *call*. 
+Represents an endpoint _call_.
 
 **Properties**
 
 - `data` **any** The result data of your request, or undefined if your request has not completed, has failed, or has no response body.
 - `loading`**boolean** Returns a boolean whether the binding is currently loading or not.
 - `dataFailed` **any** Generic type which returns the failed state returned by the API, undefined when the call is not completed or succeeded.
-- `request` **[Request](#request)** 
+- `request` **[Request](#request)**
 - `perform` **(params?: [EndpointParams](#endpointparams), body?: any) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Binding](#binding)>**
   Manually trigger a call to the endpoint. The params parameter is merged with the params parameter of the binding. Returns a promise that resolves with an Binding after call has completed. Use request networkStatus to see if call was succeeded or not. Both the original Binding and the resolved promise contain the result of the performed request.
 - `invalidateCache` **() => Promise&lt;void>** Manually trigger a cache invalidation of the endpoint with the current parameters.
@@ -342,10 +396,10 @@ Type: **String enum**
 
 **Examples**
 
- ```javascript
+```javascript
 type Props = {
   users: Binding<Array<User>>
-}
+};
 ```
 
 ---
@@ -360,7 +414,7 @@ Perform actions on any configured endpoint. These actions do not need to be disp
 - `invalidateCache` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => void** Invalidates the result of a request, settings it's status back to 'ready'. Use for example after a POST, to invalidate
 - `purgeRequest` **(`endpointKey` string, `params?` [EndpointParams](#endpointparams), `instanceId?` string) => Promise&lt;void>** Clears the request and the retrieved data.
 - `purgeAll` **() => void** Clears the whole apiData redux store. Might be useful fore logout functions.
-a GET list request, which might need to include the newly created entity.
+  a GET list request, which might need to include the newly created entity.
 
 ---
 
@@ -370,15 +424,15 @@ Information about a request made to an endpoint.
 
 **Properties**
 
-- `result?` **any** 
-- `networkStatus` **[NetworkStatus](#networkstatus)** 
-- `lastCall` **number** 
-- `duration` **number** 
-- `response?` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)** 
-- `errorBody?` **any** 
-- `endpointKey` **string** 
-- `params?` **[EndpointParams](#endpointparams)** 
-- `url` **string** 
+- `result?` **any**
+- `networkStatus` **[NetworkStatus](#networkstatus)**
+- `lastCall` **number**
+- `duration` **number**
+- `response?` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)**
+- `errorBody?` **any**
+- `endpointKey` **string**
+- `params?` **[EndpointParams](#endpointparams)**
+- `url` **string**
 
 ---
 
@@ -390,26 +444,26 @@ Map of parameter names to values.
 
 ### `EndpointConfig`
 
- Specification and configuration of an endpoint.
+Specification and configuration of an endpoint.
 
 **Properties**
 
-- `url` **string** 
-- `method` **`"GET"` | `"POST"` | `"PUT"` | `"PATCH"` | `"DELETE"`** 
+- `url` **string**
+- `method` **`"GET"` | `"POST"` | `"PUT"` | `"PATCH"` | `"DELETE"`**
 - `cacheDuration?` **number**
 - `responseSchema?` **Object | Array&lt;Object>**
-- `transformResponseBody?` **function (responseBody: Object): NormalizedData** 
+- `transformResponseBody?` **function (responseBody: Object): NormalizedData**
 - `beforeSuccess?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
   Callback function that allows you to alter a response before it gets processed and stored. Can also be used to validate a response and turn it into a failed request by setting the `ok` property of the response to false.
 - `beforeFailed?` **function (handledResponse: {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
- Callback function that allows you to alter a response before it gets processed and stored. Can also be used to turn it into a successful request by setting the `ok` property of the response to true.
+  Callback function that allows you to alter a response before it gets processed and stored. Can also be used to turn it into a successful request by setting the `ok` property of the response to true.
 - `afterSuccess` **function (afterProps: [ConfigAfterProps](#configafterprops)): boolean | void**
- Callback for executing side-effects when a call to this endpoint results in a "success" networkStatus. Called directly after the state is updated. If set, afterSuccess in globalConfig gets called after this, unless `false` is returned.
+  Callback for executing side-effects when a call to this endpoint results in a "success" networkStatus. Called directly after the state is updated. If set, afterSuccess in globalConfig gets called after this, unless `false` is returned.
 - `afterFailed` **function (afterProps: [ConfigAfterProps](#configafterprops)): boolean | void**
- Callback for executing side-effects when a call to this endpoint results in a "failed" networkStatus. Called directly after the state is updated. If set, afterFailed in globalConfig gets called after this, unless `false` is returned.
-- `setHeaders?` **function (defaultHeaders: Object, state: Object): Object** 
-- `setRequestProperties?` **function (defaultProperties: Object, state: Object): Object** 
-- `timeout?` **number** 
+  Callback for executing side-effects when a call to this endpoint results in a "failed" networkStatus. Called directly after the state is updated. If set, afterFailed in globalConfig gets called after this, unless `false` is returned.
+- `setHeaders?` **function (defaultHeaders: Object, state: Object): Object**
+- `setRequestProperties?` **function (defaultProperties: Object, state: Object): Object**
+- `timeout?` **number**
 - `autoTrigger?` **boolean**
   Trigger calls automatically if needed. Defaults to `true` for GET requests and `false` for all other requests.
 - `defaultParams?`: **Object**
@@ -419,42 +473,42 @@ Map of parameter names to values.
 
 ### `GlobalConfig`
 
- Global configuration for all endpoints.
+Global configuration for all endpoints.
 
 **Properties**
- 
- - `setHeaders?` **function (defaultHeaders: Object, state: Object): Object** 
- - `setRequestProperties` **function (defaultProperties: Object, state: Object): Object** 
- - `beforeSuccess?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}** 
- - `beforeFailed?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}** 
- - `afterSuccess?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void** 
- - `afterFailed?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void** 
- - `timeout?` **number** 
+
+- `setHeaders?` **function (defaultHeaders: Object, state: Object): Object**
+- `setRequestProperties` **function (defaultProperties: Object, state: Object): Object**
+- `beforeSuccess?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), body: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
+- `beforeFailed?` **function ({response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}, beforeProps: [ConfigBeforeProps](#configbeforeprops)): {response: [Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5), responseBody: any}**
+- `afterSuccess?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void**
+- `afterFailed?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void**
+- `timeout?` **number**
 
 ---
 
 ### `ConfigBeforeProps`
 
-- `endpointKey` **string** 
-- `request` **[Request](#request)** 
-- `requestBody?` **any** 
- 
- ---
- 
- ### `ConfigAfterProps`
- 
- **Properties**
- 
-- `endpointKey` **string** 
-- `request` **[Request](#request)** 
-- `requestBody?` **any** 
-- `resultData` **any** 
+- `endpointKey` **string**
+- `request` **[Request](#request)**
+- `requestBody?` **any**
+
+  ***
+
+### `ConfigAfterProps`
+
+**Properties**
+
+- `endpointKey` **string**
+- `request` **[Request](#request)**
+- `requestBody?` **any**
+- `resultData` **any**
 - `dispatch` **Function**
- Redux' dispatch function. Useful for state related side effects.
+  Redux' dispatch function. Useful for state related side effects.
 - `getState` **Function**
- Get access to your redux state.
+  Get access to your redux state.
 - `actions` **[Actions](#actions)**
- Perform actions on any configured endpoint
+  Perform actions on any configured endpoint
 
 ---
 
@@ -472,7 +526,7 @@ Type: **Function**
 
 - `url` **string**
 - `requestProperties` **[RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters)**
-The `init` parameter for fetch.
+  The `init` parameter for fetch.
 
 **Returns**
 

@@ -156,6 +156,7 @@ describe('FETCH_API_DATA', () => {
                 requestKey: getRequestKey('getData', params),
                 params,
                 url: 'www.getdata.get',
+                promise: Promise.resolve()
             },
         };
         const newState = {
@@ -168,6 +169,7 @@ describe('FETCH_API_DATA', () => {
                     endpointKey: 'getData',
                     params,
                     url: 'www.getdata.get',
+                    promise: Promise.resolve()
                 },
                 [getRequestKey('postData')]: {
                     networkStatus: 'ready',

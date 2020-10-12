@@ -25,13 +25,7 @@
  * THIS STORE ITSELF IS CONSIDERED PRIVATE TO THIS LIB AND IT'S ARCHITECTURE MIGHT CHANGE. An interface is provided through
  * the HOC and the selectors, use those.
  */
-import {
-    EndpointConfig,
-    GlobalConfig,
-    DataRequest,
-    EndpointParams,
-    NetworkStatus,
-} from './types';
+import { DataRequest, EndpointConfig, EndpointParams, GlobalConfig, NetworkStatus } from './types';
 
 import { ConfigureAction } from './actions/configure';
 import { SuccessAction } from './actions/success';
@@ -52,10 +46,10 @@ interface Entities {
 export interface State {
     globalConfig: GlobalConfig;
     endpointConfig: {
-        [endpointKey: string]: EndpointConfig
+        [endpointKey: string]: EndpointConfig;
     };
     requests: {
-        [requestKey: string]: DataRequest
+        [requestKey: string]: DataRequest;
     };
     entities: Entities;
 }
@@ -78,11 +72,11 @@ export interface FetchAction {
         endpointKey: string;
         params?: EndpointParams;
         url: string;
+        promise: Promise<unknown>;
     };
 }
 
 export type Action =
-
     | ConfigureAction
     | FetchAction
     | SuccessAction
@@ -91,8 +85,7 @@ export type Action =
     | ClearAction
     | AfterRehydrateAction
     | PurgeRequestAction
-    | PurgeAllAction
-    ;
+    | PurgeAllAction;
 
 // reducer
 
@@ -116,6 +109,7 @@ export default (state: State = defaultState, action: Action): State => {
                         endpointKey: action.payload.endpointKey,
                         params: action.payload.params,
                         url: action.payload.url,
+                        promise: action.payload.promise,
                     },
                 },
             };
@@ -234,16 +228,16 @@ export const recoverNetworkStatus = (networkStatus: NetworkStatus): NetworkStatu
     networkStatus === 'loading' ? 'ready' : networkStatus;
 
 export const recoverNetworkStatuses = (requests: {
-    [requestKey: string]: DataRequest
+    [requestKey: string]: DataRequest;
 }): { [requestKey: string]: DataRequest } => ({
     ...Object.keys(requests).reduce(
         (result, key) => ({
             ...result,
             [key]: {
                 ...requests[key],
-                networkStatus: recoverNetworkStatus(requests[key].networkStatus)
-            }
+                networkStatus: recoverNetworkStatus(requests[key].networkStatus),
+            },
         }),
         {}
-    )
+    ),
 });

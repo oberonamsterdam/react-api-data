@@ -6,6 +6,7 @@ import { getRequest } from './selectors/getRequest';
 import { getResultData } from './selectors/getResultData';
 import { invalidateRequest } from './actions/invalidateRequest';
 import { performRequest, setRequestHandler } from './actions/performRequest';
+import getDataFromTree from './getDataFromTree';
 import { getEntity } from './selectors/getEntity';
 import reducer from './reducer';
 import { State } from './reducer';
@@ -33,6 +34,7 @@ export {
     getRequest,
     getResultData,
     getEntity,
+    getDataFromTree,
     invalidateRequest,
     afterRehydrate,
     purgeAll,

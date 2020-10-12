@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Binding, EndpointParams, EndpointConfig } from './types';
+import { Binding, EndpointConfig, EndpointParams } from './types';
 import { BindingsStore } from './helpers/createBinding';
 import { shouldAutoTrigger } from './withApiData';
 import { State } from './reducer';
@@ -8,6 +8,7 @@ import shallowEqual from 'shallowequal';
 
 export interface HookOptions extends Partial<EndpointConfig> {
     instanceId?: string;
+    isSSR?: boolean;
 }
 
 type UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => Binding<T, F>;
@@ -19,7 +20,12 @@ type UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, op
 // - the call has been invalidated (networkStatus is ready)
 
 const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => {
-    const { instanceId, ...config } = options ?? {};
+    const {
+        instanceId,
+        // we auto detect a SSR environment. If we are on SSR, we will immediately execute the request during every render(!)
+        isSSR = typeof document === 'undefined',
+        ...config
+    } = options ?? {};
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
     const prevParams = useRef<EndpointParams>();
     const prevEndpointKey = useRef<string>();
@@ -36,7 +42,8 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
         config
     );
     const networkStatus = binding.request.networkStatus;
-    useEffect(() => {
+
+    const fetchDataIfNeeded = () => {
         if (
             autoTrigger &&
             ((prevParams.current && !shallowEqual(prevParams.current, params)) ||
@@ -47,6 +54,15 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
             prevEndpointKey.current = endpointKey;
             binding.perform(params, undefined);
         }
+    };
+
+    if (isSSR) {
+        // immediately invoke request on SSR
+        fetchDataIfNeeded();
+    }
+
+    useEffect(() => {
+        fetchDataIfNeeded();
     }, [autoTrigger, params, endpointKey, networkStatus]);
 
     return binding;

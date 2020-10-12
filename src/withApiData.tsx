@@ -1,8 +1,7 @@
 import React from 'react';
 import { Binding, DataRequest, EndpointParams, Actions, EndpointConfig } from './types';
 import { connect, ConnectedComponent } from 'react-redux';
-import { State } from './reducer';
-import { Action } from './reducer';
+import { Action, State } from './reducer';
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import shallowEqual from 'shallowequal';
 import { ThunkDispatch } from 'redux-thunk';
@@ -24,6 +23,7 @@ export interface WithApiDataProps {
     apiData: State;
     params: WithApiDataParams;
     dispatch: ThunkDispatch<{ apiData: State }, void, Action>;
+    isSSR?: boolean;
 }
 
 export type WithApiDataBindingProps<TPropNames extends string> = {
@@ -143,11 +143,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                                 )
                             ) {
                                 this.props.dispatch(
-                                    performRequest(
-                                        bindings[bindingKey],
-                                        params,
-                                        undefined,
-                                        index.toString(),
+                                    performRequest(bindings[bindingKey], params, undefined, index.toString(),
                                         undefined,
                                         bindingConfig
                                     )
@@ -157,9 +153,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     } else {
                         if (shouldPerformRequest(this.props, prevProps, bindings, bindingKey)) {
                             this.props.dispatch(
-                                performRequest(
-                                    bindings[bindingKey],
-                                    this.props.params[bindingKey] as EndpointParams,
+                                performRequest(bindings[bindingKey], this.props.params[bindingKey] as EndpointParams,
                                     undefined,
                                     undefined,
                                     undefined,
@@ -237,7 +231,17 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
             }
 
             render() {
-                const { apiData, params, dispatch, ...componentProps } = this.props;
+                const {
+                    apiData,
+                    params,
+                    dispatch,
+                    isSSR = typeof document === 'undefined',
+                    ...componentProps
+                } = this.props;
+
+                if (isSSR) {
+                    this.fetchDataIfNeeded();
+                }
 
                 const addProps: WithApiDataBindingProps<string> = {};
 
@@ -247,13 +251,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     if (Array.isArray(params[propName])) {
                         const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
                         addProps[propName] = paramsArray.map((propNameParams, index) =>
-                            this.getBinding(
-                                endpointKey,
-                                propNameParams,
-                                dispatch,
-                                propName,
-                                index.toString(),
-                                apiData,
+                            this.getBinding(endpointKey, propNameParams, dispatch, propName, index.toString(), apiData,
                                 bindingConfig
                             )
                         );

@@ -242,6 +242,18 @@ export const performRequest: PerformRequest = (
                 reject(getCurrentBinding());
             }
         });
+
+        dispatch({
+            type: 'FETCH_API_DATA',
+            payload: {
+                requestKey,
+                endpointKey,
+                params,
+                url,
+                promise
+            },
+        });
+
         loadingPromises[requestKey] = promise;
         promise.finally(() => delete loadingPromises[requestKey]);
         return promise;

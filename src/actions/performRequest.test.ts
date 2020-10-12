@@ -4,11 +4,10 @@ import request, { HandledResponse } from '../request';
 import { success } from './success';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { fail } from './fail';
-import { EndpointParams, ConfigBeforeProps } from '../types';
-import { getResultData } from '..';
-import { getRequest } from '..';
+import { ConfigBeforeProps, EndpointParams } from '../types';
+import { getRequest, getResultData } from '..';
 import thunk from 'redux-thunk';
-import { applyMiddleware, createStore, combineReducers } from 'redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
 import reducer from '../reducer';
 import { configure } from './configure';
 
@@ -151,13 +150,22 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: {},
                 url: 'mockAction.get',
+                promise: Promise.resolve(),
             },
         });
 
         // cache has expired
         const params = { test: 'a' }; // include test for params here
         performRequest('getData', params, { data: 'json' })(dispatch, () => ({
-            apiData: getState('getData', true, { getData: params }, 'success', { cacheDuration: 500 }, {}, Date.now() - 1000),
+            apiData: getState(
+                'getData',
+                true,
+                { getData: params },
+                'success',
+                { cacheDuration: 500 },
+                {},
+                Date.now() - 1000
+            ),
         }));
         expect(dispatch).toHaveBeenCalledWith({
             type: 'FETCH_API_DATA',
@@ -166,6 +174,7 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: { test: 'a' },
                 url: 'mockAction.get?test=a',
+                promise: Promise.resolve(),
             },
         });
     });
@@ -250,7 +259,7 @@ describe('performRequest', () => {
         await performRequest('getData', {}, postBody)(dispatch, () => state);
 
         expect(dispatch).toHaveBeenCalledWith(
-                success(
+            success(
                 getRequestKey('getData'),
                 state.apiData.endpointConfig,
                 // @ts-ignore fake Response object
@@ -369,13 +378,14 @@ describe('performRequest', () => {
         };
         mockResponse(response2);
         performRequest('getData', {}, {data: 'json'})(dispatch, () => state).then(() => {
-            expect(dispatch).toHaveBeenCalledWith(
-                success(
-                    getRequestKey('getData'),
-                    state.apiData.endpointConfig,
-                    // @ts-ignore fake Response
-                    { ...response2.response, ok: true },
-                    response2.body
+        expect(dispatch).toHaveBeenCalledWith(
+            success(
+                getRequestKey('getData'),
+                state.apiData.endpointConfig,
+                // @ts-ignore fake Response
+                { ...response2.response, ok: true },
+                response2.body
+
                 )
             );
             expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'API_DATA_FAIL' }));
@@ -456,7 +466,7 @@ describe('performRequest', () => {
         const result = {
             data: getResultData(state.apiData, 'getData', {}),
             request: getRequest(state.apiData, 'getData', {}),
-            perform: (myParams: EndpointParams, body: any) => dispatch(performRequest('getData', myParams, body))
+            perform: (myParams: EndpointParams, body: any) => dispatch(performRequest('getData', myParams, body)),
         };
         performRequest(
             'getData',
@@ -482,12 +492,12 @@ describe('performRequest', () => {
                 undefined,
                 Date.now(),
                 'primary'
-            )
+            ),
         };
         const result = {
             data: getResultData(state.apiData, 'getData', {}, 'primary'),
             request: getRequest(state.apiData, 'getData', {}, 'primary'),
-            perform: (myParams: EndpointParams, body: any) => dispatch(performRequest('getData', myParams, body))
+            perform: (myParams: EndpointParams, body: any) => dispatch(performRequest('getData', myParams, body)),
         };
         performRequest(
             'getData',
@@ -566,6 +576,7 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: defaultParams,
                 url: 'mockAction.get?language=nl',
+                promise: Promise.resolve(),
             },
         });
     });
@@ -601,6 +612,7 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: inputParams,
                 url: 'mockAction.get?language=en',
+                promise: Promise.resolve(),
             },
         });
     });
@@ -629,6 +641,7 @@ describe('performRequest', () => {
                     ...defaultParams,
                 },
                 url: 'mockAction.get?language=nl&test=b',
+                promise: Promise.resolve(),
             },
         });
     });
@@ -666,6 +679,7 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: inputParams,
                 url: 'mockAction.get?language=en&test=c',
+                promise: Promise.resolve(),
             },
         });
     });
@@ -706,6 +720,7 @@ describe('performRequest', () => {
                     ...inputParams,
                 },
                 url: 'mockAction.get?language=en&number=1&test=b',
+                promise: Promise.resolve(),
             },
         });
     });

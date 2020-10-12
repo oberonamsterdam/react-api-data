@@ -17,7 +17,10 @@ export type RequestHandler = (url: string, requestProperties?: RequestInit) => P
 
 const getHeaders = (requestProperties: RequestInit): HeadersInit => {
     const headers = requestProperties.headers || {};
-    if ('body' in requestProperties && !(requestProperties.body instanceof FormData)) {
+    if (
+        'body' in requestProperties &&
+        (typeof FormData !== 'undefined' ? !(requestProperties.body instanceof FormData) : true)
+    ) {
         if (headers instanceof Headers) {
             if (!headers.has('Content-Type')) {
                 headers.set('Content-Type', 'application/json');
@@ -49,7 +52,10 @@ const defaultRequestHandler: RequestHandler = (url, requestProperties = {}) => {
         console.log('Executing request: ' + url);
     }
     requestProperties.headers = getHeaders(requestProperties);
-    if (typeof requestProperties.body !== 'string' && !(requestProperties.body instanceof FormData)) {
+    if (
+        typeof requestProperties.body !== 'string' &&
+        (typeof FormData !== 'undefined' ? !(requestProperties.body instanceof FormData) : true)
+    ) {
         requestProperties.body = JSON.stringify(requestProperties.body);
     }
     return new Promise((resolve, reject) => {
