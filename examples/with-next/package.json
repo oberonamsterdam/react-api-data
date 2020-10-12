@@ -9,7 +9,7 @@
   "dependencies": {
     "next": "latest",
     "react": "^16.9.0",
-    "react-api-data": "^0.16.6",
+    "react-api-data": "^1.0.1",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.0",
     "redux": "^4.0.4",
