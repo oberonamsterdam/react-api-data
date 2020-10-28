@@ -1,7 +1,7 @@
 /node_modules
-.idea
-lib
-coverage
+/.idea
+/lib
+/coverage
 
 # ide
-.vscode
+/.vscode
