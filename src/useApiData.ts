@@ -53,12 +53,7 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
             binding.perform(params, undefined);
         }
     };
-    const enableSuspense = { 
-        ...apiData.globalConfig, 
-        ...apiData.endpointConfig[binding.request.endpointKey], 
-        ...(config)
-    }.enableSuspense ?? false;
-
+    
     if (isSSR) {
         // immediately invoke request on SSR
         fetchDataIfNeeded();
@@ -68,6 +63,7 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
         fetchDataIfNeeded();
     }, [autoTrigger, params, endpointKey, networkStatus]);
 
+    const enableSuspense = config.enableSuspense ?? apiData.endpointConfig[endpointKey].enableSuspense ?? apiData.globalConfig.enableSuspense ?? false;
     if (enableSuspense && networkStatus === 'loading') {
         const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
         const promise = getLoadingPromise(requestKey);

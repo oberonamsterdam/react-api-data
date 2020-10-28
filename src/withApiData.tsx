@@ -248,12 +248,8 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 const addProps: WithApiDataBindingProps<string> = {};
                 const responsePromises: Array<Promise<any>> = [];
                 const checkLoading = (binding: Binding<any, any>, instanceId: string = '') => {
-                    const config = { 
-                        ...this.props.apiData.globalConfig, 
-                        ...this.props.apiData.endpointConfig[binding.request.endpointKey], 
-                        ...(configs?.[binding.request.endpointKey as TPropNames] ?? {})
-                    };
-                    if (binding.request.networkStatus === 'loading' && config.enableSuspense) {
+                    const enableSuspense = configs?.[binding.request.endpointKey as TPropNames]?.enableSuspense ?? this.props.apiData.endpointConfig[binding.request.endpointKey].enableSuspense ?? this.props.apiData.globalConfig.enableSuspense ?? false;
+                    if (binding.request.networkStatus === 'loading' && enableSuspense) {
                         const requestKey = getRequestKey(binding.request.endpointKey, binding.request.params || {}, instanceId);
                         const promise = getLoadingPromise(requestKey);
                         if (promise) {
