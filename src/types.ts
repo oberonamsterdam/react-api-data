@@ -54,6 +54,7 @@ export interface GlobalConfig {
     afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
+    enableSuspense?: boolean;
 }
 
 /**
@@ -121,6 +122,7 @@ export interface EndpointConfig {
 
     timeout?: number;
     autoTrigger?: boolean;
+    enableSuspense?: boolean;
 }
 
 export interface ConfigBeforeProps {
@@ -170,3 +172,10 @@ export interface Actions {
     purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void;
     purgeAll: () => void;
 }
+
+export interface Options {
+    instanceId?: string;
+    isSSR?: boolean;
+}
+
+export interface HookOptions extends Partial<EndpointConfig>, Options {}

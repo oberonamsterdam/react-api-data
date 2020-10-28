@@ -18,8 +18,8 @@
   - [`getResultData()` (Deprecated)](#getresultdata-deprecated)
 - [HOC](#hoc)
   - [`withApiData()`](#withapidata)
-- [SSR](#hoc)
-  - [`getDataFromTree`](#getdatafromtree)
+- [SSR](#ssr)
+  - [`getDataFromTree()`](#getdatafromtree)
 - [Types and interfaces](#types-and-interfaces)
   - [`NetworkStatus`](#networkstatus)
   - [`Binding`](#binding)
@@ -33,6 +33,7 @@
   - [`State`](#state)
   - [`RequestHandler`](#requesthandler)
   - [`HandledResponse`](#handledresponse)
+  - [`Options`](#options)
 
 ## Hooks
 
@@ -53,7 +54,7 @@ If not passed, isSSR will be determined automatically.
 
 - `endpointKey` **string**
 - `params?` **[EndpointParams](#endpointparams)**
-- `options?` **[EndpointConfig](#EndpointConfig)**
+- `options?` **[EndpointConfig](#endpointconfig) & [Options](#options)**
 
 **Returns**
 
@@ -117,7 +118,8 @@ withApiData.
 
 **Parameters**
 
-- `globalConfig` **[GlobalConfig](#globalconfig)** - `endpointConfig` **[EndpointConfig](#endpointconfig)**
+- `globalConfig` **[GlobalConfig](#globalconfig)** 
+- `endpointConfig` **[EndpointConfig](#endpointconfig)**
 
 **Returns**
 
@@ -467,6 +469,8 @@ Specification and configuration of an endpoint.
   Trigger calls automatically if needed. Defaults to `true` for GET requests and `false` for all other requests.
 - `defaultParams?`: **Object**
   Provide default params for the params included in the url.
+- `enableSuspense?`: **boolean**
+  Enables [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) for the endpoint.
 
 ---
 
@@ -483,6 +487,8 @@ Global configuration for all endpoints.
 - `afterSuccess?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void**
 - `afterFailed?` **function (afterProps: [ConfigAfterProps](#configafterprops)): void**
 - `timeout?` **number**
+- `enableSuspense?`: **boolean**
+  Enables [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) globally.
 
 ---
 
@@ -539,3 +545,14 @@ Type: **Function**
 
 - `response` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)**
 - `body` **any**
+
+---
+
+### `Options`
+
+**Properties**
+
+- `isSSR` **boolean**
+- `enableSuspense?`: **boolean**
+  Enables [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) for this hook.
+  

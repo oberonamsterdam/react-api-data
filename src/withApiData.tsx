@@ -8,7 +8,9 @@ import { ThunkDispatch } from 'redux-thunk';
 import { BindingsStore } from './helpers/createBinding';
 import { getActions } from './helpers/getActions';
 import { getRequest } from './selectors/getRequest';
-import { performRequest } from './actions/performRequest';
+import { getLoadingPromise, performRequest } from './actions/performRequest';
+import { getRequestKey } from './helpers/getRequestKey';
+import { getIsSSR } from './helpers/getIsSSR';
 
 type GetParams<TPropName extends string> = (
     ownProps: any,
@@ -235,7 +237,7 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                     apiData,
                     params,
                     dispatch,
-                    isSSR = typeof document === 'undefined',
+                    isSSR = getIsSSR(),
                     ...componentProps
                 } = this.props;
 
@@ -244,17 +246,33 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                 }
 
                 const addProps: WithApiDataBindingProps<string> = {};
-
+                const responsePromises: Array<Promise<any>> = [];
+                const checkLoading = (binding: Binding<any, any>, instanceId: string = '') => {
+                    const config = { 
+                        ...this.props.apiData.globalConfig, 
+                        ...this.props.apiData.endpointConfig[binding.request.endpointKey], 
+                        ...(configs?.[binding.request.endpointKey as TPropNames] ?? {})
+                    };
+                    if (binding.request.networkStatus === 'loading' && config.enableSuspense) {
+                        const requestKey = getRequestKey(binding.request.endpointKey, binding.request.params || {}, instanceId);
+                        const promise = getLoadingPromise(requestKey);
+                        if (promise) {
+                            responsePromises.push(promise);
+                        }
+                    }
+                };
                 Object.keys(bindings).forEach((propName: TPropNames) => {
                     const endpointKey: string = bindings[propName];
                     const bindingConfig = configs?.[propName];
                     if (Array.isArray(params[propName])) {
                         const paramsArray: EndpointParams[] = params[propName] as EndpointParams[];
-                        addProps[propName] = paramsArray.map((propNameParams, index) =>
-                            this.getBinding(endpointKey, propNameParams, dispatch, propName, index.toString(), apiData,
+                        addProps[propName] = paramsArray.map((propNameParams, index) => {
+                            const binding = this.getBinding(endpointKey, propNameParams, dispatch, propName, index.toString(), apiData,
                                 bindingConfig
-                            )
-                        );
+                            );
+                            checkLoading(binding, index.toString());
+                            return binding;
+                        });
                     } else {
                         addProps[propName] = this.getBinding(
                             endpointKey,
@@ -265,8 +283,12 @@ export default function withApiData<TChildProps extends WithApiDataChildProps<TP
                             apiData,
                             bindingConfig
                         );
+                        checkLoading(addProps[propName] as Binding<any, any>);
                     }
                 });
+                if (responsePromises.length > 0) { 
+                    throw Promise.all(responsePromises);
+                }
                 const actions: Actions = getActions(dispatch);
 
                 return <WrappedComponent {...componentProps} {...addProps} actions={actions} />;

@@ -72,7 +72,6 @@ const store = createStore(combineReducers({apiData: reducer}), applyMiddleware(t
 store.dispatch(configure({}, endpointConfig));
 ```
 
-
 ### Bind API data to your component
 
 ```js
@@ -83,12 +82,46 @@ const Article = (props) => {
     const article = useApiData('getArticle', { id: props.articleId });
     return (
         <>
-            {article.request.networkStatus === 'success' && 
+            {article.request.networkStatus === 'success' &&
                 <div>
                     <h1>{article.data.title}</h1>
                     <p>{article.data.body}</p>
                 </div>
             }
+        </>
+    );
+}
+
+```
+
+### Optionally use React Suspense
+
+React-api-data supports [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html). Suspense can be enabled globally, per endpoint or per Hook/HOC. It is also possible to override the suspense setting for an endpoint or Hook/HOC.
+
+```js
+import React from 'react';
+import { useApiData } from 'react-api-data';
+
+const Article = (props) => {
+    const article = useApiData('getArticle', { id: props.articleId }, { enableSuspense: true });
+    return (
+        <>
+            {article.request.networkStatus === 'success' &&
+                <div>
+                    <h1>{article.data.title}</h1>
+                    <p>{article.data.body}</p>
+                </div>
+            }
+        </>
+    );
+};
+
+const ArticleList = (props) => {
+    return (
+        <>
+            <Suspense fallback={<ArticleListLoading/>}>
+                {props.articles.map(article => <Article articleId={article.id}/>}
+            </Suspense>
         </>
     );
 }
@@ -282,9 +315,9 @@ const ItemsList = (props) => {
 export default connectApiData(ItemsList);
 ```
 
-## Configure with Redux-persist: 
+## Configure with Redux-persist
+
 ```js
-    
     // Use the callback of redux-persist to dispatch the afterRehydrate function.
     // This will make sure all loading states are properly reset.
     const persistor = persistStore(store, {}, () => store.dispatch(afterRehydrate()));

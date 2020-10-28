@@ -54,6 +54,7 @@ export interface GlobalConfig {
     afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
+    enableSuspense?: boolean;
 }
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -98,6 +99,7 @@ export interface EndpointConfig {
 
     timeout?: number;
     autoTrigger?: boolean;
+    enableSuspense?: boolean;
 }
 
 export interface ConfigBeforeProps {
@@ -143,3 +145,10 @@ export type Actions = {
     purgeRequest: (endpointKey: string, params?: EndpointParams, instanceId?: string) => void,
     purgeAll: () => void,
 };
+
+export type Options = {
+    instanceId?: string,
+    isSSR?: boolean,
+}
+
+export type HookOptions = $Shape<EndpointConfig> | Options;
