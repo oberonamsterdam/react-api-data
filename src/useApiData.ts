@@ -1,15 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Binding, EndpointConfig, EndpointParams } from './types';
+import { Binding, EndpointParams, HookOptions } from './types';
 import { BindingsStore } from './helpers/createBinding';
 import { shouldAutoTrigger } from './withApiData';
 import { State } from './reducer';
 import shallowEqual from 'shallowequal';
-
-export interface HookOptions extends Partial<EndpointConfig> {
-    instanceId?: string;
-    isSSR?: boolean;
-}
+import { getRequestKey } from './helpers/getRequestKey';
+import { getLoadingPromise } from './actions/performRequest';
+import { getIsSSR } from './helpers/getIsSSR';
 
 type UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => Binding<T, F>;
 
@@ -23,7 +21,7 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
     const {
         instanceId,
         // we auto detect a SSR environment. If we are on SSR, we will immediately execute the request during every render(!)
-        isSSR = typeof document === 'undefined',
+        isSSR = getIsSSR(),
         ...config
     } = options ?? {};
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
@@ -55,7 +53,7 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
             binding.perform(params, undefined);
         }
     };
-
+    
     if (isSSR) {
         // immediately invoke request on SSR
         fetchDataIfNeeded();
@@ -64,6 +62,15 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
     useEffect(() => {
         fetchDataIfNeeded();
     }, [autoTrigger, params, endpointKey, networkStatus]);
+
+    const enableSuspense = config.enableSuspense ?? apiData.endpointConfig[endpointKey].enableSuspense ?? apiData.globalConfig.enableSuspense ?? false;
+    if (enableSuspense && networkStatus === 'loading') {
+        const requestKey = getRequestKey(endpointKey, params || {}, instanceId);
+        const promise = getLoadingPromise(requestKey);
+        if (promise) {
+            throw promise;
+        }
+    }
 
     return binding;
 };

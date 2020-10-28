@@ -75,6 +75,10 @@ type PerformRequest = (
 
 const loadingPromises: { [requestKey: string]: Promise<Binding<any, any>> } = {};
 
+export const getLoadingPromise = (requestKey: string): Promise<Binding<any, any>> | null => {
+    return loadingPromises[requestKey] ?? null;
+};
+
 /**
  * Manually trigger an request to an endpoint. Prefer to use {@link withApiData} instead of using this function directly.
  * This is an action creator, so make sure to dispatch the return value.

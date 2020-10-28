@@ -4,4 +4,5 @@ src
 coverage
 .github
 .vscode
-examples/
+examples
+example
