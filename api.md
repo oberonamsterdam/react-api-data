@@ -24,7 +24,7 @@
   - [`NetworkStatus`](#networkstatus)
   - [`Binding`](#binding)
   - [`Actions`](#actions)
-  - [`Request`](#request)
+  - [`DataRequest`](#datarequest)
   - [`EndpointParams`](#endpointparams)
   - [`EndpointConfig`](#endpointconfig)
   - [`GlobalConfig`](#globalconfig)
@@ -419,7 +419,7 @@ Perform actions on any configured endpoint. These actions do not need to be disp
 
 ---
 
-### `Request`
+### `DataRequest`
 
 Information about a request made to an endpoint.
 

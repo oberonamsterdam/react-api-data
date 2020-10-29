@@ -72,7 +72,6 @@ export interface FetchAction {
         endpointKey: string;
         params?: EndpointParams;
         url: string;
-        promise: Promise<unknown>;
     };
 }
 
@@ -109,7 +108,6 @@ export default (state: State = defaultState, action: Action): State => {
                         endpointKey: action.payload.endpointKey,
                         params: action.payload.params,
                         url: action.payload.url,
-                        promise: action.payload.promise,
                     },
                 },
             };

@@ -150,7 +150,6 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: {},
                 url: 'mockAction.get',
-                promise: Promise.resolve(),
             },
         });
 
@@ -174,7 +173,6 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: { test: 'a' },
                 url: 'mockAction.get?test=a',
-                promise: Promise.resolve(),
             },
         });
     });
@@ -576,7 +574,6 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: defaultParams,
                 url: 'mockAction.get?language=nl',
-                promise: Promise.resolve(),
             },
         });
     });
@@ -612,7 +609,6 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: inputParams,
                 url: 'mockAction.get?language=en',
-                promise: Promise.resolve(),
             },
         });
     });
@@ -641,7 +637,6 @@ describe('performRequest', () => {
                     ...defaultParams,
                 },
                 url: 'mockAction.get?language=nl&test=b',
-                promise: Promise.resolve(),
             },
         });
     });
@@ -679,7 +674,6 @@ describe('performRequest', () => {
                 endpointKey: 'getData',
                 params: inputParams,
                 url: 'mockAction.get?language=en&test=c',
-                promise: Promise.resolve(),
             },
         });
     });
@@ -720,7 +714,6 @@ describe('performRequest', () => {
                     ...inputParams,
                 },
                 url: 'mockAction.get?language=en&number=1&test=b',
-                promise: Promise.resolve(),
             },
         });
     });
