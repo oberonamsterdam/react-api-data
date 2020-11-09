@@ -21,7 +21,7 @@
     "declaration": true
   },
   "exclude": [
-    "example",
+    "examples",
     "node_modules",
     "lib",
     "scripts",
