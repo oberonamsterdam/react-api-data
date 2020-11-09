@@ -253,8 +253,7 @@ export const performRequest: PerformRequest = (
                 requestKey,
                 endpointKey,
                 params,
-                url,
-                promise
+                url
             },
         });
 

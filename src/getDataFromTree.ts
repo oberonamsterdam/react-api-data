@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Store } from 'redux';
+import { getLoadingPromise } from './actions/performRequest';
 import { State } from './reducer';
-import { DataRequest } from './types';
 
 type RenderFn = (tree: ReactNode) => string;
 const getDataFromTree = (
@@ -11,7 +11,10 @@ const getDataFromTree = (
 ) => {
     renderFn(tree);
     const { apiData } = store.getState();
-    return Promise.all(Object.values(apiData.requests).map((request: DataRequest) => request.promise));
+    return Promise.all(Object.keys(apiData.requests).map((requestKey: string) => {
+        const promise = getLoadingPromise(requestKey);
+        return promise;
+    }));
 };
 
 export default getDataFromTree;
