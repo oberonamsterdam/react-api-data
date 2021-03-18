@@ -28,7 +28,7 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
     const prevParams = useRef<EndpointParams>();
     const prevEndpointKey = useRef<string>();
     const apiData: State = useSelector((state: { apiData: State }) => state.apiData);
-    const autoTrigger = shouldAutoTrigger(apiData, endpointKey);
+    const autoTrigger = config.autoTrigger ?? shouldAutoTrigger(apiData, endpointKey);
     const dispatch = useDispatch();
     const binding: Binding<T, F> = bindingsStore.current.getBinding(
         endpointKey,

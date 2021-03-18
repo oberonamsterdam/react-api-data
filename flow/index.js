@@ -44,9 +44,27 @@ export {
     useActions,
 };
 
+/**
+ * @deprecated
+ */
 export var purgeApiData = purge;
+/**
+ * @deprecated
+ */
 export var getApiDataRequest = getRequest;
+/**
+ * @deprecated
+ */
 export var configureApiData = configure;
+/**
+ * @deprecated
+ */
 export var invalidateApiDataRequest = invalidateRequest;
+/**
+ * @deprecated
+ */
 export var performApiDataRequest = performRequest;
+/**
+ * @deprecated
+ */
 export var useRequestHandler = setRequestHandler;

@@ -57,16 +57,55 @@ export {
     Actions,
 };
 
+/**
+ * @deprecated
+ */
 export const configureApiData = configure;
+/**
+ * @deprecated
+ */
 export const getApiDataRequest = getRequest;
+/**
+ * @deprecated
+ */
 export const purgeAllApiData = purgeAll;
+/**
+ * @deprecated
+ */
 export const invalidateApiDataRequest = invalidateRequest;
+/**
+ * @deprecated
+ */
 export const performApiRequest = performRequest;
+/**
+ * @deprecated
+ */
 export const useRequestHandler = setRequestHandler;
+/**
+ * @deprecated
+ */
 export type ApiDataState = State;
+/**
+ * @deprecated
+ */
 export type ApiDataRequest = DataRequest;
+/**
+ * @deprecated
+ */
 export type ApiDataGlobalConfig = GlobalConfig;
+/**
+ * @deprecated
+ */
 export type ApiDataEndpointConfig = EndpointConfig;
+/**
+ * @deprecated
+ */
 export type ApiDataConfigBeforeProps = ConfigBeforeProps;
+/**
+ * @deprecated
+ */
 export type ApiDataConfigAfterProps = ConfigAfterProps;
+/**
+ * @deprecated
+ */
 export interface ApiDataBinding<T> extends Binding<T, any> {}
