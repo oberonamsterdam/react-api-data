@@ -1,6 +1,6 @@
 {
   "name": "react-api-data",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Fetch and normalize data from api",
   "main": "lib/index.js",
   "scripts": {
@@ -59,7 +59,6 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@types/query-string": "^6.3.0",
     "hoist-non-react-statics": "^3.3.1",
     "normalizr": "^3.2.4",
     "query-string": "^6.11.1",
