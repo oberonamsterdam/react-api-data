@@ -290,7 +290,7 @@ Please note that these `defaultParams` will be overwritten if they are explicitl
 
 ## Uploading a file
 
-[See file Upload examples](./example.file-upload.md)
+[See file Upload examples](./examples/example.file-upload.md)
 
 ## Make multiple requests to the same endpoint at once
 
