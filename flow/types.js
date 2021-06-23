@@ -54,7 +54,14 @@ export interface GlobalConfig {
     afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
+    /*
+     * Enable React suspense for all endpoints
+     */
     enableSuspense?: boolean;
+    /*
+     * Parse response as json, text, blob, formData or arrayBuffer, defaults to json
+     */
+    parseMethod?: ParseMethod;
 }
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -99,7 +106,14 @@ export interface EndpointConfig {
 
     timeout?: number;
     autoTrigger?: boolean;
+    /*
+     * Enable React suspense for this endpoint
+     */
     enableSuspense?: boolean;
+    /*
+     * Parse response as json, text, blob, formData or arrayBuffer, defaults to json
+     */
+    parseMethod?: ParseMethod;
 }
 
 export interface ConfigBeforeProps {
@@ -152,3 +166,16 @@ export type Options = {
 }
 
 export type HookOptions = $Shape<EndpointConfig> | Options;
+
+export type ParseMethod = 'json' | 'blob' | 'text' | 'arrayBuffer'  | 'formData';
+
+export interface RequestConfig {
+    parseMethod?: ParseMethod;
+}
+
+export interface HandledResponse {
+    response: Response;
+    body: any;
+}
+
+export type RequestHandler = (url: string, requestProperties?: RequestOptions, config?: RequestConfig) => Promise<HandledResponse>;

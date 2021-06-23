@@ -53,7 +53,14 @@ export interface GlobalConfig {
     afterFailed?: (afterProps: ConfigAfterProps) => void;
     timeout?: number;
     autoTrigger?: boolean;
+    /*
+     * Enable React suspense for all endpoints
+     */
     enableSuspense?: boolean;
+    /*
+     * Parse response as json, text, blob, formData or arrayBuffer, defaults to json
+     */
+    parseMethod?: ParseMethod;
 }
 
 /**
@@ -109,11 +116,11 @@ export interface EndpointConfig {
      */
     setHeaders?: (defaultHeaders: object, state: object) => object;
     /*
-     * defaultPropertie will be the properties returned by the setRequestproperties function from the global config, if set
+     * defaultProperties will be the properties returned by the setRequestproperties function from the global config, if set
      */
     setRequestProperties?: (defaultProperties: object, state: object) => object;
     /*
-     * Set defaultParams in a URL.
+     * Set default params in a URL.
      */
     defaultParams?: {
         [paramName: string]: string | number;
@@ -121,7 +128,14 @@ export interface EndpointConfig {
 
     timeout?: number;
     autoTrigger?: boolean;
+    /*
+     * Enable React suspense for this endpoint
+     */
     enableSuspense?: boolean;
+    /*
+     * Parse response as json, text, blob, formData or arrayBuffer, defaults to json
+     */
+    parseMethod?: ParseMethod;
 }
 
 export interface ConfigBeforeProps {
@@ -178,3 +192,15 @@ export interface Options {
 }
 
 export interface HookOptions extends Partial<EndpointConfig>, Options {}
+
+export interface HandledResponse {
+    response: Response;
+    body: any;
+}
+
+export type ParseMethod = 'json' | 'blob' | 'text' | 'arrayBuffer' | 'formData';
+
+export interface RequestConfig {
+    parseMethod?: ParseMethod;
+}
+export type RequestHandler = (url: string, requestProperties?: RequestInit, config?: RequestConfig) => Promise<HandledResponse>;

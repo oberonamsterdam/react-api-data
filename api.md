@@ -32,6 +32,7 @@
   - [`ConfigAfterProps`](#configafterprops)
   - [`State`](#state)
   - [`RequestHandler`](#requesthandler)
+  - [`RequestConfig`](#requestconfig)
   - [`HandledResponse`](#handledresponse)
   - [`Options`](#options)
 
@@ -471,6 +472,9 @@ Specification and configuration of an endpoint.
   Provide default params for the params included in the url.
 - `enableSuspense?`: **boolean**
   Enables [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) for the endpoint.
+- `parseMethod?`: **'json' | 'blob' | 'text' | 'arrayBuffer' | 'formData'**
+  Parse responses automatically as json, text or any of the other options.
+  Defaults to 'json'.
 
 ---
 
@@ -489,6 +493,9 @@ Global configuration for all endpoints.
 - `timeout?` **number**
 - `enableSuspense?`: **boolean**
   Enables [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) globally.
+- `parseMethod?`: **'json' | 'blob' | 'text' | 'arrayBuffer' | 'formData'**
+  Parse responses automatically as json, text or any of the other options.
+  Defaults to 'json'.
 
 ---
 
@@ -532,10 +539,21 @@ Type: **Function**
 - `url` **string**
 - `requestProperties` **[RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters)**
   The `init` parameter for fetch.
+- `config?` **[RequestConfig](#requestconfig)**
+  Extra config options for handling the fetch request
 
 **Returns**
 
 **Promise&lt;[HandledResponse](#handledresponse)>**
+
+---
+
+### `RequestConfig`
+
+**Properties**
+
+- `parseMethod?`: **'json' | 'blob' | 'text' | 'arrayBuffer' | 'formData'**
+  Parse response automatically as json, text or any of the other options.
 
 ---
 

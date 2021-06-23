@@ -1,9 +1,8 @@
 // @flow
 
-import type { EndpointParams } from '../types';
+import type { EndpointParams, RequestHandler } from '../types';
 import type { ActionCreator } from 'redux';
 import type { Action, State } from '../reducer';
-import type { RequestHandler } from '../request';
 
 declare export var performRequest: (
   endpointKey: string,

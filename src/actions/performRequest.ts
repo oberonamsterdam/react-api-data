@@ -7,6 +7,9 @@ import {
     GlobalConfig,
     EndpointParams,
     DataRequest,
+    HandledResponse,
+    RequestConfig,
+    RequestHandler,
 } from '../types';
 import { getRequest } from '../selectors/getRequest';
 import { fail } from './fail';
@@ -14,9 +17,8 @@ import { success } from './success';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { formatUrl } from '../helpers/formatUrl';
 import { BindingsStore } from '../helpers/createBinding';
-import Request, { HandledResponse } from '../request';
+import Request from '../request';
 import { cacheExpired } from '../selectors/cacheExpired';
-import { RequestHandler } from '../request';
 import { getActions } from '../helpers/getActions';
 import { Dispatch } from 'redux';
 import { getFailedData } from '../selectors/getFailedData';
@@ -28,7 +30,7 @@ export const getRequestProperties = (
     globalConfig: GlobalConfig,
     state: any,
     body?: any
-) => {
+): RequestInit => {
     const defaultProperties = { body, headers: {}, method: endpointConfig.method };
     const requestProperties = composeConfigPipeFn(
         endpointConfig.setRequestProperties,
@@ -40,6 +42,16 @@ export const getRequestProperties = (
     );
 
     return requestProperties;
+};
+
+export const getRequestConfig = (
+    endpointConfig: EndpointConfig,
+    globalConfig: GlobalConfig,
+): RequestConfig => {
+    const parseMethod = endpointConfig.parseMethod ?? globalConfig.parseMethod ?? 'json';
+    return {
+        parseMethod
+    };
 };
 
 // passes return value from endpoint function to global function
@@ -143,6 +155,7 @@ export const performRequest: PerformRequest = (
         });
 
         const requestProperties = getRequestProperties(config, globalConfig, state, body);
+        const requestConfig = getRequestConfig(config, globalConfig);
         const promise = new Promise((resolve: (binding: Binding<any, any>) => void, reject: (binding: Binding<any, any>) => void) => {
             const timeout = config.timeout || globalConfig.timeout;
             let abortTimeout: any;
@@ -154,7 +167,7 @@ export const performRequest: PerformRequest = (
                     handleFail(new Error('Timeout'));
                 }, timeout);
             }
-            requestFunction(url, requestProperties).then(
+            requestFunction(url, requestProperties, requestConfig).then(
                 (handledResponse: HandledResponse) => {
                     if (aborted) {
                         return;

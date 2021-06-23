@@ -1,11 +1,6 @@
+import { RequestHandler } from './types';
+
 const __DEV__ = process.env.NODE_ENV === 'development';
-
-export interface HandledResponse {
-    response: Response;
-    body: any;
-}
-
-export type RequestHandler = (url: string, requestProperties?: RequestInit) => Promise<HandledResponse>;
 
 /*
  * Get the headers based on request properties, adds:
@@ -47,7 +42,7 @@ const getHeaders = (requestProperties: RequestInit): HeadersInit => {
  * connection fails.
  */
 
-const defaultRequestHandler: RequestHandler = (url, requestProperties = {}) => {
+const defaultRequestHandler: RequestHandler = (url, requestProperties = {}, { parseMethod = 'json' } = { }) => {
     if (__DEV__) {
         console.log('Executing request: ' + url);
     }
@@ -70,7 +65,7 @@ const defaultRequestHandler: RequestHandler = (url, requestProperties = {}) => {
                     body: {},
                 });
             } else {
-                response.json().then(
+                response[parseMethod]().then(
                     (body: any) =>
                         resolve({
                             response,
@@ -78,7 +73,7 @@ const defaultRequestHandler: RequestHandler = (url, requestProperties = {}) => {
                         }),
                     err => {
                         if (__DEV__) {
-                            console.warn(`Could not parse JSON response of ${url}`);
+                            console.warn(`Could not parse ${parseMethod} response of ${url}`);
                         }
                         resolve({
                             response,
