@@ -26,6 +26,8 @@ export type {
     ConfigAfterProps,
     Binding,
     Actions,
+    ParseMethod,
+    RequestConfig,
 } from './types';
 
 export {

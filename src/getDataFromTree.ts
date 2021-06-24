@@ -7,9 +7,10 @@ type RenderFn = (tree: ReactNode) => string;
 const getDataFromTree = (
     tree: ReactNode,
     store: Store<{ apiData: State }>,
-    renderFn: RenderFn = require('react-dom/server').renderToStaticMarkup,
+    renderFn?: RenderFn,
 ) => {
-    renderFn(tree);
+    const renderFunction = renderFn ?? require('react-dom/server').renderToStaticMarkup;
+    renderFunction(tree);
     const { apiData } = store.getState();
     return Promise.all(Object.keys(apiData.requests).map((requestKey: string) => {
         const promise = getLoadingPromise(requestKey);

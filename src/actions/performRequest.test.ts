@@ -1,10 +1,10 @@
 import getState from '../mocks/mockState';
 import { performRequest } from './performRequest';
-import request, { HandledResponse } from '../request';
+import request from '../request';
 import { success } from './success';
 import { getRequestKey } from '../helpers/getRequestKey';
 import { fail } from './fail';
-import { ConfigBeforeProps, EndpointParams } from '../types';
+import { ConfigBeforeProps, EndpointParams, HandledResponse } from '../types';
 import { getRequest, getResultData } from '..';
 import thunk from 'redux-thunk';
 import { applyMiddleware, combineReducers, createStore } from 'redux';

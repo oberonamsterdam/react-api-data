@@ -25,6 +25,8 @@ import {
     ConfigAfterProps,
     Binding,
     Actions,
+    ParseMethod,
+    RequestConfig,
 } from './types';
 
 export {
@@ -55,6 +57,8 @@ export {
     ConfigAfterProps,
     Binding,
     Actions,
+    ParseMethod,
+    RequestConfig,
 };
 
 /**
