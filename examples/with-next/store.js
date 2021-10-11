@@ -1,7 +1,7 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunkMiddleware from "redux-thunk";
-import { configureApiData, reducer } from "react-api-data";
+import { configure, reducer } from "react-api-data";
 import { useMemo } from "react";
 
 let store;
@@ -19,7 +19,7 @@ function initStore(initialState) {
     initialState,
     composeWithDevTools(applyMiddleware(thunkMiddleware))
   );
-  store.dispatch(configureApiData({}, endpointConfig));
+  store.dispatch(configure({}, endpointConfig));
   return store;
 }
 

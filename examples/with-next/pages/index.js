@@ -1,7 +1,7 @@
 import React from "react";
 import { useApiData } from "react-api-data";
 
-const Article = props => {
+const Article = () => {
   const article = useApiData("getArticle", { id: 1 });
   return (
     <>
