@@ -52,7 +52,7 @@ describe('useApiData should trigger perform under the right conditions', () => {
     });
 
     it('performs a request when status is ready and does not when hook got rerendered with same endpoint && params and status not ready', async () => {
-        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params), {
+        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params, {isSSR: false}), {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
         expect(performMock1).toHaveBeenCalledTimes(1);
@@ -75,7 +75,7 @@ describe('useApiData should trigger perform under the right conditions', () => {
 
     it('performs a request when status is ready and also when hook got rerenderd with different params', async () => {
         mockBindingWithStore(store1, endpointKey1, performMock1, getBinding);
-        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params ), {
+        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params, {isSSR: false}), {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
         expect(performMock1).toHaveBeenCalledTimes(1);
@@ -84,7 +84,7 @@ describe('useApiData should trigger perform under the right conditions', () => {
     }, 3000);
 
     it('performs a request when status is ready and autotrigger true and when endpoint name changes it does a new perform', async () => {
-        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params), {
+        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params, {isSSR: false}), {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
         expect(performMock1).toHaveBeenCalledTimes(1);
@@ -97,7 +97,7 @@ describe('useApiData should trigger perform under the right conditions', () => {
     }, 3000);
     it('performs a request when status is ready and autotrigger true and rerenders after invalidation', async () => {
         mockBindingWithStore(store1, endpointKey1, performMock1, getBinding);
-        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params), {
+        const { rerender } = renderHook(({ endpointKey, params }) => useApiData(endpointKey, params, {isSSR: false}), {
             initialProps: { endpointKey: 'testEndpoint', params: {} },
         });
         expect(performMock1).toHaveBeenCalled();

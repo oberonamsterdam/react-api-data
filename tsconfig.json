@@ -5,7 +5,12 @@
     "module": "CommonJS",
     "target": "es5",
     "downlevelIteration": true,
-    "lib": ["es6", "dom", "esnext.asynciterable"],
+    "lib": [
+      "es6",
+      "dom",
+      "esnext.asynciterable",
+      "es2019"
+    ],
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",

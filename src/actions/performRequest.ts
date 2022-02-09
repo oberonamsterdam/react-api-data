@@ -271,7 +271,8 @@ export const performRequest: PerformRequest = (
         });
 
         loadingPromises[requestKey] = promise;
-        promise.finally(() => delete loadingPromises[requestKey]);
+        // .catch(() => null) is added to prevent unhandled promise rejection errors
+        promise.catch(() => null).finally(() => delete loadingPromises[requestKey]);
         return promise;
     };
 };
