@@ -9,15 +9,13 @@ import { getRequestKey } from './helpers/getRequestKey';
 import { getLoadingPromise } from './actions/performRequest';
 import { getIsSSR } from './helpers/getIsSSR';
 
-type UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => Binding<T, F>;
-
 // the hook should call perform when shouldAutoTrigger and:
 // - the component gets mounted
 // - the params have changed
 // - the endpoint has changed
 // - the call has been invalidated (networkStatus is ready)
 
-const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: EndpointParams, options?: HookOptions) => {
+const useApiData = <T, F = unknown, Params extends EndpointParams = EndpointParams, Body = any>(endpointKey: string, params?: Params, options?: HookOptions): Binding<T, F, Params, Body> => {
     const {
         instanceId,
         // we auto detect a SSR environment. If we are on SSR, we will immediately execute the request during every render(!)
@@ -25,7 +23,7 @@ const useApiData: UseHook = <T, F = unknown>(endpointKey: string, params?: Endpo
         ...config
     } = options ?? {};
     const bindingsStore = useRef<BindingsStore>(new BindingsStore());
-    const prevParams = useRef<EndpointParams>();
+    const prevParams = useRef<Params>();
     const prevEndpointKey = useRef<string>();
     const apiData: State = useSelector((state: { apiData: State }) => state.apiData);
     const autoTrigger = config.autoTrigger ?? shouldAutoTrigger(apiData, endpointKey);

@@ -8,8 +8,7 @@ import { invalidateRequest } from './actions/invalidateRequest';
 import { performRequest, setRequestHandler } from './actions/performRequest';
 import getDataFromTree from './getDataFromTree';
 import { getEntity } from './selectors/getEntity';
-import reducer from './reducer';
-import { State } from './reducer';
+import reducer, { State } from './reducer';
 import useApiData from './useApiData';
 import useActions from './useActions';
 import {
@@ -27,6 +26,7 @@ import {
     Actions,
     ParseMethod,
     RequestConfig,
+    HookOptions,
 } from './types';
 
 export {
@@ -59,6 +59,7 @@ export {
     Actions,
     ParseMethod,
     RequestConfig,
+    HookOptions,
 };
 
 /**
@@ -112,4 +113,4 @@ export type ApiDataConfigAfterProps = ConfigAfterProps;
 /**
  * @deprecated
  */
-export interface ApiDataBinding<T> extends Binding<T, any> {}
+export interface ApiDataBinding<T> extends Binding<T, any, EndpointParams, any> {}

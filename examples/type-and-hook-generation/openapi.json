@@ -1,0 +1,208 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "articles",
+    "version": "1.0"
+  },
+  "servers": [],
+  "paths": {
+    "/article/{articleId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "number"
+          },
+          "name": "articleId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Get Article by Article ID",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Article Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                },
+                "examples": {
+                  "example": {
+                    "value": {
+                      "id": 12,
+                      "title": "My Article",
+                      "body": "This is the body",
+                      "author": {
+                        "id": 2,
+                        "name": "Richard"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Article Not Found"
+          }
+        },
+        "operationId": "get-article-articleId",
+        "description": "Get Article by Article ID"
+      }
+    },
+    "/article": {
+      "post": {
+        "summary": "Create New Article",
+        "operationId": "post-article",
+        "responses": {
+          "200": {
+            "description": "Article Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "id": 12,
+                      "title": "My Article",
+                      "body": "This is the body",
+                      "author": {
+                        "id": 2,
+                        "name": "Richard"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Author not found"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticlePost"
+              },
+              "examples": {
+                "Create Article": {
+                  "value": {
+                    "id": 12,
+                    "title": "My Article",
+                    "body": "This is the body",
+                    "authorId": 2
+                  }
+                }
+              }
+            }
+          },
+          "description": "Post the necessary fields for the API to create a new user."
+        },
+        "description": "Create a new article."
+      },
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "Author": {
+        "description": "",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "x-examples": {
+          "example-1": {
+            "id": 2,
+            "name": "Richard"
+          }
+        },
+        "title": "Author"
+      },
+      "Article": {
+        "description": "",
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": 12,
+            "title": "My Article",
+            "body": "This is the body",
+            "authorId": 3
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "author": {
+            "$ref": "#/components/schemas/Author"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "body",
+          "author"
+        ]
+      },
+      "ArticlePost": {
+        "description": "",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "authorId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "body",
+          "authorId"
+        ],
+        "x-examples": {
+          "example-1": {
+            "id": 12,
+            "title": "My Article",
+            "body": "This is the body",
+            "authorId": 2
+          }
+        }
+      }
+    }
+  }
+}

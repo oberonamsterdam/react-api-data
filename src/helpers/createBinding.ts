@@ -12,7 +12,7 @@ import { getLoadingState } from '../selectors/getLoadingState';
 import { purgeRequest } from '../actions/purgeRequest';
 
 type BindingInstances = {
-    [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any, any>;
+    [requestKey in string]: (apiData: State, newRequest?: DataRequest) => Binding<any, any, EndpointParams, any>;
 };
 
 export class BindingsStore {
@@ -42,7 +42,7 @@ const createBinding = (
     bindingsStore: BindingsStore,
     instanceId: string = '',
     config?: Partial<EndpointConfig>
-): ((apiData: State, request?: DataRequest) => Binding<any, any>) => {
+): ((apiData: State, request?: DataRequest) => Binding<any, any, EndpointParams, any>) => {
     let params: EndpointParams = bindingParams;
 
     return (apiData: State, request?: DataRequest) => ({
