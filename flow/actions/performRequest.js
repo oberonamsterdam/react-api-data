@@ -10,7 +10,7 @@ declare export var performRequest: (
   body?: any,
   instanceId?: string
 ) => (
-  dispatch: ActionCreator<Action>,
+  dispatch: ActionCreator<Action, any>,
   getState: () => {
     apiData: State
   }

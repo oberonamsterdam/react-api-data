@@ -1,6 +1,6 @@
 // @flow
 import { type State } from '../reducer';
-import { DataRequest, type EndpointParams } from '..';
+import { type DataRequest, type EndpointParams } from '..';
 
 declare export var getRequest: (
   State: State,
